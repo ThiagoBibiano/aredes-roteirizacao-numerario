@@ -40,6 +40,15 @@ from roteirizacao.domain.optimization import (
     RestricaoElegibilidade,
     VeiculoRoteirizacao,
 )
+from roteirizacao.domain.results import (
+    KpiGerencial,
+    KpiOperacional,
+    OrdemNaoAtendida,
+    ParadaPlanejada,
+    ResumoOperacional,
+    ResultadoPlanejamento,
+    RotaPlanejada,
+)
 from roteirizacao.domain.services import ContextoExecucao
 
 __all__ = [
@@ -57,17 +66,24 @@ __all__ = [
     "EventoAuditoria",
     "InstanciaRoteirizacaoBase",
     "JanelaTempo",
+    "KpiGerencial",
+    "KpiOperacional",
     "MetadadoIngestao",
     "MetadadoRastreabilidade",
     "NoRoteirizacao",
     "Ordem",
     "OrdemBruta",
     "OrdemClassificada",
+    "OrdemNaoAtendida",
+    "ParadaPlanejada",
     "PenalidadeRoteirizacao",
     "Ponto",
     "PontoBruto",
     "RegraCompatibilidade",
     "RestricaoElegibilidade",
+    "ResultadoPlanejamento",
+    "ResumoOperacional",
+    "RotaPlanejada",
     "SeveridadeContratual",
     "SeveridadeEvento",
     "StatusCancelamento",
