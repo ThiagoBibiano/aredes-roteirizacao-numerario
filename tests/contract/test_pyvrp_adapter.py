@@ -143,13 +143,18 @@ class PyVRPAdapterContractTest(unittest.TestCase):
         self.assertEqual(payload.clients[0].pickup, (500, 1500000))
         self.assertEqual(payload.vehicle_types[0].capacity, (2000, 8000000))
 
-    def test_generates_complete_edge_matrix(self) -> None:
+    def test_uses_logistics_matrix_edges_and_metadata(self) -> None:
         instancia = self.build_instance(self.ordem_bruta(tipo_servico="suprimento"), tipo=ClasseOperacional.SUPRIMENTO)
         payload = self.adapter.build_payload(instancia)
+        trecho = instancia.matriz_logistica.trecho("dep-BASE-01", "no-ORD-01")
+        edge_map = {(edge.frm, edge.to): edge for edge in payload.edges}
 
-        total_locations = len(payload.depots) + len(payload.clients)
-        self.assertEqual(len(payload.edges), total_locations * total_locations)
-        self.assertTrue(all(edge.distance >= 0 and edge.duration >= 0 for edge in payload.edges))
+        self.assertEqual(payload.metadata["hash_matriz"], instancia.matriz_logistica.hash_matriz)
+        self.assertEqual(payload.metadata["estrategia_matriz"], "haversine_v1")
+        self.assertEqual(len(payload.edges), len(instancia.matriz_logistica.trechos))
+        self.assertIn((0, 1), edge_map)
+        self.assertEqual(edge_map[(0, 1)].distance, trecho.distancia_metros)
+        self.assertEqual(edge_map[(0, 1)].duration, trecho.tempo_segundos)
 
     def test_time_windows_are_relative_to_common_origin(self) -> None:
         instancia = self.build_instance(self.ordem_bruta(tipo_servico="suprimento"), tipo=ClasseOperacional.SUPRIMENTO)

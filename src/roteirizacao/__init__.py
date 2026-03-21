@@ -2,6 +2,7 @@
 
 from roteirizacao.application import (
     InstanceBuildResult,
+    LogisticsMatrixBuilder,
     OptimizationInstanceBuilder,
     PlanningExecutor,
     PreparationPipeline,
@@ -11,6 +12,7 @@ from roteirizacao.optimization import PyVRPAdapter, SolverAdapter
 
 __all__ = [
     "InstanceBuildResult",
+    "LogisticsMatrixBuilder",
     "OptimizationInstanceBuilder",
     "PlanningExecutor",
     "PreparationPipeline",

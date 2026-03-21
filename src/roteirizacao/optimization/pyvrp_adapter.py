@@ -3,7 +3,6 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from datetime import datetime
 from decimal import Decimal
-from math import fabs
 from typing import Any
 
 from roteirizacao.domain.enums import ClasseOperacional
@@ -79,12 +78,10 @@ class PyVRPAdapter(SolverAdapter):
         coordinate_scale: int = 1000,
         amount_scale: int = 100,
         duration_unit_seconds: int = 60,
-        edge_strategy: str = "manhattan",
     ) -> None:
         self.coordinate_scale = coordinate_scale
         self.amount_scale = amount_scale
         self.duration_unit_seconds = duration_unit_seconds
-        self.edge_strategy = edge_strategy
 
     def build_payload(self, instancia: InstanciaRoteirizacaoBase) -> PyVRPModelPayload:
         time_origin = self._time_origin(instancia)
@@ -105,7 +102,7 @@ class PyVRPAdapter(SolverAdapter):
             self._build_vehicle_type(instancia, time_origin, depot_index, veiculo)
             for veiculo in instancia.veiculos
         )
-        edges = self._build_edges(depots, clients)
+        edges = self._build_edges(instancia)
         penalties = {
             penalidade.id_alvo: self._scale_amount(penalidade.valor)
             for penalidade in instancia.penalidades
@@ -126,6 +123,8 @@ class PyVRPAdapter(SolverAdapter):
                 "hash_cenario": instancia.hash_cenario,
                 "classe_operacional": instancia.classe_operacional.value,
                 "restricoes_extras": list(instancia.restricoes_extras),
+                "hash_matriz": instancia.matriz_logistica.hash_matriz,
+                "estrategia_matriz": instancia.matriz_logistica.estrategia_geracao,
             },
         )
 
@@ -205,8 +204,6 @@ class PyVRPAdapter(SolverAdapter):
             delivery = tuple(ordered_demands)
             pickup = tuple(0 for _ in ordered_demands)
 
-        # Inference from PyVRP optional-clients docs: prize + required=False models
-        # drop penalties while preserving solver freedom.
         return PyVRPClientData(
             name=no.id_no,
             x=self._scale_coordinate(no.localizacao.latitude),
@@ -243,14 +240,23 @@ class PyVRPAdapter(SolverAdapter):
             tw_late=self._offset_seconds(time_origin, veiculo.janela_operacao.fim),
         )
 
-    def _build_edges(self, depots: tuple[PyVRPDepotData, ...], clients: tuple[PyVRPClientData, ...]) -> tuple[PyVRPEdgeData, ...]:
-        locations = list(depots) + list(clients)
-        edges: list[PyVRPEdgeData] = []
-        for frm_idx, frm in enumerate(locations):
-            for to_idx, to in enumerate(locations):
-                distance = self._distance(frm.x, frm.y, to.x, to.y)
-                duration = distance
-                edges.append(PyVRPEdgeData(frm=frm_idx, to=to_idx, distance=distance, duration=duration))
+    def _build_edges(self, instancia: InstanciaRoteirizacaoBase) -> tuple[PyVRPEdgeData, ...]:
+        index_by_location = {
+            location_id: idx
+            for idx, location_id in enumerate(instancia.matriz_logistica.ids_localizacao)
+        }
+        edges = []
+        for trecho in instancia.matriz_logistica.trechos:
+            if not trecho.disponivel:
+                continue
+            edges.append(
+                PyVRPEdgeData(
+                    frm=index_by_location[trecho.id_origem],
+                    to=index_by_location[trecho.id_destino],
+                    distance=trecho.distancia_metros or 0,
+                    duration=trecho.tempo_segundos or 0,
+                )
+            )
         return tuple(edges)
 
     def _time_origin(self, instancia: InstanciaRoteirizacaoBase) -> datetime:
@@ -272,8 +278,3 @@ class PyVRPAdapter(SolverAdapter):
 
     def _scale_duration_seconds(self, minutes: int) -> int:
         return minutes * self.duration_unit_seconds
-
-    def _distance(self, x1: int, y1: int, x2: int, y2: int) -> int:
-        if self.edge_strategy != "manhattan":
-            raise ValueError("edge_strategy nao suportada")
-        return int(fabs(x1 - x2) + fabs(y1 - y2))

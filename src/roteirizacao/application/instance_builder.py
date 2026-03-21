@@ -7,6 +7,7 @@ from hashlib import sha256
 from itertools import count
 from typing import Any
 
+from roteirizacao.application.logistics_matrix import LogisticsMatrixBuilder
 from roteirizacao.application.preparation import PreparationResult
 from roteirizacao.domain.enums import ClasseOperacional, SeveridadeEvento, TipoEventoAuditoria
 from roteirizacao.domain.events import ErroValidacao, EventoAuditoria
@@ -38,8 +39,9 @@ class InstanceBuildResult:
 
 
 class OptimizationInstanceBuilder:
-    def __init__(self, contexto: ContextoExecucao) -> None:
+    def __init__(self, contexto: ContextoExecucao, *, matrix_builder: LogisticsMatrixBuilder | None = None) -> None:
         self.contexto = contexto
+        self.matrix_builder = matrix_builder or LogisticsMatrixBuilder(contexto)
         self._counter = count(1)
 
     def build(self, preparation_result: PreparationResult) -> InstanceBuildResult:
@@ -117,6 +119,15 @@ class OptimizationInstanceBuilder:
             for base in self._bases_da_instancia(viaturas_consideradas, bases_by_id)
         )
 
+        metadados = ordens[0].ordem.metadados
+        matriz_logistica, evento_matriz = self.matrix_builder.build(
+            id_matriz=f"matrix-{self.contexto.id_execucao}-{classe_operacional.value}",
+            depositos=depositos,
+            nos=nos,
+            metadados=metadados,
+        )
+        eventos.append(evento_matriz)
+
         penalidades = tuple(self._build_penalties(nos))
         janelas_tempo = {no.id_no: no.janela_tempo for no in nos}
         tempos_servico = {no.id_no: no.tempo_servico for no in nos}
@@ -124,19 +135,25 @@ class OptimizationInstanceBuilder:
             "fixo_por_veiculo": {veiculo.id_veiculo: veiculo.custo_fixo for veiculo in veiculos},
             "variavel_por_veiculo": {veiculo.id_veiculo: veiculo.custo_variavel for veiculo in veiculos},
         }
+        custos_por_arco = {
+            trecho.chave: trecho.custo
+            for trecho in matriz_logistica.trechos
+            if trecho.disponivel and trecho.custo is not None
+        }
         parametros_construcao = {
             "total_nos": len(nos),
             "total_veiculos": len(veiculos),
             "dimensoes_capacidade": [DIMENSAO_VOLUMETRICA, DIMENSAO_FINANCEIRA],
             "classe_operacional": classe_operacional.value,
             "requires_financial_accretion": classe_operacional == ClasseOperacional.RECOLHIMENTO,
+            "estrategia_matriz": matriz_logistica.estrategia_geracao,
+            "hash_matriz": matriz_logistica.hash_matriz,
         }
         restricoes_extras = (
             "circuito_fechado",
             "isolamento_estado_fisico",
             "teto_segurado_aplicado" if classe_operacional == ClasseOperacional.RECOLHIMENTO else "capacidade_dupla",
         )
-        metadados = ordens[0].ordem.metadados
 
         instancia = InstanciaRoteirizacaoBase(
             id_cenario=f"cenario-{self.contexto.id_execucao}-{classe_operacional.value}",
@@ -144,6 +161,7 @@ class OptimizationInstanceBuilder:
             depositos=depositos,
             nos_atendimento=nos,
             veiculos=veiculos,
+            matriz_logistica=matriz_logistica,
             dimensoes_capacidade=(DIMENSAO_VOLUMETRICA, DIMENSAO_FINANCEIRA),
             janelas_tempo=janelas_tempo,
             tempos_servico=tempos_servico,
@@ -152,6 +170,7 @@ class OptimizationInstanceBuilder:
             elegibilidade_veiculo_no=elegibilidades,
             parametros_construcao=parametros_construcao,
             metadados=metadados,
+            custos_por_arco=custos_por_arco,
             restricoes_extras=restricoes_extras,
         )
         hash_cenario = self._hash_instance(instancia)
@@ -167,6 +186,7 @@ class OptimizationInstanceBuilder:
                 contexto_adicional={
                     "classe_operacional": classe_operacional.value,
                     "hash_cenario": hash_cenario,
+                    "hash_matriz": matriz_logistica.hash_matriz,
                     "total_nos": len(nos),
                     "total_veiculos": len(veiculos),
                 },

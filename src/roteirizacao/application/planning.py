@@ -381,7 +381,8 @@ class PlanningExecutor:
         return StatusExecucaoPlanejamento.CONCLUIDA
 
     def _estimate_route_cost(self, route: Any, veiculo: VeiculoRoteirizacao) -> Decimal:
-        distance_cost = Decimal(route.distance()) * veiculo.custo_variavel
+        distance_km = Decimal(route.distance()) / Decimal("1000")
+        distance_cost = distance_km * veiculo.custo_variavel
         return (veiculo.custo_fixo + distance_cost).quantize(Decimal("0.01"))
 
     def _stop_criterion(self) -> Any:
