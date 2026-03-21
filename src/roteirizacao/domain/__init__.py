@@ -16,6 +16,7 @@ from roteirizacao.domain.enums import (
     TipoViatura,
 )
 from roteirizacao.domain.events import ErroContrato, ErroValidacao, EventoAuditoria
+from roteirizacao.domain.logistics import MatrizLogistica, TrechoLogistico
 from roteirizacao.domain.models import (
     Base,
     BaseBruta,
@@ -68,6 +69,7 @@ __all__ = [
     "JanelaTempo",
     "KpiGerencial",
     "KpiOperacional",
+    "MatrizLogistica",
     "MetadadoIngestao",
     "MetadadoRastreabilidade",
     "NoRoteirizacao",
@@ -93,6 +95,7 @@ __all__ = [
     "TipoPonto",
     "TipoServico",
     "TipoViatura",
+    "TrechoLogistico",
     "VeiculoRoteirizacao",
     "Viatura",
     "ViaturaBruta",

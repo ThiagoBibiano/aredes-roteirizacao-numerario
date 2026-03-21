@@ -5,6 +5,7 @@ from decimal import Decimal
 from typing import Any
 
 from roteirizacao.domain.enums import ClasseOperacional, Criticidade, TipoServico
+from roteirizacao.domain.logistics import MatrizLogistica
 from roteirizacao.domain.models import Coordenada, JanelaTempo, MetadadoRastreabilidade
 from roteirizacao.domain.serialization import SerializableMixin
 
@@ -72,6 +73,7 @@ class InstanciaRoteirizacaoBase(SerializableMixin):
     depositos: tuple[DepositoRoteirizacao, ...]
     nos_atendimento: tuple[NoRoteirizacao, ...]
     veiculos: tuple[VeiculoRoteirizacao, ...]
+    matriz_logistica: MatrizLogistica
     dimensoes_capacidade: tuple[str, ...]
     janelas_tempo: dict[str, JanelaTempo]
     tempos_servico: dict[str, int]
@@ -94,7 +96,10 @@ class InstanciaRoteirizacaoBase(SerializableMixin):
 
         no_ids = {no.id_no for no in self.nos_atendimento}
         veiculo_ids = {veiculo.id_veiculo for veiculo in self.veiculos}
+        localizacoes_esperadas = tuple([deposito.id_deposito for deposito in self.depositos] + [no.id_no for no in self.nos_atendimento])
 
+        if self.matriz_logistica.ids_localizacao != localizacoes_esperadas:
+            raise ValueError("matriz_logistica deve seguir a ordem canonica deposito->nos")
         if set(self.janelas_tempo) != no_ids:
             raise ValueError("janelas_tempo deve cobrir todos os nos da instancia")
         if set(self.tempos_servico) != no_ids:
@@ -112,3 +117,7 @@ class InstanciaRoteirizacaoBase(SerializableMixin):
                 raise ValueError("restricao de elegibilidade referencia no inexistente")
             if restricao.id_veiculo not in veiculo_ids:
                 raise ValueError("restricao de elegibilidade referencia veiculo inexistente")
+
+        chaves_matriz = {trecho.chave for trecho in self.matriz_logistica.trechos if trecho.disponivel and trecho.custo is not None}
+        if self.custos_por_arco and set(self.custos_por_arco) - chaves_matriz:
+            raise ValueError("custos_por_arco deve referenciar apenas trechos disponiveis da matriz")

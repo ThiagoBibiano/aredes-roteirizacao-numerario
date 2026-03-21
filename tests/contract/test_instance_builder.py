@@ -3,6 +3,7 @@ from __future__ import annotations
 import sys
 import unittest
 from datetime import date, datetime, timezone
+from decimal import Decimal
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -194,17 +195,31 @@ class InstanceBuilderContractTest(unittest.TestCase):
         self.assertNotIn(ClasseOperacional.RECOLHIMENTO, result.instancias)
         self.assertTrue(any(error.codigo_regra == "negocio.inviabilidade_operacional" for error in result.erros))
 
-    def test_instance_has_hash_penalties_and_build_audit_event(self) -> None:
+    def test_instance_has_hash_penalties_matrix_and_build_audit_events(self) -> None:
         preparation = self.prepare([
             self.ordem_bruta(id_ordem="ORD-HASH", tipo_servico="suprimento")
         ])
 
         result = self.builder.build(preparation)
         instancia = result.instancias[ClasseOperacional.SUPRIMENTO]
+        matriz = instancia.matriz_logistica
+        trecho_saida = matriz.trecho("dep-BASE-01", "no-ORD-HASH")
+        trecho_retorno = matriz.trecho("no-ORD-HASH", "dep-BASE-01")
 
         self.assertIsNotNone(instancia.hash_cenario)
+        self.assertIsNotNone(matriz.hash_matriz)
         self.assertEqual(len(instancia.penalidades), 2)
+        self.assertEqual(matriz.ids_localizacao, ("dep-BASE-01", "no-ORD-HASH"))
+        self.assertEqual(matriz.trecho("dep-BASE-01", "dep-BASE-01").distancia_metros, 0)
+        self.assertGreater(trecho_saida.distancia_metros or 0, 0)
+        self.assertGreater(trecho_saida.tempo_segundos or 0, 0)
+        self.assertEqual(trecho_saida.distancia_metros, trecho_retorno.distancia_metros)
+        self.assertEqual(instancia.custos_por_arco["dep-BASE-01->no-ORD-HASH"], trecho_saida.custo)
         self.assertTrue(any(event.tipo_evento == TipoEventoAuditoria.CONSTRUCAO_INSTANCIA for event in result.eventos_auditoria))
+        self.assertTrue(any(event.entidade_afetada == "MatrizLogistica" for event in result.eventos_auditoria))
+        self.assertEqual(instancia.parametros_construcao["estrategia_matriz"], "haversine_v1")
+        self.assertEqual(instancia.parametros_construcao["hash_matriz"], matriz.hash_matriz)
+        self.assertIsInstance(instancia.custos_por_arco["dep-BASE-01->no-ORD-HASH"], Decimal)
 
 
 if __name__ == "__main__":
