@@ -21,6 +21,7 @@ class NoRoteirizacao(SerializableMixin):
     id_no: str
     id_ordem: str
     id_ponto: str
+    localizacao: Coordenada
     tipo_servico: TipoServico
     classe_operacional: ClasseOperacional
     criticidade: Criticidade

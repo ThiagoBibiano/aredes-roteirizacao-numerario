@@ -75,7 +75,7 @@ class OptimizationInstanceBuilder:
         erros: list[ErroValidacao] = []
         eventos: list[EventoAuditoria] = []
 
-        nos = tuple(self._to_node(ordem) for ordem in ordens)
+        nos = tuple(self._to_node(ordem, pontos_by_id[ordem.ordem.id_ponto]) for ordem in ordens)
         elegibilidades, viaturas_consideradas, ha_veiculo_elegivel = self._build_eligibility(
             classe_operacional=classe_operacional,
             nos=nos,
@@ -107,10 +107,7 @@ class OptimizationInstanceBuilder:
             )
             return None, erros, eventos
 
-        veiculos = tuple(
-            self._to_vehicle(viatura, classe_operacional)
-            for viatura in viaturas_consideradas
-        )
+        veiculos = tuple(self._to_vehicle(viatura, classe_operacional) for viatura in viaturas_consideradas)
         depositos = tuple(
             DepositoRoteirizacao(
                 id_deposito=f"dep-{base.id_base}",
@@ -177,11 +174,12 @@ class OptimizationInstanceBuilder:
         )
         return instancia, erros, eventos
 
-    def _to_node(self, ordem: OrdemClassificada) -> NoRoteirizacao:
+    def _to_node(self, ordem: OrdemClassificada, ponto: Ponto) -> NoRoteirizacao:
         return NoRoteirizacao(
             id_no=f"no-{ordem.ordem.id_ordem}",
             id_ordem=ordem.ordem.id_ordem,
             id_ponto=ordem.ordem.id_ponto,
+            localizacao=ponto.localizacao,
             tipo_servico=ordem.ordem.tipo_servico,
             classe_operacional=ordem.ordem.classe_operacional,
             criticidade=ordem.ordem.criticidade,
