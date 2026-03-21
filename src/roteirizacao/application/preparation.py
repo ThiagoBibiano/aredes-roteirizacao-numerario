@@ -31,6 +31,12 @@ class PreparationResult:
             agrupado.setdefault(ordem.ordem.classe_operacional.value, []).append(ordem)
         return agrupado
 
+    def ordens_planejaveis_por_classe_operacional(self) -> dict[str, list[OrdemClassificada]]:
+        agrupado: dict[str, list[OrdemClassificada]] = {}
+        for ordem in self.ordens_planejaveis:
+            agrupado.setdefault(ordem.ordem.classe_operacional.value, []).append(ordem)
+        return agrupado
+
 
 class PreparationPipeline:
     def __init__(self, contexto: ContextoExecucao) -> None:
