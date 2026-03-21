@@ -32,6 +32,14 @@ from roteirizacao.domain.models import (
     Viatura,
     ViaturaBruta,
 )
+from roteirizacao.domain.optimization import (
+    DepositoRoteirizacao,
+    InstanciaRoteirizacaoBase,
+    NoRoteirizacao,
+    PenalidadeRoteirizacao,
+    RestricaoElegibilidade,
+    VeiculoRoteirizacao,
+)
 from roteirizacao.domain.services import ContextoExecucao
 
 __all__ = [
@@ -43,18 +51,23 @@ __all__ = [
     "ContextoExecucao",
     "Coordenada",
     "Criticidade",
+    "DepositoRoteirizacao",
     "ErroContrato",
     "ErroValidacao",
     "EventoAuditoria",
+    "InstanciaRoteirizacaoBase",
     "JanelaTempo",
     "MetadadoIngestao",
     "MetadadoRastreabilidade",
+    "NoRoteirizacao",
     "Ordem",
     "OrdemBruta",
     "OrdemClassificada",
+    "PenalidadeRoteirizacao",
     "Ponto",
     "PontoBruto",
     "RegraCompatibilidade",
+    "RestricaoElegibilidade",
     "SeveridadeContratual",
     "SeveridadeEvento",
     "StatusCancelamento",
@@ -64,6 +77,7 @@ __all__ = [
     "TipoPonto",
     "TipoServico",
     "TipoViatura",
+    "VeiculoRoteirizacao",
     "Viatura",
     "ViaturaBruta",
 ]
