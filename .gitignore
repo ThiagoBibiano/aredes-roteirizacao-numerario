@@ -224,3 +224,4 @@ __marimo__/
 data/fake_smoke/logistics_snapshots/
 data/fake_smoke/outputs/*.json
 data/fake_smoke/outputs/executions/
+data/api_runs/
