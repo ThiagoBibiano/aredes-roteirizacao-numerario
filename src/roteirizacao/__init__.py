@@ -1,6 +1,7 @@
 """Pacote principal do projeto de roteirizacao de numerario."""
 
 from roteirizacao.application import (
+    ClassPostProcessingResult,
     FallbackLogisticsMatrixProvider,
     FileSystemSnapshotRepository,
     InstanceBuildResult,
@@ -12,15 +13,19 @@ from roteirizacao.application import (
     OptimizationInstanceBuilder,
     PersistedSnapshotLogisticsMatrixProvider,
     PlanningExecutor,
+    PostProcessingResult,
     PreparationPipeline,
     PreparationResult,
+    RoutePostProcessor,
     SnapshotCoverageError,
     SnapshotMaterializationResult,
     SnapshotUnavailableError,
+    SolverExecutionArtifact,
 )
 from roteirizacao.optimization import PyVRPAdapter, SolverAdapter
 
 __all__ = [
+    "ClassPostProcessingResult",
     "FallbackLogisticsMatrixProvider",
     "FileSystemSnapshotRepository",
     "InstanceBuildResult",
@@ -32,11 +37,14 @@ __all__ = [
     "OptimizationInstanceBuilder",
     "PersistedSnapshotLogisticsMatrixProvider",
     "PlanningExecutor",
+    "PostProcessingResult",
     "PreparationPipeline",
     "PreparationResult",
     "PyVRPAdapter",
+    "RoutePostProcessor",
     "SnapshotCoverageError",
     "SnapshotMaterializationResult",
     "SnapshotUnavailableError",
     "SolverAdapter",
+    "SolverExecutionArtifact",
 ]
