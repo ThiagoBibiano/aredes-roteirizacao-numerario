@@ -1,0 +1,16 @@
+[
+  {
+    "id_viatura": "VTR-01",
+    "tipo_viatura": "media",
+    "id_base_origem": "BASE-01",
+    "inicio_turno": "2026-03-21T06:00:00+00:00",
+    "fim_turno": "2026-03-21T18:00:00+00:00",
+    "custo_fixo": "500.00",
+    "custo_variavel": "2.50",
+    "capacidade_financeira": "100000.00",
+    "capacidade_volumetrica": "20",
+    "teto_segurado": "80000.00",
+    "compatibilidade_servico": ["suprimento", "recolhimento", "extraordinario"],
+    "status_ativo": true
+  }
+]

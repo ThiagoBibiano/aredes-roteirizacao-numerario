@@ -1,0 +1,13 @@
+[
+  {
+    "id_ponto": "PONTO-01",
+    "tipo_ponto": "agencia",
+    "latitude": -23.5489,
+    "longitude": -46.6388,
+    "setor_geografico": "centro",
+    "inicio_janela": "2026-03-21T08:00:00+00:00",
+    "fim_janela": "2026-03-21T17:00:00+00:00",
+    "tempo_servico": 20,
+    "status_ativo": true
+  }
+]
