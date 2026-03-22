@@ -5,9 +5,15 @@ from dataclasses import dataclass, field, replace
 from decimal import Decimal
 from hashlib import sha256
 from itertools import count
+from pathlib import Path
 from typing import Any
 
 from roteirizacao.application.logistics_matrix import LogisticsMatrixBuilder
+from roteirizacao.application.logistics_provider import (
+    FallbackLogisticsMatrixProvider,
+    LogisticsMatrixProvider,
+    PersistedSnapshotLogisticsMatrixProvider,
+)
 from roteirizacao.application.preparation import PreparationResult
 from roteirizacao.domain.enums import ClasseOperacional, SeveridadeEvento, TipoEventoAuditoria
 from roteirizacao.domain.events import ErroValidacao, EventoAuditoria
@@ -25,6 +31,7 @@ from roteirizacao.domain.services import ContextoExecucao
 
 DIMENSAO_FINANCEIRA = "financeiro"
 DIMENSAO_VOLUMETRICA = "volume"
+DEFAULT_SNAPSHOT_DIR = Path("data/logistics_snapshots")
 
 
 @dataclass(slots=True)
@@ -39,9 +46,13 @@ class InstanceBuildResult:
 
 
 class OptimizationInstanceBuilder:
-    def __init__(self, contexto: ContextoExecucao, *, matrix_builder: LogisticsMatrixBuilder | None = None) -> None:
+    def __init__(self, contexto: ContextoExecucao, *, matrix_provider: LogisticsMatrixProvider | None = None) -> None:
         self.contexto = contexto
-        self.matrix_builder = matrix_builder or LogisticsMatrixBuilder(contexto)
+        self.matrix_provider = matrix_provider or FallbackLogisticsMatrixProvider(
+            contexto,
+            primary=PersistedSnapshotLogisticsMatrixProvider(contexto, snapshot_dir=DEFAULT_SNAPSHOT_DIR),
+            fallback=LogisticsMatrixBuilder(contexto),
+        )
         self._counter = count(1)
 
     def build(self, preparation_result: PreparationResult) -> InstanceBuildResult:
@@ -120,13 +131,13 @@ class OptimizationInstanceBuilder:
         )
 
         metadados = ordens[0].ordem.metadados
-        matriz_logistica, evento_matriz = self.matrix_builder.build(
+        matriz_logistica, eventos_matriz = self.matrix_provider.build(
             id_matriz=f"matrix-{self.contexto.id_execucao}-{classe_operacional.value}",
             depositos=depositos,
             nos=nos,
             metadados=metadados,
         )
-        eventos.append(evento_matriz)
+        eventos.extend(eventos_matriz)
 
         penalidades = tuple(self._build_penalties(nos))
         janelas_tempo = {no.id_no: no.janela_tempo for no in nos}
@@ -148,6 +159,7 @@ class OptimizationInstanceBuilder:
             "requires_financial_accretion": classe_operacional == ClasseOperacional.RECOLHIMENTO,
             "estrategia_matriz": matriz_logistica.estrategia_geracao,
             "hash_matriz": matriz_logistica.hash_matriz,
+            "snapshot_dir": str(DEFAULT_SNAPSHOT_DIR),
         }
         restricoes_extras = (
             "circuito_fechado",
