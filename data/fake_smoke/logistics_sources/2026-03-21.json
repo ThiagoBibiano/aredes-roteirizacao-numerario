@@ -1,0 +1,36 @@
+{
+  "snapshot_id": "snap-fake-2026-03-21",
+  "generated_at": "2026-03-20T17:00:00+00:00",
+  "strategy_name": "real_snapshot_v1",
+  "source_name": "fake_smoke_source",
+  "arcs": [
+    {
+      "id_origem": "dep-BASE-01",
+      "id_destino": "dep-BASE-01",
+      "distancia_metros": 0,
+      "tempo_segundos": 0,
+      "custo": "0.00"
+    },
+    {
+      "id_origem": "dep-BASE-01",
+      "id_destino": "no-ORD-SMOKE-01",
+      "distancia_metros": 2400,
+      "tempo_segundos": 420,
+      "custo": "8.40"
+    },
+    {
+      "id_origem": "no-ORD-SMOKE-01",
+      "id_destino": "dep-BASE-01",
+      "distancia_metros": 2400,
+      "tempo_segundos": 420,
+      "custo": "8.40"
+    },
+    {
+      "id_origem": "no-ORD-SMOKE-01",
+      "id_destino": "no-ORD-SMOKE-01",
+      "distancia_metros": 0,
+      "tempo_segundos": 0,
+      "custo": "0.00"
+    }
+  ]
+}

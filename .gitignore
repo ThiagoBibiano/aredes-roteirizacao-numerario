@@ -219,3 +219,7 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# Smoke test artifacts
+data/fake_smoke/logistics_snapshots/
+data/fake_smoke/outputs/*.json
