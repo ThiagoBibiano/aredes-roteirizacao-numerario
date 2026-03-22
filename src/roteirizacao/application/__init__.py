@@ -10,6 +10,12 @@ from roteirizacao.application.logistics_provider import (
     SnapshotUnavailableError,
 )
 from roteirizacao.application.planning import PlanningExecutor
+from roteirizacao.application.post_processing import (
+    ClassPostProcessingResult,
+    PostProcessingResult,
+    RoutePostProcessor,
+    SolverExecutionArtifact,
+)
 from roteirizacao.application.preparation import PreparationPipeline, PreparationResult
 from roteirizacao.application.snapshot_materializer import (
     FileSystemSnapshotRepository,
@@ -20,6 +26,7 @@ from roteirizacao.application.snapshot_materializer import (
 )
 
 __all__ = [
+    "ClassPostProcessingResult",
     "FallbackLogisticsMatrixProvider",
     "FileSystemSnapshotRepository",
     "InstanceBuildResult",
@@ -31,9 +38,12 @@ __all__ = [
     "OptimizationInstanceBuilder",
     "PersistedSnapshotLogisticsMatrixProvider",
     "PlanningExecutor",
+    "PostProcessingResult",
     "PreparationPipeline",
     "PreparationResult",
+    "RoutePostProcessor",
     "SnapshotCoverageError",
     "SnapshotMaterializationResult",
     "SnapshotUnavailableError",
+    "SolverExecutionArtifact",
 ]
