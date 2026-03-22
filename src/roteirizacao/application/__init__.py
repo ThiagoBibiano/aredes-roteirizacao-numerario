@@ -11,17 +11,29 @@ from roteirizacao.application.logistics_provider import (
 )
 from roteirizacao.application.planning import PlanningExecutor
 from roteirizacao.application.preparation import PreparationPipeline, PreparationResult
+from roteirizacao.application.snapshot_materializer import (
+    FileSystemSnapshotRepository,
+    JsonFileLogisticsSnapshotSource,
+    LogisticsSnapshotMaterializer,
+    LogisticsSnapshotSource,
+    SnapshotMaterializationResult,
+)
 
 __all__ = [
     "FallbackLogisticsMatrixProvider",
+    "FileSystemSnapshotRepository",
     "InstanceBuildResult",
+    "JsonFileLogisticsSnapshotSource",
     "LogisticsMatrixBuilder",
     "LogisticsMatrixProvider",
+    "LogisticsSnapshotMaterializer",
+    "LogisticsSnapshotSource",
     "OptimizationInstanceBuilder",
     "PersistedSnapshotLogisticsMatrixProvider",
     "PlanningExecutor",
     "PreparationPipeline",
     "PreparationResult",
     "SnapshotCoverageError",
+    "SnapshotMaterializationResult",
     "SnapshotUnavailableError",
 ]
