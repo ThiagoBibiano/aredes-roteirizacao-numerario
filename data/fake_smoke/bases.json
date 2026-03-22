@@ -1,0 +1,11 @@
+[
+  {
+    "id_base": "BASE-01",
+    "nome": "Base Central Fake",
+    "latitude": -23.5505,
+    "longitude": -46.6333,
+    "inicio_operacao": "2026-03-21T06:00:00+00:00",
+    "fim_operacao": "2026-03-21T22:00:00+00:00",
+    "status_ativo": true
+  }
+]

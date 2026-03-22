@@ -1,0 +1,21 @@
+[
+  {
+    "id_ordem": "ORD-SMOKE-01",
+    "origem_ordem": "erp_fake",
+    "data_operacao": "2026-03-21",
+    "timestamp_criacao": "2026-03-20T15:00:00+00:00",
+    "tipo_servico": "suprimento",
+    "classe_planejamento": "padrao",
+    "id_ponto": "PONTO-01",
+    "valor_estimado": "15000.00",
+    "volume_estimado": "5",
+    "inicio_janela": "2026-03-21T09:00:00+00:00",
+    "fim_janela": "2026-03-21T11:00:00+00:00",
+    "tempo_servico": 20,
+    "criticidade": "alta",
+    "penalidade_nao_atendimento": "20000.00",
+    "penalidade_atraso": "500.00",
+    "status_cancelamento": "nao_cancelada",
+    "taxa_improdutiva": "0"
+  }
+]
