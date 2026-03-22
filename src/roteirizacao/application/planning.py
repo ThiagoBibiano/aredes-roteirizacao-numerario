@@ -4,6 +4,7 @@ from decimal import Decimal, ROUND_HALF_UP
 from itertools import count
 from typing import Any
 
+from roteirizacao.application.audit import PlanningAuditTrailBuilder
 from roteirizacao.application.instance_builder import InstanceBuildResult
 from roteirizacao.application.post_processing import RoutePostProcessor, SolverExecutionArtifact
 from roteirizacao.application.preparation import PreparationResult
@@ -21,6 +22,7 @@ class PlanningExecutor:
         *,
         adapter: PyVRPAdapter | None = None,
         post_processor: RoutePostProcessor | None = None,
+        audit_builder: PlanningAuditTrailBuilder | None = None,
         max_iterations: int = 100,
         seed: int = 1,
         collect_stats: bool = False,
@@ -29,6 +31,7 @@ class PlanningExecutor:
         self.contexto = contexto
         self.adapter = adapter or PyVRPAdapter()
         self.post_processor = post_processor or RoutePostProcessor(contexto)
+        self.audit_builder = audit_builder or PlanningAuditTrailBuilder(contexto)
         self.max_iterations = max_iterations
         self.seed = seed
         self.collect_stats = collect_stats
@@ -140,6 +143,22 @@ class PlanningExecutor:
             )
         )
 
+        audit_result = self.audit_builder.build(
+            status_final=status_final,
+            eventos_existentes=eventos,
+            erros=erros,
+            preparation_result=preparation_result,
+            ordens_nao_atendidas=ordens_nao_atendidas,
+            hashes_cenario=hashes_cenario,
+            parametros_planejamento={
+                "max_iterations": self.max_iterations,
+                "seed": self.seed,
+                "collect_stats": self.collect_stats,
+                "display": self.display,
+                "classes_processadas": sorted(hashes_cenario),
+            },
+        )
+
         return ResultadoPlanejamento(
             id_execucao=self.contexto.id_execucao,
             data_operacao=self.contexto.data_operacao,
@@ -152,9 +171,11 @@ class PlanningExecutor:
             ordens_nao_atendidas=tuple(ordens_nao_atendidas),
             ordens_excluidas=tuple(preparation_result.ordens_excluidas),
             ordens_canceladas=tuple(preparation_result.ordens_canceladas),
-            eventos_auditoria=tuple(eventos),
+            eventos_auditoria=tuple(audit_result.eventos_auditoria),
             erros=tuple(erros),
             hashes_cenario=hashes_cenario,
+            log_planejamento=audit_result.log_planejamento,
+            motivos_inviabilidade=tuple(audit_result.motivos_inviabilidade),
         )
 
     def _build_operational_kpi(

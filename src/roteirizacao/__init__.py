@@ -1,6 +1,7 @@
 """Pacote principal do projeto de roteirizacao de numerario."""
 
 from roteirizacao.application import (
+    AuditTrailResult,
     ClassPostProcessingResult,
     FallbackLogisticsMatrixProvider,
     FileSystemSnapshotRepository,
@@ -12,6 +13,7 @@ from roteirizacao.application import (
     LogisticsSnapshotSource,
     OptimizationInstanceBuilder,
     PersistedSnapshotLogisticsMatrixProvider,
+    PlanningAuditTrailBuilder,
     PlanningExecutor,
     PostProcessingResult,
     PreparationPipeline,
@@ -25,6 +27,7 @@ from roteirizacao.application import (
 from roteirizacao.optimization import PyVRPAdapter, SolverAdapter
 
 __all__ = [
+    "AuditTrailResult",
     "ClassPostProcessingResult",
     "FallbackLogisticsMatrixProvider",
     "FileSystemSnapshotRepository",
@@ -36,6 +39,7 @@ __all__ = [
     "LogisticsSnapshotSource",
     "OptimizationInstanceBuilder",
     "PersistedSnapshotLogisticsMatrixProvider",
+    "PlanningAuditTrailBuilder",
     "PlanningExecutor",
     "PostProcessingResult",
     "PreparationPipeline",

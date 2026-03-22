@@ -3,8 +3,9 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from datetime import date, datetime
 from decimal import Decimal
+from typing import Any
 
-from roteirizacao.domain.enums import ClasseOperacional, Criticidade, StatusExecucaoPlanejamento, TipoServico
+from roteirizacao.domain.enums import ClasseOperacional, Criticidade, SeveridadeEvento, StatusExecucaoPlanejamento, TipoServico
 from roteirizacao.domain.events import ErroContrato, ErroValidacao, EventoAuditoria
 from roteirizacao.domain.models import OrdemClassificada
 from roteirizacao.domain.serialization import SerializableMixin
@@ -100,6 +101,31 @@ class KpiGerencial(SerializableMixin):
 
 
 @dataclass(slots=True, frozen=True)
+class MotivoInviabilidade(SerializableMixin):
+    codigo: str
+    descricao: str
+    entidade: str
+    id_entidade: str | None
+    severidade: SeveridadeEvento
+    origem: str
+    regra_relacionada: str | None = None
+    contexto: dict[str, Any] = field(default_factory=dict)
+
+
+@dataclass(slots=True, frozen=True)
+class LogPlanejamento(SerializableMixin):
+    id_execucao: str
+    data_operacao: date
+    status_final: StatusExecucaoPlanejamento
+    cutoff: datetime
+    timestamp_referencia: datetime
+    total_eventos: int
+    total_erros: int
+    total_motivos_inviabilidade: int
+    parametros_planejamento: dict[str, Any] = field(default_factory=dict)
+
+
+@dataclass(slots=True, frozen=True)
 class ResultadoPlanejamento(SerializableMixin):
     id_execucao: str
     data_operacao: date
@@ -115,3 +141,5 @@ class ResultadoPlanejamento(SerializableMixin):
     eventos_auditoria: tuple[EventoAuditoria, ...] = ()
     erros: tuple[ErroContrato | ErroValidacao, ...] = ()
     hashes_cenario: dict[str, str] = field(default_factory=dict)
+    log_planejamento: LogPlanejamento | None = None
+    motivos_inviabilidade: tuple[MotivoInviabilidade, ...] = ()
