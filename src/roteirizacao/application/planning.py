@@ -1,15 +1,16 @@
 from __future__ import annotations
 
-from decimal import Decimal, ROUND_HALF_UP
 from itertools import count
 from typing import Any
 
+from roteirizacao.application.audit import PlanningAuditTrailBuilder
 from roteirizacao.application.instance_builder import InstanceBuildResult
 from roteirizacao.application.post_processing import RoutePostProcessor, SolverExecutionArtifact
 from roteirizacao.application.preparation import PreparationResult
+from roteirizacao.application.reporting import PlanningReportingBuilder
 from roteirizacao.domain.enums import ClasseOperacional, SeveridadeEvento, StatusExecucaoPlanejamento, TipoEventoAuditoria
 from roteirizacao.domain.events import ErroValidacao, EventoAuditoria
-from roteirizacao.domain.results import KpiGerencial, KpiOperacional, OrdemNaoAtendida, ResultadoPlanejamento, RotaPlanejada
+from roteirizacao.domain.results import ResultadoPlanejamento
 from roteirizacao.domain.services import ContextoExecucao
 from roteirizacao.optimization import PyVRPAdapter
 
@@ -21,6 +22,8 @@ class PlanningExecutor:
         *,
         adapter: PyVRPAdapter | None = None,
         post_processor: RoutePostProcessor | None = None,
+        audit_builder: PlanningAuditTrailBuilder | None = None,
+        reporting_builder: PlanningReportingBuilder | None = None,
         max_iterations: int = 100,
         seed: int = 1,
         collect_stats: bool = False,
@@ -29,6 +32,8 @@ class PlanningExecutor:
         self.contexto = contexto
         self.adapter = adapter or PyVRPAdapter()
         self.post_processor = post_processor or RoutePostProcessor(contexto)
+        self.audit_builder = audit_builder or PlanningAuditTrailBuilder(contexto)
+        self.reporting_builder = reporting_builder or PlanningReportingBuilder(contexto)
         self.max_iterations = max_iterations
         self.seed = seed
         self.collect_stats = collect_stats
@@ -121,8 +126,6 @@ class PlanningExecutor:
         rotas_por_classe = post_processing.rotas_por_classe
         ordens_nao_atendidas = post_processing.ordens_nao_atendidas
         resumo = post_processing.resumo_operacional
-        kpi_operacional = self._build_operational_kpi(rotas_por_classe, ordens_nao_atendidas, instance_result)
-        kpi_gerencial = self._build_managerial_kpi(rotas_por_classe, ordens_nao_atendidas)
         status_final = self._final_status(erros, rotas_por_classe, ordens_nao_atendidas)
 
         eventos.append(
@@ -140,79 +143,55 @@ class PlanningExecutor:
             )
         )
 
+        audit_result = self.audit_builder.build(
+            status_final=status_final,
+            eventos_existentes=eventos,
+            erros=erros,
+            preparation_result=preparation_result,
+            ordens_nao_atendidas=ordens_nao_atendidas,
+            hashes_cenario=hashes_cenario,
+            parametros_planejamento={
+                "max_iterations": self.max_iterations,
+                "seed": self.seed,
+                "collect_stats": self.collect_stats,
+                "display": self.display,
+                "classes_processadas": sorted(hashes_cenario),
+            },
+        )
+        reporting_result = self.reporting_builder.build(
+            status_final=status_final,
+            preparation_result=preparation_result,
+            rotas_por_classe=rotas_por_classe,
+            ordens_nao_atendidas=ordens_nao_atendidas,
+            eventos_auditoria=audit_result.eventos_auditoria,
+            motivos_inviabilidade=audit_result.motivos_inviabilidade,
+        )
+
         return ResultadoPlanejamento(
             id_execucao=self.contexto.id_execucao,
             data_operacao=self.contexto.data_operacao,
             status_final=status_final,
             resumo_operacional=resumo,
-            kpi_operacional=kpi_operacional,
-            kpi_gerencial=kpi_gerencial,
+            kpi_operacional=reporting_result.kpi_operacional,
+            kpi_gerencial=reporting_result.kpi_gerencial,
             rotas_suprimento=tuple(rotas_por_classe[ClasseOperacional.SUPRIMENTO]),
             rotas_recolhimento=tuple(rotas_por_classe[ClasseOperacional.RECOLHIMENTO]),
             ordens_nao_atendidas=tuple(ordens_nao_atendidas),
             ordens_excluidas=tuple(preparation_result.ordens_excluidas),
             ordens_canceladas=tuple(preparation_result.ordens_canceladas),
-            eventos_auditoria=tuple(eventos),
+            eventos_auditoria=tuple(audit_result.eventos_auditoria),
             erros=tuple(erros),
             hashes_cenario=hashes_cenario,
-        )
-
-    def _build_operational_kpi(
-        self,
-        rotas_por_classe: dict[ClasseOperacional, list[RotaPlanejada]],
-        ordens_nao_atendidas: list[OrdemNaoAtendida],
-        instance_result: InstanceBuildResult,
-    ) -> KpiOperacional:
-        todas_rotas = [rota for rotas in rotas_por_classe.values() for rota in rotas]
-        distancia_total = sum(rota.distancia_estimada for rota in todas_rotas)
-        duracao_total = sum(rota.duracao_estimada_segundos for rota in todas_rotas)
-        total_planejadas = sum(len(rota.paradas) for rota in todas_rotas)
-        denominador_atendimento = total_planejadas + len(ordens_nao_atendidas)
-        taxa_atendimento = Decimal("1") if denominador_atendimento == 0 else (
-            Decimal(total_planejadas) / Decimal(denominador_atendimento)
-        )
-
-        viaturas_disponiveis = {
-            veiculo.id_viatura
-            for instancia in instance_result.instancias.values()
-            for veiculo in instancia.veiculos
-        }
-        viaturas_utilizadas = {rota.id_viatura for rota in todas_rotas}
-        utilizacao_frota = Decimal("0") if not viaturas_disponiveis else (
-            Decimal(len(viaturas_utilizadas)) / Decimal(len(viaturas_disponiveis))
-        )
-
-        return KpiOperacional(
-            distancia_total_estimada=distancia_total,
-            duracao_total_estimada_segundos=duracao_total,
-            taxa_atendimento=self._quantize_ratio(taxa_atendimento),
-            utilizacao_frota=self._quantize_ratio(utilizacao_frota),
-            rotas_com_limite_segurado=sum(1 for rota in todas_rotas if rota.atingiu_limite_segurado),
-        )
-
-    def _build_managerial_kpi(
-        self,
-        rotas_por_classe: dict[ClasseOperacional, list[RotaPlanejada]],
-        ordens_nao_atendidas: list[OrdemNaoAtendida],
-    ) -> KpiGerencial:
-        todas_rotas = [rota for rotas in rotas_por_classe.values() for rota in rotas]
-        custo_total = sum((rota.custo_estimado for rota in todas_rotas), start=Decimal("0"))
-        penalidade_total = sum((ordem.penalidade_aplicada for ordem in ordens_nao_atendidas), start=Decimal("0"))
-        total_ordens_planejadas = sum(len(rota.paradas) for rota in todas_rotas)
-        custo_medio_por_rota = Decimal("0") if not todas_rotas else custo_total / Decimal(len(todas_rotas))
-        custo_medio_por_ordem = Decimal("0") if total_ordens_planejadas == 0 else custo_total / Decimal(total_ordens_planejadas)
-        return KpiGerencial(
-            custo_total_estimado=custo_total.quantize(Decimal("0.01")),
-            penalidade_total_nao_atendimento=penalidade_total.quantize(Decimal("0.01")),
-            custo_medio_por_rota=custo_medio_por_rota.quantize(Decimal("0.01")),
-            custo_medio_por_ordem_planejada=custo_medio_por_ordem.quantize(Decimal("0.01")),
+            log_planejamento=audit_result.log_planejamento,
+            motivos_inviabilidade=tuple(audit_result.motivos_inviabilidade),
+            relatorio_planejamento=reporting_result.relatorio_planejamento,
         )
 
     def _final_status(
         self,
         erros: list[Any],
-        rotas_por_classe: dict[ClasseOperacional, list[RotaPlanejada]],
-        ordens_nao_atendidas: list[OrdemNaoAtendida],
+        rotas_por_classe: dict[ClasseOperacional, list],
+        ordens_nao_atendidas: list,
     ) -> StatusExecucaoPlanejamento:
         total_rotas = sum(len(rotas) for rotas in rotas_por_classe.values())
         if erros and total_rotas == 0:
@@ -227,9 +206,6 @@ class PlanningExecutor:
         import pyvrp
 
         return pyvrp.stop.MaxIterations(self.max_iterations)
-
-    def _quantize_ratio(self, value: Decimal) -> Decimal:
-        return value.quantize(Decimal("0.0001"), rounding=ROUND_HALF_UP)
 
     def _event(
         self,
