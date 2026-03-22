@@ -87,15 +87,23 @@ class ResumoOperacional(SerializableMixin):
 class KpiOperacional(SerializableMixin):
     distancia_total_estimada: int
     duracao_total_estimada_segundos: int
+    tempo_total_servico_segundos: int
     taxa_atendimento: Decimal
     utilizacao_frota: Decimal
     rotas_com_limite_segurado: int
+    total_ordens_atendidas: int
+    total_ordens_especiais_atendidas: int
+    viaturas_acionadas: int
+    total_paradas_improdutivas: int
+    total_ordens_excluidas_por_restricao: int
 
 
 @dataclass(slots=True, frozen=True)
 class KpiGerencial(SerializableMixin):
     custo_total_estimado: Decimal
     penalidade_total_nao_atendimento: Decimal
+    impacto_financeiro_cancelamentos: Decimal
+    valor_total_taxas_improdutivas: Decimal
     custo_medio_por_rota: Decimal
     custo_medio_por_ordem_planejada: Decimal
 
@@ -126,6 +134,25 @@ class LogPlanejamento(SerializableMixin):
 
 
 @dataclass(slots=True, frozen=True)
+class RelatorioPlanejamento(SerializableMixin):
+    id_execucao: str
+    data_operacao: date
+    status_final: StatusExecucaoPlanejamento
+    total_ordens_atendidas: int
+    total_ordens_especiais_atendidas: int
+    total_ordens_nao_atendidas: int
+    total_ordens_excluidas: int
+    total_ordens_canceladas: int
+    total_viaturas_acionadas: int
+    total_eventos_auditoria: int
+    total_motivos_inviabilidade: int
+    classes_processadas: tuple[str, ...] = ()
+    custo_total_estimado: Decimal = Decimal("0")
+    impacto_financeiro_cancelamentos: Decimal = Decimal("0")
+    destaques: tuple[str, ...] = ()
+
+
+@dataclass(slots=True, frozen=True)
 class ResultadoPlanejamento(SerializableMixin):
     id_execucao: str
     data_operacao: date
@@ -143,3 +170,4 @@ class ResultadoPlanejamento(SerializableMixin):
     hashes_cenario: dict[str, str] = field(default_factory=dict)
     log_planejamento: LogPlanejamento | None = None
     motivos_inviabilidade: tuple[MotivoInviabilidade, ...] = ()
+    relatorio_planejamento: RelatorioPlanejamento | None = None

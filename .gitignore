@@ -223,3 +223,4 @@ __marimo__/
 # Smoke test artifacts
 data/fake_smoke/logistics_snapshots/
 data/fake_smoke/outputs/*.json
+data/fake_smoke/outputs/executions/
