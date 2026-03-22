@@ -1,477 +1,315 @@
-# Sistema de Roteirização para Transporte de Numerário
+# Sistema de Roteirizacao para Transporte de Numerario
 
-MVP de planejamento diário de rotas para transporte de numerário, com foco em **suprimento**, **recolhimento** e **serviços especiais**, usando **PyVRP** como motor de otimização.
+Backend de planejamento diario de rotas para transporte de numerario, com foco em **suprimento**, **recolhimento** e tratamento prioritario de ordens especiais, usando **PyVRP** como motor de otimizacao.
 
-## Visão geral
+Hoje o repositorio ja contem:
 
-Este projeto busca responder, para cada dia operacional:
+- contratos de dominio e validacao;
+- pipeline `bruto -> validado -> classificado`;
+- montagem de `InstanciaRoteirizacaoBase` solver-agnostic;
+- adaptador para PyVRP;
+- pos-processamento, auditoria e KPIs;
+- geracao e persistencia de snapshots logísticos;
+- orquestracao idempotente do planejamento diario;
+- CLI operacional;
+- API FastAPI para consumo por frontend externo.
 
-> Quais ordens cada viatura deve executar, em que sequência e em qual horário, para minimizar o custo total da operação sem violar prazos, capacidades, limites de risco e regras operacionais?
+## O que o sistema resolve
 
-O sistema foi desenhado para refletir a realidade operacional do transporte de numerário, incluindo:
+Para cada dia operacional, a aplicacao responde:
+
+> Quais ordens cada viatura deve executar, em que sequencia e em qual horario, minimizando o custo total da operacao sem violar janelas, capacidades, teto segurado e regras operacionais?
+
+O modelo contempla, no estado atual do projeto:
 
 - janelas de atendimento;
-- jornada máxima da guarnição;
-- capacidade financeira e volumétrica;
-- teto segurado por rota;
-- priorização por SLA;
-- isolamento entre operações de suprimento e recolhimento;
-- geração de plano diário com trilha de auditoria.
+- jornada/turno da viatura;
+- capacidade financeira e volumetrica;
+- teto segurado para recolhimento;
+- segregacao entre suprimento e recolhimento;
+- penalidades por nao atendimento e atraso;
+- cancelamentos e parada improdutiva;
+- trilha de auditoria e explicabilidade;
+- reprocessamento seguro do mesmo cenario.
 
----
+## Status atual
 
-## Objetivos do MVP
+O projeto nao esta mais apenas em estruturacao. O nucleo executavel e o backend HTTP ja estao implementados.
 
-O MVP cobre o **planejamento diário** da operação, com geração de um plano viável e economicamente eficiente.
+Entregas principais ja concluidas:
 
-### Incluído no MVP
+- Etapa 1: especificacao formal dos contratos em [`docs/etapa-1/`](docs/etapa-1/)
+- Etapa 2: ingestao, validacao e classificacao
+- Etapa 3: instancia solver-agnostic
+- Etapa 4: adaptador PyVRP
+- Etapa 5: resultado de planejamento
+- Etapas 6 a 8: malha, snapshots e materializacao versionada
+- Etapa 9: CLI operacional
+- Etapas 10 a 12: pos-processamento, auditoria e reporting
+- Etapa 13: orquestracao idempotente
+- Camada HTTP: FastAPI sobre o orquestrador
 
-- planejamento de rotas saindo e retornando à base;
-- roteirização de ordens de **suprimento**;
-- roteirização de ordens de **recolhimento**;
-- tratamento priorizado de **serviços especiais**;
-- uso de matriz de tempo e distância;
-- controle de capacidade volumétrica e financeira;
-- controle de limite segurado por rota;
-- registro de inviabilidades e justificativas;
-- tratamento de cancelamentos com impacto operacional e financeiro.
-
-### Fora do MVP
-
-- reotimização com viatura em campo;
-- redistribuição dinâmica durante a execução;
-- múltiplas viagens por viatura no mesmo turno;
-- balanceamento entre múltiplas bases;
-- trânsito em tempo real;
-- integração plena com torre de controle.
-
----
-
-## Premissas de negócio
-
-### 1. Circuito fechado
-Toda rota parte e retorna à mesma base no MVP.
-
-### 2. Isolamento de estado físico
-No MVP, **suprimento e recolhimento não se misturam na mesma viagem operacional**.
-
-- uma rota de suprimento não executa recolhimento;
-- uma rota de recolhimento não executa suprimento;
-- a troca de estado operacional exige retorno à base.
-
-### 3. Planejamento diário com cut-off
-As ordens elegíveis para o dia operacional são congeladas em um **cut-off no D-1**.
-
-### 4. Multi-cliente por setor
-Uma mesma viatura pode atender múltiplos pontos em sequência dentro de um setor geográfico, desde que a rota permaneça viável em:
-
-- tempo;
-- custo;
-- capacidade;
-- risco;
-- limite segurado.
-
-### 5. Limite segurado
-No caso de recolhimento, o valor acumulado embarcado não pode ultrapassar o teto coberto pela apólice da operação.
-
----
-
-## Arquitetura proposta
-
-A arquitetura foi desenhada para manter o domínio desacoplado do solver e da infraestrutura externa.
+## Arquitetura implementada
 
 ```mermaid
 flowchart LR
-    A[Dados de entrada] --> B[Validação e normalização]
-    B --> C[Classificação operacional]
-    C --> D[Montagem da instância de domínio]
-    D --> E[Adapter de otimização]
+    A[Dados brutos] --> B[PreparationPipeline]
+    B --> C[OptimizationInstanceBuilder]
+    C --> D[InstanciaRoteirizacaoBase]
+    D --> E[PyVRPAdapter]
     E --> F[PyVRP]
-    F --> G[Pós-processamento]
-    G --> H[Plano operacional diário]
-    G --> I[Logs de inviabilidade]
-    G --> J[KPIs e auditoria]
-````
+    F --> G[RoutePostProcessor]
+    G --> H[PlanningAuditTrailBuilder]
+    H --> I[PlanningReportingBuilder]
+    I --> J[ResultadoPlanejamento]
+    J --> K[CLI]
+    J --> L[FastAPI]
+```
 
-### Camadas
+Principios mantidos:
 
-* **domain**
-  Regras de negócio e entidades centrais do problema.
+- o dominio nao depende diretamente de PyVRP;
+- a linguagem do negocio e separada do solver;
+- a execucao diaria e idempotente por `hash_cenario`;
+- a saida final preserva auditoria, KPIs e contexto de execucao.
 
-* **application**
-  Casos de uso e orquestração do fluxo de planejamento.
-
-* **infrastructure**
-  Leitura de arquivos, integração com APIs, persistência, geração de matriz e adaptadores externos.
-
-* **optimization**
-  Contrato do solver e implementação do adaptador PyVRP.
-
-* **orchestration**
-  Pipeline executável, idempotência, rastreabilidade e auditoria.
-
----
-
-## Estrutura sugerida do repositório
+## Estrutura real do repositorio
 
 ```text
-roteirizacao-numerario-mvp/
+.
 ├─ README.md
 ├─ docs/
+│  ├─ api.md
 │  ├─ contexto.md
-│  ├─ arquitetura.md
-│  ├─ regras-de-negocio.md
-│  └─ roadmap.md
+│  └─ etapa-1/
+├─ data/
+│  ├─ fake_smoke/
+│  ├─ logistics_snapshots/
+│  └─ logistics_sources/
+├─ scripts/
+│  └─ roteirizacao_cli.py
 ├─ src/
 │  └─ roteirizacao/
-│     ├─ domain/
-│     │  ├─ entities/
-│     │  ├─ value_objects/
-│     │  ├─ services/
-│     │  └─ contracts/
+│     ├─ api/
 │     ├─ application/
-│     │  ├─ use_cases/
-│     │  ├─ dto/
-│     │  └─ services/
-│     ├─ infrastructure/
-│     │  ├─ io/
-│     │  ├─ matrix/
-│     │  ├─ repositories/
-│     │  └─ logging/
+│     ├─ domain/
 │     ├─ optimization/
-│     │  ├─ solver_adapter.py
-│     │  ├─ pyvrp_adapter.py
-│     │  └─ model_builders/
-│     └─ orchestration/
-│        ├─ pipeline.py
-│        └─ run_context.py
+│     └─ cli.py
 ├─ tests/
-│  ├─ unit/
-│  ├─ integration/
-│  ├─ contract/
-│  └─ acceptance/
-├─ data/
-│  ├─ raw/
-│  ├─ processed/
-│  └─ samples/
-├─ notebooks/
+│  └─ contract/
 ├─ pyproject.toml
-├─ .gitignore
-└─ .env.example
+└─ .python-version
 ```
 
----
+## Requisitos de ambiente
 
-## Fluxo operacional do planejamento
+- `pyenv` com Python `3.13.7`
+- ambiente virtual `.venv`
+- `PyVRP` instalado para executar o planejamento completo
 
-```mermaid
-flowchart TD
-    A[Receber ordens D-1] --> B[Aplicar cut-off]
-    B --> C[Validar dados]
-    C --> D[Classificar ordens]
-    D --> E[Separar por tipo operacional]
-    E --> F[Gerar matriz tempo/distância]
-    F --> G[Montar instâncias de roteirização]
-    G --> H[Executar solver]
-    H --> I[Pós-processar solução]
-    I --> J[Gerar plano diário]
-    I --> K[Gerar auditoria]
-    I --> L[Registrar inviabilidades]
+Versoes usadas no ambiente de desenvolvimento atual:
+
+- Python `3.13.7`
+- PyVRP `0.13.3`
+- FastAPI `0.135.1`
+- Uvicorn `0.42.0`
+
+## Setup local
+
+```bash
+pyenv local 3.13.7
+pyenv exec python -m venv .venv
+.venv/bin/pip install -e .
+.venv/bin/pip install '.[dev]'
+.venv/bin/pip install pyvrp==0.13.3
 ```
 
----
+Se quiser apenas validar que o ambiente foi criado corretamente:
 
-## Entidades principais do domínio
-
-### Base operacional
-
-Representa a origem e o retorno das viaturas.
-
-Campos típicos:
-
-* `id_base`
-* `nome`
-* `coordenadas`
-* `horario_operacao`
-
-### Ponto atendido
-
-Representa o local físico de atendimento.
-
-Campos típicos:
-
-* `id_ponto`
-* `tipo_ponto`
-* `coordenadas`
-* `inicio_janela`
-* `fim_janela`
-* `tempo_servico`
-
-### Ordem de atendimento
-
-Representa a demanda a ser roteirizada.
-
-Campos mínimos:
-
-* `id_ordem`
-* `data_operacao`
-* `tipo_servico`
-* `classe_planejamento`
-* `id_ponto`
-* `valor_estimado`
-* `volume_estimado`
-* `inicio_janela`
-* `fim_janela`
-* `tempo_servico`
-* `criticidade`
-* `penalidade_nao_atendimento`
-* `penalidade_atraso`
-* `status_cancelamento`
-* `janela_cancelamento`
-* `taxa_improdutiva`
-
-### Viatura
-
-Representa o recurso operacional da rota.
-
-Campos típicos:
-
-* `id_viatura`
-* `tipo`
-* `base_origem`
-* `turno`
-* `custo_fixo`
-* `custo_variavel`
-* `limite_financeiro`
-* `limite_volumetrico`
-
----
-
-## Regras de negócio e restrições
-
-## Restrições rígidas
-
-O plano é inviável quando viola qualquer uma das regras abaixo:
-
-1. atendimento dentro da janela permitida;
-2. jornada máxima da guarnição;
-3. limite financeiro da viatura;
-4. limite volumétrico da viatura;
-5. teto segurado da rota;
-6. isolamento entre suprimento e recolhimento;
-7. compatibilidade entre viatura, ponto e serviço;
-8. circuito fechado com retorno à base.
-
-## Restrições penalizáveis
-
-Podem ser tratadas como custo elevado, conforme política operacional:
-
-* não atendimento de ordem padrão;
-* atraso moderado em ordem não crítica;
-* uso de viatura adicional;
-* cancelamento tardio;
-* parada improdutiva.
-
----
-
-## Função objetivo
-
-A solução deve buscar minimizar o custo total da operação, considerando:
-
-* custo fixo de uso da viatura;
-* custo variável de deslocamento;
-* penalidades por atraso;
-* penalidades por não atendimento;
-* impacto de cancelamentos;
-* improdutividade operacional.
-
-Em versões futuras, o modelo poderá incorporar mecanismos explícitos para reduzir previsibilidade operacional de horários e trajetos.
-
----
-
-## Separação por classe operacional
-
-No MVP, a modelagem deve considerar pelo menos estas classes:
-
-```mermaid
-flowchart LR
-    A[Ordens elegíveis do dia] --> B{Tipo operacional}
-    B --> C[Suprimento]
-    B --> D[Recolhimento]
-    B --> E[Serviço especial]
-    C --> F[Instância de solver]
-    D --> G[Instância de solver]
-    E --> H[Tratamento prioritário]
+```bash
+.venv/bin/python --version
+.venv/bin/python -c "import pyvrp, fastapi, uvicorn"
 ```
 
-Essa separação simplifica a modelagem, reduz ambiguidade operacional e melhora a aderência às regras do negócio.
+## Como rodar os testes
 
----
-
-## Integração com PyVRP
-
-O **PyVRP** será usado como motor de otimização do MVP.
-
-Princípios da integração:
-
-* o domínio não deve depender diretamente do PyVRP;
-* a montagem do modelo do solver deve ocorrer em uma camada adaptadora;
-* a solução do solver deve ser traduzida de volta para objetos e eventos do domínio;
-* a troca futura de solver deve exigir mudança mínima fora da camada de adaptação.
-
-### Contrato esperado do adaptador
-
-```python
-class SolverAdapter:
-    def solve(self, instancia):
-        ...
+```bash
+.venv/bin/python -m compileall src tests
+.venv/bin/python -m unittest discover -s tests -p 'test_*.py' -v
 ```
 
-Implementação prevista:
+A suite atual cobre contratos do pipeline, adaptador do solver, snapshots, orquestracao e API HTTP.
 
-```python
-class PyVRPAdapter(SolverAdapter):
-    def solve(self, instancia):
-        ...
+## Smoke test com dataset fake
+
+O repositorio ja inclui um dataset minimo em [`data/fake_smoke/`](data/fake_smoke/).
+
+Execucao pela CLI:
+
+```bash
+.venv/bin/python scripts/roteirizacao_cli.py run-planning \
+  --dataset-dir data/fake_smoke \
+  --materialize-snapshot \
+  --max-iterations 50 \
+  --seed 1
 ```
 
-Referência oficial:
+Esse comando produz:
 
-* PyVRP: [https://pyvrp.org/](https://pyvrp.org/)
+- resultado consolidado em `data/fake_smoke/outputs/resultado-planejamento.json`;
+- estado idempotente em `data/fake_smoke/outputs/executions/`;
+- reaproveitamento automatico do mesmo cenario em reexecucoes identicas.
 
----
+## CLI operacional
 
-## Pipeline de execução
+Entry point do projeto:
 
-```mermaid
-sequenceDiagram
-    participant U as Usuário/Operação
-    participant P as Pipeline
-    participant V as Validação
-    participant M as Malha
-    participant S as Solver
-    participant A as Auditoria
-
-    U->>P: Enviar dados do dia
-    P->>V: Validar e normalizar
-    V-->>P: Dados consistentes
-    P->>M: Gerar matriz tempo/distância
-    M-->>P: Matriz operacional
-    P->>S: Montar e resolver instância
-    S-->>P: Solução bruta
-    P->>A: Pós-processar e registrar evidências
-    A-->>U: Plano diário + logs + KPIs
+```bash
+roteirizacao --help
 ```
 
----
+Ou diretamente:
 
-## Rastreabilidade e auditoria
+```bash
+.venv/bin/python scripts/roteirizacao_cli.py --help
+```
 
-Cada execução do pipeline deve ser auditável.
+Comandos disponiveis:
 
-Sugestões de rastreabilidade:
+- `materialize-snapshot`: materializa um snapshot logístico bruto para o formato versionado do projeto
+- `run-planning`: executa o planejamento diario a partir de um dataset local
 
-* `id_execucao`
-* `data_referencia`
-* `hash_cenario`
-* versão das entradas
-* versão do modelo
-* versão do solver
-* lista de ordens atendidas
-* lista de ordens não atendidas
-* justificativas de inviabilidade
-* métricas agregadas da solução
+Exemplo para materializar snapshot:
 
----
+```bash
+.venv/bin/python scripts/roteirizacao_cli.py materialize-snapshot \
+  --date 2026-03-22 \
+  --source-dir data/logistics_sources \
+  --snapshot-dir data/logistics_snapshots
+```
 
-## Estratégia de testes
+## API FastAPI
 
-O projeto deve evoluir com cobertura de testes desde o início.
+A API foi criada para expor o motor como backend para um frontend futuro em outro repositorio.
 
-### Tipos de teste
+Subir localmente com recarga:
 
-* **unit**: regras puras de domínio;
-* **contract**: interfaces entre camadas;
-* **integration**: integração com matriz, arquivos e solver;
-* **acceptance**: cenários operacionais completos.
+```bash
+.venv/bin/python -m uvicorn roteirizacao.api.main:create_app --factory --reload
+```
 
-### Exemplos de cenários importantes
+Ou via entry point instalado:
 
-* rota de suprimento válida com múltiplos pontos;
-* rota de recolhimento respeitando teto segurado;
-* ordem fora da janela de atendimento;
-* cancelamento antes e depois do cut-off;
-* incompatibilidade entre viatura e serviço;
-* excesso de capacidade volumétrica;
-* excesso de capacidade financeira.
+```bash
+roteirizacao-api
+```
 
----
+A documentacao interativa fica disponivel em:
 
-## Roadmap inicial
+- `http://127.0.0.1:8000/docs`
+- `http://127.0.0.1:8000/redoc`
 
-### Fase 1 — Fundamentos
+### Endpoints principais
 
-* definir contratos de dados;
-* modelar entidades centrais;
-* estruturar repositório e convenções;
-* criar suíte inicial de testes.
+- `GET /health`
+- `POST /api/v1/snapshots/materialize`
+- `POST /api/v1/planning/run-dataset`
+- `POST /api/v1/planning/run`
 
-### Fase 2 — Pipeline base
+O endpoint `run-dataset` reutiliza um dataset existente em disco.
 
-* ingestão;
-* validação;
-* normalização;
-* classificação operacional.
+O endpoint `run` aceita payload inline, materializa internamente os arquivos em `data/api_runs/` e executa o mesmo orquestrador idempotente usado pela CLI.
 
-### Fase 3 — Modelagem de otimização
+Exemplo rapido de chamada HTTP com dataset existente:
 
-* geração de matriz;
-* montagem da instância;
-* implementação do `SolverAdapter`;
-* implementação do `PyVRPAdapter`.
+```bash
+curl -X POST http://127.0.0.1:8000/api/v1/planning/run-dataset \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "dataset_dir": "data/fake_smoke",
+    "materialize_snapshot": true,
+    "max_iterations": 50,
+    "seed": 1
+  }'
+```
 
-### Fase 4 — Saída operacional
+Detalhes adicionais da camada HTTP estao em [`docs/api.md`](docs/api.md).
 
-* plano diário;
-* KPIs;
-* logs de inviabilidade;
-* trilha de auditoria.
+## Idempotencia e rastreabilidade
 
----
+A orquestracao principal usa um `hash_cenario` estavel a partir das entradas relevantes do planejamento.
 
-## Convenções de desenvolvimento
+Isso garante:
 
-### Branches
+- mesma entrada relevante -> mesmo identificador de cenario;
+- reexecucao segura do mesmo cenario;
+- retry apos falha tecnica sem duplicar artefatos;
+- recuperacao do contexto logico anterior.
 
-Sugestão simples:
+Artefatos por cenario incluem:
 
-* `main`: estável
-* `feat/*`: novas funcionalidades
-* `fix/*`: correções
-* `docs/*`: documentação
-* `test/*`: testes
+- `cenario.json`
+- `estado.json`
+- `resultado-planejamento.json`
+- `resultado-planejamento.pkl`
+- `manifest.json`
 
-### Commits
+## Dados e snapshots
 
-Sugestão de padrão:
+Convencoes relevantes do repositorio:
 
-* `feat: adiciona entidade Ordem`
-* `fix: corrige cálculo de capacidade financeira`
-* `test: adiciona cenários de janela de atendimento`
-* `docs: documenta fluxo do pipeline`
+- [`data/logistics_sources/README.md`](data/logistics_sources/README.md): formato esperado da fonte bruta de malha
+- [`data/logistics_snapshots/README.md`](data/logistics_snapshots/README.md): formato materializado e versionado do snapshot
+- [`data/fake_smoke/README.md`](data/fake_smoke/README.md): dataset minimo para smoke de ponta a ponta
 
----
+## Modulos principais
 
-## Próximos passos
+### `src/roteirizacao/domain/`
 
-1. consolidar os contratos de entrada;
-2. criar as entidades de domínio;
-3. modelar os casos de uso principais;
-4. implementar o adaptador PyVRP;
-5. gerar o primeiro cenário de ponta a ponta com dados sintéticos.
+Contem enums, entidades, eventos, contratos solver-agnostic, contratos de resultado e utilitarios de serializacao.
 
----
+### `src/roteirizacao/application/`
 
-## Status do projeto
+Contem os casos de uso do sistema:
 
-🚧 Em estruturação do MVP.
+- `preparation.py`
+- `instance_builder.py`
+- `planning.py`
+- `post_processing.py`
+- `audit.py`
+- `reporting.py`
+- `snapshot_materializer.py`
+- `orchestration.py`
+
+### `src/roteirizacao/optimization/`
+
+Contem a fronteira com o solver e o adaptador do PyVRP.
+
+### `src/roteirizacao/api/`
+
+Contem a camada FastAPI, schemas HTTP e service wrapper sobre o orquestrador.
+
+## Limitacoes atuais
+
+Ainda nao fazem parte do escopo implementado:
+
+- autenticacao/autorizacao da API;
+- banco de dados para execucoes;
+- fila assíncrona para jobs longos;
+- reotimizacao com viatura em campo;
+- observabilidade externa e metrics server;
+- integracao nativa com fontes externas reais alem do modelo de snapshot/dataset local.
+
+## Documentacao complementar
+
+- [`docs/contexto.md`](docs/contexto.md)
+- [`docs/api.md`](docs/api.md)
+- [`docs/etapa-1/`](docs/etapa-1/)
+
+## Proximos passos recomendados
+
+- autenticar a API e versionar contratos HTTP;
+- transformar execucoes longas em jobs assíncronos;
+- persistir resultados em banco em vez de apenas filesystem;
+- adicionar integracoes reais de entrada e de malha;
+- criar o frontend consumidor em repositorio separado.
