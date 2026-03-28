@@ -150,24 +150,23 @@ class PlanningExecutorContractTest(unittest.TestCase):
         self.assertEqual(resultado.kpi_operacional.utilizacao_frota, Decimal("1.0000"))
         self.assertFalse(resultado.ordens_nao_atendidas)
 
-    def test_marks_low_penalty_order_as_not_attended(self) -> None:
+    def test_attends_low_penalty_order_when_it_is_feasible(self) -> None:
         resultado = self.execute(
-            pontos=[self.ponto_bruto(point_id="PONTO-LONGE", latitude=-23.0000, longitude=-45.0000)],
+            pontos=[self.ponto_bruto()],
             ordens=[
                 self.ordem_bruta(
                     id_ordem="ORD-LOW",
-                    id_ponto="PONTO-LONGE",
                     penalidade_nao_atendimento="1.00",
                 )
             ],
         )
 
-        self.assertEqual(resultado.status_final, StatusExecucaoPlanejamento.CONCLUIDA_COM_RESSALVAS)
-        self.assertEqual(len(resultado.rotas_suprimento), 0)
-        self.assertEqual(len(resultado.ordens_nao_atendidas), 1)
-        self.assertEqual(resultado.ordens_nao_atendidas[0].id_ordem, "ORD-LOW")
-        self.assertEqual(resultado.kpi_gerencial.penalidade_total_nao_atendimento, Decimal("1.00"))
-        self.assertEqual(resultado.kpi_operacional.taxa_atendimento, Decimal("0.0000"))
+        self.assertEqual(resultado.status_final, StatusExecucaoPlanejamento.CONCLUIDA)
+        self.assertEqual(len(resultado.rotas_suprimento), 1)
+        self.assertEqual(len(resultado.ordens_nao_atendidas), 0)
+        self.assertEqual(resultado.rotas_suprimento[0].paradas[0].id_ordem, "ORD-LOW")
+        self.assertEqual(resultado.kpi_gerencial.penalidade_total_nao_atendimento, Decimal("0.00"))
+        self.assertEqual(resultado.kpi_operacional.taxa_atendimento, Decimal("1.0000"))
 
     def test_consolidates_audit_events_and_hashes(self) -> None:
         resultado = self.execute(

@@ -133,6 +133,7 @@ class ReportingBuilderContractTest(unittest.TestCase):
                     id_ordem="ORD-REC-ESP",
                     tipo_servico="recolhimento",
                     classe_planejamento="especial",
+                    timestamp_criacao="2026-03-21T07:30:00+00:00",
                     valor_estimado="80000.00",
                     volume_estimado="4",
                 ),

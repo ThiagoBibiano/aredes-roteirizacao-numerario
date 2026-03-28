@@ -76,12 +76,20 @@ Essa decisão simplifica o MVP, aumenta aderência operacional e evita modelar, 
 
 ### 4.3 Horizonte de planejamento das ordens
 
-As demandas serão tratadas segundo sua antecedência de solicitação:
+As demandas serão tratadas segundo sua antecedência de solicitação e sua classe de planejamento de negócio.
 
-| Classe da ordem | Antecedência típica | Natureza                                        | Papel no planejamento                                         |
-| --------------- | ------------------: | ----------------------------------------------- | ------------------------------------------------------------- |
-| Padrão          |     D-2 ou superior | Suprimento ou recolhimento recorrente           | Forma a base da malha do dia                                  |
-| Especial        |                 D-1 | Suprimento, recolhimento ou serviço excepcional | Tem prioridade elevada e maior penalidade por não atendimento |
+No estado atual da aplicação:
+
+* ordens `padrao` representam a carteira base ou recorrente do planejamento;
+* ordens não padrão criadas no próprio dia operacional (`D0`) são tratadas como `especial`;
+* ordens não padrão criadas em `D-1` ou antes são tratadas como `eventual`;
+* a distinção entre `especial` e `eventual` é feita a partir de `timestamp_criacao` em relação a `data_operacao`.
+
+| Classe da ordem | Antecedência típica         | Natureza                                                     | Papel no planejamento                                                |
+| --------------- | --------------------------: | ------------------------------------------------------------ | -------------------------------------------------------------------- |
+| Padrão          | carteira base / recorrente | Suprimento ou recolhimento recorrente                        | Forma a base da malha do dia                                         |
+| Eventual        |             D-1 ou anterior | Solicitação não padrão recebida antes do dia operacional     | Requer encaixe adicional e prioridade intermediária conforme o SLA   |
+| Especial        |                          D0 | Solicitação no próprio dia operacional ou atendimento urgente | Tem prioridade elevada e maior sensibilidade operacional e contratual |
 
 ### 4.4 Cut-off operacional
 
@@ -166,8 +174,9 @@ Na prática, a operação é tipicamente organizada por **setores geográficos**
 | ---------------------------- | ----------------------------------------------------- |
 | `id_ordem`                   | Identificador único da ordem                          |
 | `data_operacao`              | Data prevista do atendimento                          |
-| `tipo_servico`               | Suprimento, recolhimento ou especial                  |
-| `classe_planejamento`        | Padrão ou Especial                                    |
+| `timestamp_criacao`          | Instante usado para distinguir `especial` de `eventual` |
+| `tipo_servico`               | Suprimento, recolhimento ou atendimento extraordinário |
+| `classe_planejamento`        | Padrão, Especial ou Eventual                          |
 | `id_ponto`                   | Referência ao ponto atendido                          |
 | `valor_estimado`             | Valor monetário movimentado                           |
 | `volume_estimado`            | Volume físico previsto                                |
@@ -265,7 +274,7 @@ A lógica do MVP deve priorizar primeiro o cumprimento do serviço e, em seguida
 ### Hierarquia de decisão
 
 1. minimizar não atendimento de **ordens especiais**;
-2. minimizar não atendimento de **ordens padrão**;
+2. minimizar não atendimento de **ordens padrão e eventuais**;
 3. minimizar violações de SLA;
 4. minimizar número de viaturas acionadas;
 5. minimizar custo total de deslocamento e tempo em rota;
@@ -276,6 +285,8 @@ A lógica do MVP deve priorizar primeiro o cumprimento do serviço e, em seguida
 [
 \text{Minimizar } Z =
 P_{esp} \cdot N_{esp_nao_atendidas}
++
+P_{evt} \cdot N_{evt_nao_atendidas}
 +
 P_{pad} \cdot N_{pad_nao_atendidas}
 +
@@ -291,6 +302,7 @@ C_v \cdot C_{deslocamento}
 Onde:
 
 * (P_{esp}): penalidade de ordem especial não atendida;
+* (P_{evt}): penalidade de ordem eventual não atendida;
 * (P_{pad}): penalidade de ordem padrão não atendida;
 * (P_{sla}): penalidade por atraso/violação contratual;
 * (P_{imp}): custo associado a parada improdutiva ou cancelamento tardio;
@@ -298,10 +310,10 @@ Onde:
 * (C_v): custo variável de operação.
 
 **Diretriz importante:**
-deve valer a relação:
+na prática, a aplicação materializa prioridade por ordem via criticidade, SLA e penalidades contratuais. Uma parametrização coerente com essa regra é:
 
 [
-P_{esp} \gg P_{pad} \gg C_f
+P_{esp} \geq P_{evt} \geq P_{pad} \gg C_f
 ]
 
 para garantir que o modelo não “economize frota” à custa do descumprimento de ordens prioritárias.
@@ -434,7 +446,8 @@ A evolução natural do modelo pode seguir a ordem abaixo:
 | SLA                         | Regra contratual de prazo e nível de serviço                                                    |
 | Cut-off time                | Horário de congelamento das ordens elegíveis para o plano do dia seguinte                       |
 | Ordem padrão                | Ordem conhecida com antecedência de D-2 ou superior                                             |
-| Ordem especial              | Ordem com solicitação em D-1 e tratamento prioritário                                           |
+| Ordem eventual              | Ordem não padrão criada em D-1 ou antes da data operacional                                     |
+| Ordem especial              | Ordem com solicitação no próprio dia operacional (D0) e tratamento prioritário                  |
 | Isolamento de estado físico | Regra que impede mistura de suprimento e recolhimento na mesma viagem                           |
 | Teto segurado               | Valor máximo coberto pela apólice para a carga transportada                                     |
 | Parada improdutiva          | Custo gerado por atendimento cancelado ou frustrado sem aproveitamento logístico correspondente |
@@ -460,13 +473,14 @@ A evolução natural do modelo pode seguir a ordem abaixo:
 * **PyVRP** como motor de otimização do MVP;
 * motor de malha logística baseado em matriz de **tempo** e **distância**;
 * possível uso de **OSRM** ou provedor equivalente para construção da malha.
+* formulação matemática detalhada em `docs/formulacao-matematica.md`.
 
 ---
 
 ## 17. Conclusão
 
 O projeto passa a ter um recorte claro para execução:
-um **MVP de planejamento diário**, com **PyVRP**, baseado em **rotas fechadas**, **dupla capacidade**, **controle por apólice**, **priorização por SLA**, **tratamento de ordens especiais**, **registro de cancelamentos** e **isolamento entre suprimento e recolhimento**.
+um **MVP de planejamento diário**, com **PyVRP**, baseado em **rotas fechadas**, **dupla capacidade**, **controle por apólice**, **priorização por SLA**, **tratamento de ordens padrão, eventuais e especiais**, **registro de cancelamentos** e **isolamento entre suprimento e recolhimento**.
 
 Com isso, o modelo já reflete elementos centrais da operação real: atendimento multi-cliente por setor, limitação por risco segurado, impacto econômico de cancelamentos e preocupação com previsibilidade operacional.
 
@@ -697,7 +711,7 @@ Preparar as ordens para o planejamento do dia.
 
 Esse módulo decide como cada ordem será tratada no cenário:
 
-* padrão ou especial;
+* padrão, eventual ou especial;
 * suprimento ou recolhimento;
 * elegível ou não para o cut-off;
 * cancelada ou ativa;
@@ -727,7 +741,8 @@ Esse módulo decide como cada ordem será tratada no cenário:
 
 ## Testes principais
 
-* ordem D-1 é classificada como especial;
+* ordem criada no próprio dia operacional é classificada como especial;
+* ordem não padrão criada em D-1 ou antes é classificada como eventual;
 * ordem D-2+ é classificada como padrão;
 * cancelamento antes do cut-off exclui ordem da malha;
 * cancelamento tardio gera impacto operacional registrável.
@@ -866,7 +881,7 @@ Ela ainda não conhece PyVRP.
 
 * instância contém todos os nós esperados;
 * veículo recebe capacidades corretas;
-* penalidade de ordem especial é superior à padrão;
+* penalidades de ordens prioritárias refletem a distinção entre padrão, eventual e especial;
 * recolhimento respeita o acúmulo de valor;
 * nenhuma referência a classes do PyVRP existe aqui.
 
@@ -1191,7 +1206,7 @@ Implementar:
 A aplicação já consegue dizer:
 
 * o que entra no planejamento do dia;
-* o que é especial;
+* o que é especial ou eventual;
 * o que está fora do cut-off;
 * o que pertence a suprimento e recolhimento.
 
@@ -1291,7 +1306,8 @@ Para cenários de negócio:
 
 * dia normal;
 * excesso de valor em rota de recolhimento;
-* ordem especial D-1;
+* ordem eventual criada em D-1 ou antes;
+* ordem especial criada no próprio dia operacional;
 * cancelamento tardio;
 * rota inviável por janela;
 * falha técnica do solver com retry.

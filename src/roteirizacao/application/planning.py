@@ -16,6 +16,8 @@ from roteirizacao.optimization import PyVRPAdapter
 
 
 class PlanningExecutor:
+    SERVICE_POLICY_NAME = "maximize_attendance_v1"
+
     def __init__(
         self,
         contexto: ContextoExecucao,
@@ -155,6 +157,7 @@ class PlanningExecutor:
                 "seed": self.seed,
                 "collect_stats": self.collect_stats,
                 "display": self.display,
+                "service_policy": self.SERVICE_POLICY_NAME,
                 "classes_processadas": sorted(hashes_cenario),
             },
         )

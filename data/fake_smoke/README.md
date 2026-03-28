@@ -1,8 +1,16 @@
-# Smoke Test Fake
+# Smoke Test Fake de Estresse
 
-Este dataset minimo existe para exercitar o fluxo operacional completo da Etapa 9.
+Este dataset existe para exercitar o fluxo operacional completo em um cenario mais agressivo, com maior dispersao geografica e mais excecoes.
+
+Se voce quer um caminho feliz que normalmente fecha com solucao completa, use `data/fake_solution/`.
 
 ## Comandos
+
+Sempre que `bases.json`, `pontos.json` ou `ordens.json` forem alterados, regenere antes a matriz sintetica de tempo/distancia do dataset fake:
+
+```bash
+.venv/bin/python scripts/build_fake_smoke_matrix.py --dataset-dir data/fake_smoke
+```
 
 Materializar o snapshot logistico fake:
 
@@ -24,3 +32,11 @@ Executar o planejamento com materializacao no inicio:
 ```
 
 O resultado sera gravado em `data/fake_smoke/outputs/resultado-planejamento.json`.
+
+## Observacao sobre a malha fake
+
+O solver opera sobre **ordens de servico**, nao sobre todos os pontos cadastrados isoladamente. Por isso:
+
+- a matriz fake sempre inclui todas as bases;
+- a matriz fake inclui apenas os pontos que aparecem nas ordens do dia, materializados como nos `no-<id_ordem>`;
+- se o conjunto de ordens aumentar, a matriz precisa ser regenerada para refletir os novos nos e arcos.

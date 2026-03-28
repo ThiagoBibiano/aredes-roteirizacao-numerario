@@ -12,6 +12,7 @@ from roteirizacao.application import PreparationPipeline
 from roteirizacao.domain import (
     BaseBruta,
     ClasseOperacional,
+    ClassePlanejamento,
     ContextoExecucao,
     MetadadoIngestao,
     OrdemBruta,
@@ -185,15 +186,37 @@ class PreparationPipelineContractTest(unittest.TestCase):
                 tipo_servico="especial",
                 classe_planejamento="especial",
                 classe_operacional="recolhimento",
+                timestamp_criacao="2026-03-21T07:00:00+00:00",
             )
         )
 
         self.assertFalse(result.possui_erros)
         self.assertEqual(result.ordens_planejaveis[0].ordem.tipo_servico, TipoServico.EXTRAORDINARIO)
         self.assertEqual(result.ordens_planejaveis[0].ordem.classe_operacional, ClasseOperacional.RECOLHIMENTO)
+        self.assertEqual(result.ordens_planejaveis[0].ordem.classe_planejamento, ClassePlanejamento.ESPECIAL)
         self.assertTrue(
             any(
                 event.regra_relacionada == "alias.tipo_servico"
+                for event in result.eventos_auditoria
+            )
+        )
+
+    def test_special_order_created_before_operation_day_becomes_eventual(self) -> None:
+        result = self.run_pipeline(
+            self.ordem_bruta(
+                id_ordem="ORD-ESP-DM1",
+                classe_planejamento="especial",
+                timestamp_criacao="2026-03-20T15:00:00+00:00",
+            )
+        )
+
+        self.assertFalse(result.possui_erros)
+        self.assertEqual(result.ordens_planejaveis[0].ordem.classe_planejamento, ClassePlanejamento.EVENTUAL)
+        self.assertTrue(
+            any(
+                event.regra_relacionada == "classificacao.antecedencia_ordem"
+                and event.valor_observado == "especial"
+                and event.valor_esperado == "eventual"
                 for event in result.eventos_auditoria
             )
         )
