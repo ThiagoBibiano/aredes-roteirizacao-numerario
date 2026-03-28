@@ -72,6 +72,8 @@ class PyVRPModelPayload:
 
 
 class PyVRPAdapter(SolverAdapter):
+    SERVICE_PRIORITY_BONUS = Decimal("100000000.00")
+
     def __init__(
         self,
         *,
@@ -85,6 +87,7 @@ class PyVRPAdapter(SolverAdapter):
 
     def build_payload(self, instancia: InstanciaRoteirizacaoBase) -> PyVRPModelPayload:
         time_origin = self._time_origin(instancia)
+        service_priority_bonus = self._service_priority_bonus(instancia)
         depots = tuple(
             PyVRPDepotData(
                 name=deposito.id_deposito,
@@ -97,7 +100,15 @@ class PyVRPAdapter(SolverAdapter):
         )
         depot_index = {deposito.id_deposito: idx for idx, deposito in enumerate(instancia.depositos)}
 
-        clients = tuple(self._build_client(instancia, time_origin, no) for no in instancia.nos_atendimento)
+        clients = tuple(
+            self._build_client(
+                instancia,
+                time_origin,
+                no,
+                service_priority_bonus=service_priority_bonus,
+            )
+            for no in instancia.nos_atendimento
+        )
         vehicle_types = tuple(
             self._build_vehicle_type(instancia, time_origin, depot_index, veiculo)
             for veiculo in instancia.veiculos
@@ -194,7 +205,14 @@ class PyVRPAdapter(SolverAdapter):
 
         return model
 
-    def _build_client(self, instancia: InstanciaRoteirizacaoBase, time_origin: datetime, no: NoRoteirizacao) -> PyVRPClientData:
+    def _build_client(
+        self,
+        instancia: InstanciaRoteirizacaoBase,
+        time_origin: datetime,
+        no: NoRoteirizacao,
+        *,
+        service_priority_bonus: Decimal,
+    ) -> PyVRPClientData:
         ordered_demands = [self._scale_amount(no.demandas[dimension]) for dimension in instancia.dimensoes_capacidade]
 
         if instancia.classe_operacional == ClasseOperacional.RECOLHIMENTO:
@@ -213,7 +231,7 @@ class PyVRPAdapter(SolverAdapter):
             service_duration=self._scale_duration_seconds(no.tempo_servico),
             tw_early=self._offset_seconds(time_origin, no.janela_tempo.inicio),
             tw_late=self._offset_seconds(time_origin, no.janela_tempo.fim),
-            prize=self._scale_amount(no.penalidade_nao_atendimento),
+            prize=self._scale_amount(no.penalidade_nao_atendimento + service_priority_bonus),
             required=False,
         )
 
@@ -266,6 +284,9 @@ class PyVRPAdapter(SolverAdapter):
 
     def _max_vehicle_time(self, instancia: InstanciaRoteirizacaoBase) -> datetime:
         return max(veiculo.janela_operacao.fim for veiculo in instancia.veiculos)
+
+    def _service_priority_bonus(self, instancia: InstanciaRoteirizacaoBase) -> Decimal:
+        return self.SERVICE_PRIORITY_BONUS
 
     def _offset_seconds(self, origin: datetime, value: datetime) -> int:
         return int((value - origin).total_seconds())

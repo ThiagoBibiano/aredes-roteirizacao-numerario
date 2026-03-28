@@ -224,4 +224,10 @@ __marimo__/
 data/fake_smoke/logistics_snapshots/
 data/fake_smoke/outputs/*.json
 data/fake_smoke/outputs/executions/
+data/fake_solution/logistics_snapshots/
+data/fake_solution/outputs/*.json
+data/fake_solution/outputs/executions/
 data/api_runs/
+notebook/.ipynb_checkpoints/
+
+apps/ui_streamlit/settings.local.toml

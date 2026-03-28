@@ -1,0 +1,122 @@
+[
+  {
+    "id_ponto": "P-CENTRO-01",
+    "nome": "Agencia Itau - Av. Paulista",
+    "latitude": -23.561414,
+    "longitude": -46.6558819,
+    "tipo_ponto": "agencia",
+    "setor_geografico": "CENTRO",
+    "inicio_janela": "2026-03-21T08:00:00+00:00",
+    "fim_janela": "2026-03-21T18:00:00+00:00",
+    "tempo_servico": 20,
+    "status_ativo": true
+  },
+  {
+    "id_ponto": "P-CENTRO-02",
+    "nome": "Shopping Frei Caneca",
+    "latitude": -23.5535561,
+    "longitude": -46.6529552,
+    "tipo_ponto": "comercio",
+    "setor_geografico": "CENTRO",
+    "inicio_janela": "2026-03-21T08:00:00+00:00",
+    "fim_janela": "2026-03-21T20:00:00+00:00",
+    "tempo_servico": 30,
+    "status_ativo": true
+  },
+  {
+    "id_ponto": "P-LESTE-01",
+    "nome": "Agencia BB - Tatuape",
+    "latitude": -23.5395512,
+    "longitude": -46.5749103,
+    "tipo_ponto": "agencia",
+    "setor_geografico": "LESTE",
+    "inicio_janela": "2026-03-21T08:00:00+00:00",
+    "fim_janela": "2026-03-21T18:00:00+00:00",
+    "tempo_servico": 20,
+    "status_ativo": true
+  },
+  {
+    "id_ponto": "P-LESTE-02",
+    "nome": "Shopping Analia Franco",
+    "latitude": -23.5601128,
+    "longitude": -46.5529984,
+    "tipo_ponto": "comercio",
+    "setor_geografico": "LESTE",
+    "inicio_janela": "2026-03-21T08:00:00+00:00",
+    "fim_janela": "2026-03-21T20:00:00+00:00",
+    "tempo_servico": 30,
+    "status_ativo": true
+  },
+  {
+    "id_ponto": "P-SUL-01",
+    "nome": "Agencia Santander - Chacara Sto Antonio",
+    "latitude": -23.6261234,
+    "longitude": -46.7033456,
+    "tipo_ponto": "agencia",
+    "setor_geografico": "SUL",
+    "inicio_janela": "2026-03-21T08:00:00+00:00",
+    "fim_janela": "2026-03-21T20:00:00+00:00",
+    "tempo_servico": 25,
+    "status_ativo": true
+  },
+  {
+    "id_ponto": "P-SUL-02",
+    "nome": "Shopping Morumbi",
+    "latitude": -23.622445,
+    "longitude": -46.6987789,
+    "tipo_ponto": "comercio",
+    "setor_geografico": "SUL",
+    "inicio_janela": "2026-03-21T08:00:00+00:00",
+    "fim_janela": "2026-03-21T20:00:00+00:00",
+    "tempo_servico": 30,
+    "status_ativo": true
+  },
+  {
+    "id_ponto": "P-ABC-01",
+    "nome": "Agencia CEF - Centro SBC",
+    "latitude": -23.7121004,
+    "longitude": -46.5488902,
+    "tipo_ponto": "agencia",
+    "setor_geografico": "ABC",
+    "inicio_janela": "2026-03-21T08:00:00+00:00",
+    "fim_janela": "2026-03-21T19:00:00+00:00",
+    "tempo_servico": 20,
+    "status_ativo": true
+  },
+  {
+    "id_ponto": "P-ABC-02",
+    "nome": "Grand Plaza Shopping - Santo Andre",
+    "latitude": -23.6502213,
+    "longitude": -46.5338819,
+    "tipo_ponto": "comercio",
+    "setor_geografico": "ABC",
+    "inicio_janela": "2026-03-21T08:00:00+00:00",
+    "fim_janela": "2026-03-21T20:00:00+00:00",
+    "tempo_servico": 30,
+    "status_ativo": true
+  },
+  {
+    "id_ponto": "P-NORTE-01",
+    "nome": "Internacional Shopping Guarulhos",
+    "latitude": -23.479123,
+    "longitude": -46.5184567,
+    "tipo_ponto": "comercio",
+    "setor_geografico": "NORTE",
+    "inicio_janela": "2026-03-21T08:00:00+00:00",
+    "fim_janela": "2026-03-21T20:00:00+00:00",
+    "tempo_servico": 30,
+    "status_ativo": true
+  },
+  {
+    "id_ponto": "P-NORTE-02",
+    "nome": "Agencia CEF - Centro Guarulhos",
+    "latitude": -23.468112,
+    "longitude": -46.5312214,
+    "tipo_ponto": "agencia",
+    "setor_geografico": "NORTE",
+    "inicio_janela": "2026-03-21T08:00:00+00:00",
+    "fim_janela": "2026-03-21T18:00:00+00:00",
+    "tempo_servico": 20,
+    "status_ativo": true
+  }
+]

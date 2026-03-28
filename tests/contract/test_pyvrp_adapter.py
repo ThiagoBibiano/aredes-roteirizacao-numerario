@@ -4,6 +4,7 @@ import importlib.util
 import sys
 import unittest
 from datetime import date, datetime, timezone
+from decimal import Decimal
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -125,13 +126,15 @@ class PyVRPAdapterContractTest(unittest.TestCase):
     def test_maps_supply_instance_to_delivery_payload(self) -> None:
         instancia = self.build_instance(self.ordem_bruta(tipo_servico="suprimento"), tipo=ClasseOperacional.SUPRIMENTO)
         payload = self.adapter.build_payload(instancia)
+        expected_bonus = self.adapter.SERVICE_PRIORITY_BONUS
+        expected_prize = int(round(float(instancia.nos_atendimento[0].penalidade_nao_atendimento + expected_bonus) * 100))
 
         self.assertEqual(payload.profile_name, "suprimento")
         self.assertEqual(len(payload.depots), 1)
         self.assertEqual(len(payload.clients), 1)
         self.assertEqual(payload.clients[0].delivery, (500, 1500000))
         self.assertEqual(payload.clients[0].pickup, (0, 0))
-        self.assertEqual(payload.clients[0].prize, 800000)
+        self.assertEqual(payload.clients[0].prize, expected_prize)
         self.assertFalse(payload.clients[0].required)
 
     def test_maps_recolhimento_instance_to_pickup_payload(self) -> None:
