@@ -3,6 +3,7 @@ from __future__ import annotations
 import importlib.util
 import json
 import sys
+from collections import Counter
 from dataclasses import dataclass
 from datetime import date, datetime, timezone
 from decimal import Decimal
@@ -381,6 +382,266 @@ def _route_color_map(orchestration) -> dict[str, tuple[float, float, float, floa
     return {route.id_rota: next(palette) for route in _iter_routes(orchestration)}
 
 
+def _enum_value(value: Any) -> str:
+    return str(getattr(value, "value", value))
+
+
+def _order_metadata_map(artifacts: ScenarioArtifacts) -> dict[str, dict[str, Any]]:
+    metadata: dict[str, dict[str, Any]] = {}
+    for ordem in artifacts.ordens:
+        ordem_id = str(ordem["id_ordem"])
+        node_id = f"no-{ordem_id}"
+        label = artifacts.labels.get(node_id, ordem_id)
+        metadata[ordem_id] = {
+            "id_ordem": ordem_id,
+            "id_ponto": str(ordem.get("id_ponto", "")),
+            "node_id": node_id,
+            "label": label,
+            "label_short": label.split(" - ")[0],
+            "tipo_servico": str(ordem.get("tipo_servico", "desconhecido")).lower(),
+            "classe_planejamento": str(ordem.get("classe_planejamento", "nao_informada")).lower(),
+            "criticidade": str(ordem.get("criticidade", "nao_informada")).lower(),
+            "valor_estimado": str(ordem.get("valor_estimado", "0")),
+            "volume_estimado": str(ordem.get("volume_estimado", "0")),
+        }
+    return metadata
+
+
+def _service_style(tipo_servico: str) -> dict[str, Any]:
+    normalized = tipo_servico.lower()
+    if normalized == "suprimento":
+        return {
+            "marker": "^",
+            "fill": "#2a9d8f",
+            "line_style": "solid",
+            "service_label": "SUP",
+        }
+    if normalized == "recolhimento":
+        return {
+            "marker": "v",
+            "fill": "#e76f51",
+            "line_style": (0, (6, 4)),
+            "service_label": "REC",
+        }
+    return {
+        "marker": "o",
+        "fill": "#7d8597",
+        "line_style": "solid",
+        "service_label": normalized[:3].upper(),
+    }
+
+
+def _route_short_label(route_id: str) -> str:
+    suffix = route_id.rsplit("-", 1)[-1]
+    if suffix.isdigit():
+        return f"R{int(suffix):02d}"
+    return route_id[-8:]
+
+
+def _format_brl(value: Any) -> str:
+    amount = Decimal(str(value))
+    formatted = f"{amount:,.0f}"
+    return formatted.replace(",", ".")
+
+
+def _planning_label(classe_planejamento: str) -> str:
+    normalized = classe_planejamento.lower()
+    if normalized == "especial":
+        return "ESP"
+    if normalized == "eventual":
+        return "EVT"
+    if normalized == "padrao":
+        return "PAD"
+    if normalized == "nao_informada":
+        return "N/I"
+    return normalized[:3].upper()
+
+
+def _build_solution_node_state(orchestration, artifacts: ScenarioArtifacts) -> dict[str, dict[str, Any]]:
+    node_state: dict[str, dict[str, Any]] = {}
+    order_metadata = _order_metadata_map(artifacts)
+
+    for route_index, route in enumerate(_iter_routes(orchestration), start=1):
+        route_label = _route_short_label(route.id_rota)
+        route_class = _enum_value(route.classe_operacional).lower()
+        style = _service_style(route_class)
+        for parada in route.paradas:
+            metadata = order_metadata.get(parada.id_ordem, {}).copy()
+            metadata.update(
+                {
+                    "id_rota": route.id_rota,
+                    "route_label": route_label,
+                    "route_index": route_index,
+                    "vehicle_id": route.id_viatura,
+                    "sequence": parada.sequencia,
+                    "tipo_servico": _enum_value(parada.tipo_servico).lower(),
+                    "criticidade": _enum_value(parada.criticidade).lower(),
+                    "line_style": style["line_style"],
+                    "service_label": style["service_label"],
+                    "served": True,
+                }
+            )
+            node_state[parada.id_no] = metadata
+
+    result = orchestration.resultado_planejamento
+    for ordem in result.ordens_nao_atendidas:
+        node_id = ordem.id_no
+        metadata = order_metadata.get(ordem.id_ordem, {}).copy()
+        metadata.update(
+            {
+                "id_ordem": ordem.id_ordem,
+                "node_id": node_id,
+                "tipo_servico": _enum_value(ordem.tipo_servico).lower(),
+                "criticidade": _enum_value(ordem.criticidade).lower(),
+                "served": False,
+                "service_label": _service_style(_enum_value(ordem.tipo_servico))["service_label"],
+            }
+        )
+        node_state[node_id] = metadata
+
+    return node_state
+
+
+def _draw_solution_semantic_legend(axis) -> None:
+    from matplotlib.lines import Line2D
+
+    handles = [
+        Line2D(
+            [0],
+            [0],
+            marker="s",
+            linestyle="None",
+            markerfacecolor="#12355b",
+            markeredgecolor="white",
+            markeredgewidth=1.2,
+            markersize=10,
+            label="Base",
+        ),
+        Line2D(
+            [0],
+            [0],
+            marker="^",
+            linestyle="None",
+            markerfacecolor="#2a9d8f",
+            markeredgecolor="white",
+            markeredgewidth=1.0,
+            markersize=10,
+            label="Suprimento",
+        ),
+        Line2D(
+            [0],
+            [0],
+            marker="v",
+            linestyle="None",
+            markerfacecolor="#e76f51",
+            markeredgecolor="white",
+            markeredgewidth=1.0,
+            markersize=10,
+            label="Recolhimento",
+        ),
+        Line2D(
+            [0],
+            [0],
+            marker="o",
+            linestyle="None",
+            markerfacecolor="#ffffff",
+            markeredgecolor="#d4a017",
+            markeredgewidth=2.0,
+            markersize=10,
+            label="Especial",
+        ),
+        Line2D(
+            [0],
+            [0],
+            marker="X",
+            linestyle="None",
+            markerfacecolor="#cbd5e1",
+            markeredgecolor="#475569",
+            markeredgewidth=1.0,
+            markersize=9,
+            label="Nao atendida",
+        ),
+        Line2D(
+            [0, 1],
+            [0, 0],
+            color="#64748b",
+            linewidth=2.4,
+            linestyle="solid",
+            label="Rota de suprimento",
+        ),
+        Line2D(
+            [0, 1],
+            [0, 0],
+            color="#64748b",
+            linewidth=2.4,
+            linestyle=(0, (6, 4)),
+            label="Rota de recolhimento",
+        ),
+    ]
+    axis.legend(handles=handles, loc="upper left", frameon=True, fontsize=8.5)
+
+
+def _draw_route_summary_panel(axis, orchestration, node_state: dict[str, dict[str, Any]], colors) -> None:
+    axis.axis("off")
+
+    routes = list(_iter_routes(orchestration))
+    served_nodes = [item for item in node_state.values() if item.get("served")]
+    special_served = sum(1 for item in served_nodes if item.get("classe_planejamento") == "especial")
+    unserved_count = sum(1 for item in node_state.values() if item.get("served") is False)
+    services = Counter(item.get("tipo_servico", "desconhecido") for item in served_nodes)
+
+    header = (
+        f"Rotas: {len(routes)}\n"
+        f"Atendidas: {len(served_nodes)} | Especiais: {special_served}\n"
+        f"SUP: {services.get('suprimento', 0)} | REC: {services.get('recolhimento', 0)}\n"
+        f"Nao atendidas: {unserved_count}"
+    )
+    axis.text(
+        0.0,
+        1.0,
+        header,
+        va="top",
+        fontsize=9,
+        color="#243b53",
+        bbox={"facecolor": "#f8fafc", "edgecolor": "#cbd5e1", "boxstyle": "round,pad=0.45"},
+    )
+
+    y_position = 0.78
+    displayed_routes = 0
+    for route in routes:
+        route_nodes = [item for item in node_state.values() if item.get("id_rota") == route.id_rota]
+        if not route_nodes:
+            continue
+        special_count = sum(1 for item in route_nodes if item.get("classe_planejamento") == "especial")
+        route_class = _enum_value(route.classe_operacional).lower()
+        summary = (
+            f"{_route_short_label(route.id_rota)} | {route.id_viatura}\n"
+            f"{route_class} | {len(route.paradas)} parada(s) | {special_count} especial(is)\n"
+            f"R$ {_format_brl(route.custo_estimado)} | {route.distancia_estimada / 1000:.1f} km"
+        )
+        axis.text(
+            0.0,
+            y_position,
+            summary,
+            va="top",
+            fontsize=8.4,
+            color="#102a43",
+            bbox={
+                "facecolor": (*colors[route.id_rota][:3], 0.12),
+                "edgecolor": colors[route.id_rota],
+                "boxstyle": "round,pad=0.4",
+            },
+        )
+        displayed_routes += 1
+        y_position -= 0.145
+        if y_position < 0.05:
+            break
+
+    hidden_routes = len(routes) - displayed_routes
+    if hidden_routes > 0:
+        axis.text(0.0, max(y_position, 0.03), f"+ {hidden_routes} rota(s) fora do painel", fontsize=8.2, color="#52606d")
+
+
 def build_solution_graph(orchestration, artifacts: ScenarioArtifacts, *, include_return_to_base: bool = True):
     nx, _ = _require_network_stack()
     graph = nx.MultiDiGraph()
@@ -541,6 +802,9 @@ def plot_solution_graph(
     include_base_graph: bool = True,
     figsize: tuple[int, int] = (12, 8),
     with_basemap: bool = False,
+    show_order_details: bool = True,
+    show_route_summary: bool = True,
+    show_unserved_orders: bool = True,
 ):
     nx, plt = _require_network_stack()
     base_graph = build_base_graph(artifacts)
@@ -551,11 +815,25 @@ def plot_solution_graph(
     )
     positions = nx.get_node_attributes(base_graph, "pos")
     colors = _route_color_map(orchestration)
+    node_state = _build_solution_node_state(orchestration, artifacts)
+    result = orchestration.resultado_planejamento
 
-    figure, axis = plt.subplots(figsize=figsize)
+    if show_route_summary:
+        figure = plt.figure(figsize=figsize, constrained_layout=True)
+        grid = figure.add_gridspec(1, 2, width_ratios=(4.8, 1.7))
+        axis = figure.add_subplot(grid[0, 0])
+        summary_axis = figure.add_subplot(grid[0, 1])
+    else:
+        figure, axis = plt.subplots(figsize=figsize, constrained_layout=True)
+        summary_axis = None
+
     basemap_added = _maybe_add_basemap(axis, positions) if with_basemap else False
     title_suffix = " com basemap" if basemap_added else ""
-    axis.set_title(f"Rede escolhida pelo solver{title_suffix}")
+    subtitle = (
+        f"{result.resumo_operacional.total_ordens_planejadas} ordem(ns) planejada(s)"
+        f" | {result.resumo_operacional.total_ordens_nao_atendidas} nao atendida(s)"
+    )
+    axis.set_title(f"Rede escolhida pelo solver{title_suffix}\n{subtitle}", loc="left")
 
     if include_base_graph:
         nx.draw_networkx_edges(
@@ -569,7 +847,6 @@ def plot_solution_graph(
         )
 
     base_nodes = [node for node, kind in artifacts.node_kind.items() if kind == "base"]
-    order_nodes = [node for node, kind in artifacts.node_kind.items() if kind == "ordem"]
     nx.draw_networkx_nodes(
         base_graph,
         pos=positions,
@@ -577,20 +854,9 @@ def plot_solution_graph(
         ax=axis,
         node_color="#12355b",
         node_size=420,
+        node_shape="s",
         edgecolors="white",
         linewidths=1.2,
-        label="Bases",
-    )
-    nx.draw_networkx_nodes(
-        base_graph,
-        pos=positions,
-        nodelist=order_nodes,
-        ax=axis,
-        node_color="#f8d7a3",
-        node_size=240,
-        edgecolors="white",
-        linewidths=0.7,
-        label="Ordens do dia",
     )
 
     for route_id, color in colors.items():
@@ -599,12 +865,24 @@ def plot_solution_graph(
             for origem, destino, key, attrs in solution_graph.edges(keys=True, data=True)
             if attrs["route_id"] == route_id
         ]
-        route_data = solution_graph.edges(keys=True, data=True)
-        route_label = None
-        for _, _, _, attrs in route_data:
+        route_style = "solid"
+        for _, _, _, attrs in solution_graph.edges(keys=True, data=True):
             if attrs["route_id"] == route_id:
-                route_label = f"{route_id} | {attrs['vehicle_id']}"
+                route_style = _service_style(attrs["classe_operacional"])["line_style"]
                 break
+        nx.draw_networkx_edges(
+            solution_graph,
+            pos=positions,
+            ax=axis,
+            edgelist=route_edges,
+            edge_color=["#ffffff"],
+            alpha=0.85,
+            width=5.6,
+            arrows=True,
+            arrowsize=18,
+            style=route_style,
+            connectionstyle="arc3,rad=0.06",
+        )
         nx.draw_networkx_edges(
             solution_graph,
             pos=positions,
@@ -615,15 +893,107 @@ def plot_solution_graph(
             width=2.8,
             arrows=True,
             arrowsize=16,
-            connectionstyle="arc3,rad=0.04",
-            label=route_label,
+            style=route_style,
+            connectionstyle="arc3,rad=0.06",
         )
 
-    label_map = {
-        node_id: artifacts.labels[node_id].split(" - ")[0]
-        for node_id in positions
-    }
-    nx.draw_networkx_labels(base_graph, pos=positions, labels=label_map, ax=axis, font_size=7)
+    grouped_order_nodes: dict[tuple[str, str, bool], list[str]] = {}
+    for node_id, metadata in node_state.items():
+        if metadata.get("served") is False and not show_unserved_orders:
+            continue
+        key = (
+            metadata.get("tipo_servico", "desconhecido"),
+            metadata.get("classe_planejamento", "nao_informada"),
+            bool(metadata.get("served")),
+        )
+        grouped_order_nodes.setdefault(key, []).append(node_id)
+
+    for (tipo_servico, classe_planejamento, served), node_ids in grouped_order_nodes.items():
+        style = _service_style(tipo_servico)
+        if served:
+            edge_color = "#d4a017" if classe_planejamento == "especial" else "white"
+            line_width = 2.2 if classe_planejamento == "especial" else 0.9
+            node_size = 380 if classe_planejamento == "especial" else 310
+            node_color = style["fill"]
+            node_shape = style["marker"]
+        else:
+            edge_color = "#475569"
+            line_width = 1.1
+            node_size = 300
+            node_color = "#cbd5e1"
+            node_shape = "X"
+
+        nx.draw_networkx_nodes(
+            base_graph,
+            pos=positions,
+            nodelist=node_ids,
+            ax=axis,
+            node_color=node_color,
+            node_size=node_size,
+            node_shape=node_shape,
+            edgecolors=edge_color,
+            linewidths=line_width,
+            alpha=0.98 if served else 0.92,
+        )
+
+    for node_id, metadata in node_state.items():
+        if metadata.get("served") is False and not show_unserved_orders:
+            continue
+        position = positions.get(node_id)
+        if position is None:
+            continue
+        x_coord, y_coord = position
+        sequence_label = "X" if metadata.get("served") is False else str(metadata.get("sequence", "?"))
+        axis.text(
+            x_coord,
+            y_coord,
+            sequence_label,
+            ha="center",
+            va="center",
+            fontsize=7.5,
+            color="white" if metadata.get("served") else "#102a43",
+            fontweight="bold",
+            zorder=6,
+        )
+
+    base_label_map = {node_id: artifacts.labels[node_id].split(" - ")[0] for node_id in base_nodes}
+    nx.draw_networkx_labels(base_graph, pos=positions, labels=base_label_map, ax=axis, font_size=8, font_color="#102a43")
+
+    if show_order_details:
+        longitude_span = max(point[0] for point in positions.values()) - min(point[0] for point in positions.values())
+        latitude_span = max(point[1] for point in positions.values()) - min(point[1] for point in positions.values())
+        offset_x = max(longitude_span * 0.012, 0.0035)
+        offset_y = max(latitude_span * 0.010, 0.0025)
+        for index, (node_id, metadata) in enumerate(node_state.items()):
+            if metadata.get("served") is False and not show_unserved_orders:
+                continue
+            position = positions.get(node_id)
+            if position is None:
+                continue
+            x_coord, y_coord = position
+            label_prefix = metadata.get("label_short", metadata.get("id_ordem", node_id))
+            planning_label = _planning_label(metadata.get("classe_planejamento", "nao_informada"))
+            status_label = "NAO ATENDIDA" if metadata.get("served") is False else metadata.get("route_label", "")
+            detail_label = (
+                f"{metadata.get('service_label', '---')} | {planning_label} | {metadata.get('criticidade', '--').upper()}\n"
+                f"{status_label} | R$ {_format_brl(metadata.get('valor_estimado', '0'))}"
+            )
+            vertical_sign = 1 if index % 2 == 0 else -1
+            axis.text(
+                x_coord + offset_x,
+                y_coord + (offset_y * vertical_sign),
+                f"{label_prefix}\n{detail_label}",
+                ha="left",
+                va="center",
+                fontsize=7.4,
+                color="#102a43",
+                zorder=7,
+                bbox={
+                    "facecolor": (1, 1, 1, 0.9),
+                    "edgecolor": "#d9e2ec",
+                    "boxstyle": "round,pad=0.28",
+                },
+            )
 
     _set_axis_extent(axis, positions)
     axis.set_xlabel("Longitude")
@@ -638,7 +1008,8 @@ def plot_solution_graph(
             fontsize=9,
             bbox={"facecolor": "white", "alpha": 0.8, "edgecolor": "#cccccc"},
         )
-    axis.legend(loc="upper left", bbox_to_anchor=(1.02, 1.0))
+    _draw_solution_semantic_legend(axis)
+    if summary_axis is not None:
+        _draw_route_summary_panel(summary_axis, orchestration, node_state, colors)
     axis.grid(alpha=0.2)
-    figure.tight_layout()
     return figure, axis

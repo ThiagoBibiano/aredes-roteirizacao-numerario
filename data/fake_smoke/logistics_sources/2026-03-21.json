@@ -1,6 +1,6 @@
 {
   "snapshot_id": "snap-fake_smoke-2026-03-21",
-  "generated_at": "2026-03-28T23:51:44.266866+00:00",
+  "generated_at": "2026-04-01T20:34:58.960311+00:00",
   "strategy_name": "synthetic_geodesic_v1",
   "source_name": "fake_smoke_source",
   "arcs": [
