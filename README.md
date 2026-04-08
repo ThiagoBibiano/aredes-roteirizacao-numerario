@@ -38,7 +38,7 @@ O projeto nao esta mais apenas em estruturacao. O nucleo executavel e o backend 
 
 Entregas principais ja concluidas:
 
-- Etapa 1: especificacao formal dos contratos em [`docs/etapa-1/`](docs/etapa-1/)
+- Contratos e arquitetura do backend em [`docs/contratos-e-arquitetura/`](docs/contratos-e-arquitetura/)
 - Etapa 2: ingestao, validacao e classificacao
 - Etapa 3: instancia solver-agnostic
 - Etapa 4: adaptador PyVRP
@@ -78,7 +78,7 @@ Principios mantidos:
 - Contexto funcional e diretrizes do MVP em [`docs/contexto.md`](docs/contexto.md)
 - API HTTP em [`docs/api.md`](docs/api.md)
 - Formulacao cientifica do problema de otimizacao em [`docs/formulacao-matematica.md`](docs/formulacao-matematica.md)
-- Contratos formais da etapa 1 em [`docs/etapa-1/`](docs/etapa-1/)
+- Contratos, invariantes e decisoes de arquitetura em [`docs/contratos-e-arquitetura/`](docs/contratos-e-arquitetura/)
 
 ## Estrutura real do repositorio
 
@@ -89,7 +89,7 @@ Principios mantidos:
 │  ├─ api.md
 │  ├─ contexto.md
 │  ├─ formulacao-matematica.md
-│  └─ etapa-1/
+│  └─ contratos-e-arquitetura/
 ├─ apps/
 │  └─ ui_streamlit/
 ├─ notebook/
@@ -398,7 +398,7 @@ Ainda nao fazem parte do escopo implementado:
 
 - [`docs/contexto.md`](docs/contexto.md)
 - [`docs/api.md`](docs/api.md)
-- [`docs/etapa-1/`](docs/etapa-1/)
+- [`docs/contratos-e-arquitetura/`](docs/contratos-e-arquitetura/)
 
 ## Proximos passos recomendados
 
