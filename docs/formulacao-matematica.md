@@ -1,291 +1,205 @@
 # Formulacao Matematica do Problema de Otimizacao
 
-## 1. Objetivo do documento
+## 1. Objetivo
 
-Este documento descreve, em linguagem matematica e de Pesquisa Operacional, o problema resolvido pelo nucleo de roteirizacao de transporte de numerario implementado neste repositorio.
+Este documento descreve, de forma curta e operacional, o problema que o backend resolve hoje.
 
-O objetivo aqui nao e propor uma formulacao idealizada ou generica de VRP, mas registrar com rigor:
+A ideia nao e apresentar a formulacao mais geral possivel de VRP, e sim registrar:
 
-- qual problema o sistema resolve hoje;
-- como esse problema pode ser interpretado em termos de grafos, custos e restricoes;
-- quais elementos sao efetivamente enviados ao solver;
-- quais elementos existem no dominio, mas ainda nao entram explicitamente na funcao objetivo computacional.
+- qual problema entra no solver;
+- quais restricoes ja estao representadas;
+- quais regras continuam fora do solver;
+- como a modelagem conversa com o codigo atual.
 
-Em outras palavras, este texto descreve a **formulacao operacional implementada**, e nao apenas uma formulacao aspiracional.
+## 2. Problema resolvido hoje
 
-## 2. Classificacao do problema
+O backend resolve um problema de roteirizacao com:
 
-Do ponto de vista da literatura, o problema tratado pode ser classificado como uma variante de:
-
-$$
-\text{Prize-Collecting Rich VRPTW}
-$$
-
-com as seguintes caracteristicas:
-
+- janelas de tempo em ordens e viaturas;
+- duas dimensoes de capacidade: volume e financeiro;
 - frota heterogenea;
-- multiplos depositos por vinculacao de viaturas a bases;
-- janelas de tempo em clientes e viaturas;
-- capacidade em duas dimensoes, volumetrica e financeira;
-- atendimento opcional de clientes, com premio por atendimento e penalidade implicita por descarte;
-- elegibilidade veiculo-ordem;
-- restricao de risco financeiro nas rotas de recolhimento;
-- decomposicao em subproblemas por classe operacional.
+- clientes opcionais, com custo alto para nao atendimento;
+- elegibilidade entre viatura e ordem;
+- custo fixo por viatura e custo variavel por deslocamento;
+- separacao entre `suprimento` e `recolhimento`.
 
-Em termos de Engenharia Logistica, Analise de Redes e Pesquisa Operacional, o problema pode ser lido como:
-
-- um problema de cobertura operacional com restricoes de roteamento;
-- um problema de selecao de clientes com custo de frota;
-- um problema de planejamento em rede com capacidades, turnos e janelas.
-
-## 3. Estrutura operacional do problema
-
-As ordens sao separadas em duas classes operacionais:
-
-- **suprimento**;
-- **recolhimento**.
-
-Essa separacao nao e apenas semantica. Ela altera a modelagem das demandas e da capacidade:
-
-- em `suprimento`, a demanda entra como **delivery**;
-- em `recolhimento`, a demanda entra como **pickup**;
-- em `recolhimento`, a capacidade financeira efetiva e limitada pelo teto segurado.
-
-O repositorio **nao resolve um unico problema misto** com suprimento e recolhimento na mesma rota. Em vez disso, constroi dois subproblemas independentes:
+Do ponto de vista pratico, isso e bem representado como um:
 
 $$
-P^{\text{sup}} \quad \text{e} \quad P^{\text{rec}}.
+\text{Rich Prize-Collecting VRPTW}
+$$
+
+resolvido em dois subproblemas independentes.
+
+## 3. Decomposicao por classe operacional
+
+O repositorio nao resolve um unico problema misto com suprimento e recolhimento na mesma rota.
+
+Em vez disso, ele resolve separadamente:
+
+$$
+P^{sup}
+\qquad \text{e} \qquad
+P^{rec}.
 $$
 
 ```mermaid
 flowchart TD
-    A[Ordens validadas] --> B{Classe operacional}
-    B -->|Suprimento| C[Subproblema P^sup]
-    B -->|Recolhimento| D[Subproblema P^rec]
-    C --> E[Instancia solver-agnostic]
-    D --> F[Instancia solver-agnostic]
+    A[Ordens planejaveis] --> B{Classe operacional}
+    B --> C[Problema de suprimento]
+    B --> D[Problema de recolhimento]
+    C --> E[Instancia solver agnostic]
+    D --> F[Instancia solver agnostic]
     E --> G[PyVRP]
     F --> H[PyVRP]
     G --> I[Rotas de suprimento]
     H --> J[Rotas de recolhimento]
 ```
 
-### 3.1 Consequencia importante da decomposicao
+Consequencia importante:
 
-Como os subproblemas sao resolvidos separadamente, a mesma viatura fisica pode aparecer:
+- uma mesma viatura fisica pode aparecer no subproblema de suprimento;
+- e tambem no subproblema de recolhimento;
+- o modelo atual nao impoe um acoplamento global do tipo "a viatura so pode ser usada em uma classe no dia".
 
-- uma vez em `P^{\text{sup}}`;
-- outra vez em `P^{\text{rec}}`.
+## 4. Notacao usada abaixo
 
-Logo, o modelo implementado hoje **nao impõe** uma restricao global do tipo:
-
-$$
-u_k^{\text{sup}} + u_k^{\text{rec}} \leq 1.
-$$
-
-Esse acoplamento entre classes operacionais seria uma extensao futura importante.
-
-## 4. Taxonomias do dominio
-
-O sistema possui duas taxonomias distintas.
-
-### 4.1 Classe operacional
-
-Ela determina como a ordem entra no solver:
+Daqui em diante, a formulacao descreve um unico subproblema $P^c$, onde:
 
 $$
-\mathcal{C} = \{\text{sup}, \text{rec}\}.
+c \in \{sup, rec\}.
 $$
 
-Essa classe altera:
-
-- o tipo de demanda no solver;
-- a interpretacao da capacidade;
-- a aplicacao do teto segurado.
-
-### 4.2 Classe de planejamento
-
-Ela e uma classificacao de negocio:
-
-- `padrao`;
-- `especial`;
-- `eventual`.
-
-No estado atual do codigo, essa classificacao:
-
-- existe no dominio;
-- afeta a interpretacao operacional;
-- pode influenciar parametrizacao de criticidade, janelas e penalidades;
-- **nao cria um subproblema separado no solver**.
-
-Portanto, a classe de planejamento nao aparece como indice estrutural do modelo. Sua influencia matematica e indireta, por meio de parametros como:
-
-$$
-\pi_i \quad \text{(penalidade de nao atendimento)}, \qquad
-[a_i, b_i] \quad \text{(janela)}, \qquad
-\text{criticidade}_i.
-$$
-
-```mermaid
-flowchart LR
-    A[timestamp_criacao] --> B{Antecedencia vs data_operacao}
-    B -->|D0| C[Especial]
-    B -->|D-1 ou anterior| D[Eventual]
-    B -->|Demais casos| E[Padrao]
-    C --> F[Parametros economicos e temporais]
-    D --> F
-    E --> F
-    F --> G[Prioridade efetiva no modelo]
-```
-
-## 5. Representacao em grafo
-
-Para cada classe operacional $c \in \mathcal{C}$, define-se um grafo dirigido:
-
-$$
-G^c = (V^c, A^c),
-$$
-
-onde:
-
-- $B^c$ e o conjunto de depositos disponiveis na instancia;
-- $N^c$ e o conjunto de ordens planejaveis da classe $c$;
-- $K^c$ e o conjunto de viaturas disponiveis no subproblema da classe $c$;
-- $V^c = B^c \cup N^c$;
-- $A^c$ e o conjunto de arcos disponiveis na matriz logistica.
-
-Cada viatura $k \in K^c$ possui uma base de origem $b(k) \in B^c$, e cada rota:
-
-- inicia em $b(k)$;
-- termina em $b(k)$;
-- usa no maximo uma vez a copia da viatura no subproblema $c$.
-
-Em termos de implementacao, a copia da viatura e por classe operacional. Por isso, a disponibilidade e "uma rota por viatura por subproblema", e nao "uma rota por viatura por dia" de forma global.
-
-## 6. Conjuntos, parametros e variaveis
-
-### 6.1 Conjuntos
-
-Para cada classe $c$:
+### 4.1 Conjuntos
 
 $$
 \begin{aligned}
-\mathcal{N}^c &: \text{conjunto de ordens planejaveis}, \\
-\mathcal{B}^c &: \text{conjunto de depositos}, \\
-\mathcal{K}^c &: \text{conjunto de viaturas disponiveis}, \\
-\mathcal{A}^c &: \text{conjunto de arcos disponiveis}.
+D^c &:& \text{depositos da classe } c \\
+N^c &:& \text{ordens planejaveis da classe } c \\
+K^c &:& \text{viaturas disponiveis na classe } c \\
+A^c &:& \text{arcos disponiveis da malha}
 \end{aligned}
 $$
 
-### 6.2 Parametros de rede e tempo
+O conjunto de nos do problema e:
 
-Para cada arco $(i,j) \in \mathcal{A}^c$:
+$$
+V^c = D^c \cup N^c.
+$$
+
+Cada viatura $k \in K^c$ possui uma base de origem fixa, denotada por:
+
+$$
+base(k) \in D^c.
+$$
+
+### 4.2 Parametros de rede e tempo
+
+Para cada arco $(i,j) \in A^c$:
 
 $$
 \begin{aligned}
-d_{ij} &: \text{distancia do arco } (i,j), \\
-\tau_{ij} &: \text{tempo de deslocamento no arco } (i,j).
+dist_{ij} &:& \text{distancia do arco} \\
+time_{ij} &:& \text{tempo de deslocamento do arco}
 \end{aligned}
 $$
 
-Para cada ordem $i \in \mathcal{N}^c$:
+Para cada ordem $i \in N^c$:
 
 $$
 \begin{aligned}
-s_i &: \text{tempo de servico}, \\
-[a_i, b_i] &: \text{janela de tempo}.
+service_i &:& \text{tempo de servico} \\
+open_i,\ close_i &:& \text{janela de atendimento}
 \end{aligned}
 $$
 
-Para cada viatura $k \in \mathcal{K}^c$:
-
-$$
-[\alpha_k, \beta_k] : \text{janela de operacao da viatura}.
-$$
-
-### 6.3 Parametros de demanda e capacidade
-
-Cada ordem $i \in \mathcal{N}^c$ possui duas demandas:
-
-$$
-q_i^V \quad \text{(volume)} \qquad \text{e} \qquad q_i^F \quad \text{(financeiro)}.
-$$
-
-Cada viatura $k$ possui:
+Para cada viatura $k \in K^c$:
 
 $$
 \begin{aligned}
-Q_k^V &: \text{capacidade volumetrica}, \\
-Q_k^F &: \text{capacidade financeira nominal}, \\
-I_k &: \text{teto segurado}.
+vehOpen_k,\ vehClose_k &:& \text{janela de operacao da viatura}
 \end{aligned}
 $$
 
-No subproblema de recolhimento, a capacidade financeira efetiva e:
+### 4.3 Parametros de demanda e capacidade
 
-$$
-\widetilde{Q}_k^{F,\text{rec}} = \min(Q_k^F, I_k).
-$$
-
-No subproblema de suprimento:
-
-$$
-\widetilde{Q}_k^{F,\text{sup}} = Q_k^F.
-$$
-
-### 6.4 Parametros de custo
-
-O modelo implementado no repositorio nao usa diretamente um custo arbitrario $c_{ij}^k$ por arco e por veiculo. Em vez disso, ele usa:
+Cada ordem tem duas demandas:
 
 $$
 \begin{aligned}
-f_k &: \text{custo fixo de ativacao da viatura } k, \\
-\gamma_k &: \text{custo unitario por distancia da viatura } k, \\
-\eta &: \text{custo unitario por duracao da rota}.
+dem_i^{vol} &:& \text{demanda volumetrica} \\
+dem_i^{cash} &:& \text{demanda financeira}
 \end{aligned}
 $$
 
-Na implementacao atual:
-
-- $\gamma_k$ depende da viatura;
-- $\eta$ e uniforme no payload do PyVRP;
-- $d_{ij}$ e $\tau_{ij}$ entram como atributos dos arcos.
-
-### 6.5 Parametros de prioridade e optionalidade
-
-Cada ordem $i$ possui:
+Cada viatura possui:
 
 $$
-\pi_i : \text{penalidade de nao atendimento}.
+\begin{aligned}
+cap_k^{vol} &:& \text{capacidade volumetrica} \\
+cap_k^{cash} &:& \text{capacidade financeira nominal} \\
+insured_k &:& \text{teto segurado}
+\end{aligned}
 $$
 
-O modelo computacional atual introduz ainda um bonus dominante de atendimento:
+A capacidade financeira efetiva usada no solver e:
 
 $$
-M \gg 0,
-$$
-
-e define o premio computacional do cliente como:
-
-$$
-\Pi_i = M + \pi_i.
-$$
-
-Esse e o mecanismo que implementa a politica operacional:
-
-$$
-\texttt{maximize\_attendance\_v1}.
-$$
-
-### 6.6 Parametros de elegibilidade
-
-Define-se:
-
-$$
-e_{ik} =
+cashCap_k^c =
 \begin{cases}
-1, & \text{se a viatura } k \text{ pode atender a ordem } i, \\
-0, & \text{caso contrario.}
+cap_k^{cash}, & \text{se } c = sup \\
+\min(cap_k^{cash}, insured_k), & \text{se } c = rec
+\end{cases}
+$$
+
+Isso reflete exatamente o comportamento implementado no `OptimizationInstanceBuilder`.
+
+### 4.4 Parametros de custo
+
+Para cada viatura:
+
+$$
+\begin{aligned}
+fixed_k &:& \text{custo fixo de ativacao} \\
+distCost_k &:& \text{custo por unidade de distancia}
+\end{aligned}
+$$
+
+No payload atual do PyVRP tambem existe um custo por duracao:
+
+$$
+durCost = 1.
+$$
+
+### 4.5 Parametros de optionalidade
+
+Cada ordem possui uma penalidade de nao atendimento:
+
+$$
+penalty_i.
+$$
+
+No modelo computacional atual, o cliente opcional recebe um premio dominante de atendimento:
+
+$$
+bonus \gg 0,
+$$
+
+e o custo equivalente de nao atendimento pode ser lido como:
+
+$$
+missCost_i = bonus + penalty_i.
+$$
+
+### 4.6 Elegibilidade
+
+Para cada ordem $i$ e viatura $k$:
+
+$$
+eligible_{ik} =
+\begin{cases}
+1, & \text{se } k \text{ pode atender } i \\
+0, & \text{caso contrario}
 \end{cases}
 $$
 
@@ -294,177 +208,176 @@ Essa elegibilidade agrega:
 - compatibilidade de servico;
 - compatibilidade de setor;
 - compatibilidade de ponto;
-- aderencia da ordem ao subproblema operacional.
+- aderencia da ordem ao subproblema da classe operacional.
 
-### 6.7 Variaveis de decisao
+## 5. Como a ordem entra no solver
 
-Para cada classe operacional $c$:
+O backend usa a mesma ordem de dimensoes de capacidade em toda a instancia:
 
 $$
-\begin{aligned}
-x_{ijk} &=
+(volume,\ financeiro).
+$$
+
+Para uma ordem $i$:
+
+- em suprimento, a demanda entra como `delivery`;
+- em recolhimento, a demanda entra como `pickup`.
+
+De forma resumida:
+
+$$
+\text{se } c = sup:
+\quad
+delivery_i = (dem_i^{vol}, dem_i^{cash}),
+\quad
+pickup_i = (0,0)
+$$
+
+$$
+\text{se } c = rec:
+\quad
+pickup_i = (dem_i^{vol}, dem_i^{cash}),
+\quad
+delivery_i = (0,0)
+$$
+
+## 6. Variaveis de decisao
+
+Para cada classe $c$, consideramos:
+
+$$
+x_{ijk} =
 \begin{cases}
-1, & \text{se a viatura } k \text{ percorre o arco } (i,j), \\
-0, & \text{caso contrario;}
-\end{cases} \\
-\\
-y_{ik} &=
+1, & \text{se a viatura } k \text{ percorre o arco } (i,j) \\
+0, & \text{caso contrario}
+\end{cases}
+$$
+
+$$
+serve_{ik} =
 \begin{cases}
-1, & \text{se a ordem } i \text{ e atendida pela viatura } k, \\
-0, & \text{caso contrario;}
-\end{cases} \\
-\\
-z_i &=
+1, & \text{se a ordem } i \text{ e atendida pela viatura } k \\
+0, & \text{caso contrario}
+\end{cases}
+$$
+
+$$
+miss_i =
 \begin{cases}
-1, & \text{se a ordem } i \text{ nao e atendida}, \\
-0, & \text{caso contrario;}
-\end{cases} \\
-\\
-u_k &=
+1, & \text{se a ordem } i \text{ nao e atendida} \\
+0, & \text{caso contrario}
+\end{cases}
+$$
+
+$$
+use_k =
 \begin{cases}
-1, & \text{se a viatura } k \text{ e ativada}, \\
-0, & \text{caso contrario;}
-\end{cases} \\
-\\
-T_i &\ge 0 : \text{instante de inicio de servico no no } i.
-\end{aligned}
+1, & \text{se a viatura } k \text{ e usada no subproblema} \\
+0, & \text{caso contrario}
+\end{cases}
 $$
 
-Observacao importante: o campo `penalidade_atraso` existe no dominio, mas a implementacao atual **nao introduz explicitamente** uma variavel de atraso monetizada do tipo $w_i$ na funcao objetivo do solver.
-
-## 7. Funcao objetivo implementada hoje
-
-### 7.1 Forma conceitual
-
-A leitura mais fiel da formulacao computacional atual e:
-
 $$
-\max
-\left[
-\sum_{i \in \mathcal{N}^c} \Pi_i \sum_{k \in \mathcal{K}^c} y_{ik}
--
-\sum_{k \in \mathcal{K}^c} f_k u_k
--
-\sum_{k \in \mathcal{K}^c} \gamma_k D_k
--
-\eta \sum_{k \in \mathcal{K}^c} H_k
-\right],
+start_i \ge 0
+\qquad
+\text{instante de inicio de servico da ordem } i.
 $$
 
-onde:
+## 7. Funcao objetivo
 
-- $D_k$ e a distancia total da rota da viatura $k$;
-- $H_k$ e a duracao total da rota da viatura $k$;
-- $\Pi_i = M + \pi_i$ e o premio de atendimento.
-
-### 7.2 Forma equivalente em minimizacao
-
-Como
-
-$$
-z_i = 1 - \sum_{k \in \mathcal{K}^c} y_{ik},
-$$
-
-uma forma equivalente, a menos de constante aditiva, e:
+Para leitura humana, a formulacao mais intuitiva e em minimizacao:
 
 $$
 \min
 \left[
-\sum_{k \in \mathcal{K}^c} f_k u_k
+\sum_{k \in K^c} fixed_k \, use_k
 +
-\sum_{k \in \mathcal{K}^c} \gamma_k D_k
+\sum_{k \in K^c} \sum_{(i,j) \in A^c} distCost_k \, dist_{ij} \, x_{ijk}
 +
-\eta \sum_{k \in \mathcal{K}^c} H_k
+durCost \sum_{k \in K^c} \sum_{(i,j) \in A^c} time_{ij} \, x_{ijk}
 +
-\sum_{i \in \mathcal{N}^c} \Pi_i z_i
-\right].
+\sum_{i \in N^c} missCost_i \, miss_i
+\right]
 $$
 
-### 7.3 Interpretacao academica
+Leitura pratica:
 
-Essa formulacao nao e uma simples minimizacao de custo. Ela implementa um **surrogate lexicografico**:
+1. evitar nao atendimento;
+2. depois reduzir custo de frota;
+3. depois reduzir custo de deslocamento e duracao.
 
-1. primeiro, maximizar o atendimento;
-2. depois, entre solucoes com atendimento semelhante, reduzir custo de frota e deslocamento.
+### 7.1 Relacao com a implementacao do PyVRP
 
-Isso decorre do fato de que $M$ foi definido com magnitude muito superior aos demais termos de custo.
-
-### 7.4 O que nao entra explicitamente na funcao objetivo atual
-
-O modelo atual **nao monetiza explicitamente**:
+O payload atual do PyVRP usa clientes opcionais com:
 
 $$
-\rho_i w_i,
+prize_i = bonus + penalty_i
 $$
 
-isto e, nao existe hoje um termo parametrizado por ordem para atraso no payload do solver. O atraso aparece:
+e `required = False`.
 
-- como violacao operacional observada no pos-processamento;
-- como `time_warp` no retorno do solver;
-- como alerta e auditoria no resultado consolidado.
-
-Portanto, do ponto de vista cientifico, o problema implementado hoje e mais precisamente um:
+Ou seja, o solver trabalha na pratica com uma forma equivalente de:
 
 $$
-\text{Prize-Collecting VRPTW com custo fixo, custo por distancia e custo por duracao},
+\text{maximizar premio de atendimento} - \text{custos}
 $$
 
-e nao um VRPTW com penalizacao monetaria fina de atraso por cliente.
+mas a leitura acima em minimizacao e mais simples para entender o problema.
 
-## 8. Restricoes
+## 8. Restricoes principais
 
-### 8.1 Atendimento unico ou descarte
+### 8.1 Atendimento unico ou nao atendimento
 
-Cada ordem deve ser ou atendida exatamente uma vez, ou descartada:
+Cada ordem ou e atendida por uma unica viatura, ou fica fora da solucao:
 
 $$
-\sum_{k \in \mathcal{K}^c} y_{ik} + z_i = 1,
-\qquad \forall i \in \mathcal{N}^c.
+\sum_{k \in K^c} serve_{ik} + miss_i = 1,
+\qquad \forall i \in N^c
 $$
 
 ### 8.2 Conservacao de fluxo
 
-Se uma ordem e atendida pela viatura $k$, entao existe exatamente um arco de entrada e um de saida:
+Se a ordem $i$ foi servida pela viatura $k$, entao ela tem exatamente um arco de entrada e um de saida naquela rota:
 
 $$
-\sum_{j : (j,i) \in \mathcal{A}^c} x_{jik} = y_{ik},
-\qquad \forall i \in \mathcal{N}^c,\ \forall k \in \mathcal{K}^c,
-$$
-
-$$
-\sum_{j : (i,j) \in \mathcal{A}^c} x_{ijk} = y_{ik},
-\qquad \forall i \in \mathcal{N}^c,\ \forall k \in \mathcal{K}^c.
-$$
-
-### 8.3 Saida e retorno ao deposito
-
-Cada viatura ativada inicia e termina na propria base:
-
-$$
-\sum_{j : (b(k),j) \in \mathcal{A}^c} x_{b(k)jk} = u_k,
-\qquad \forall k \in \mathcal{K}^c,
+\sum_{j : (j,i) \in A^c} x_{jik} = serve_{ik},
+\qquad \forall i \in N^c,\ \forall k \in K^c
 $$
 
 $$
-\sum_{j : (j,b(k)) \in \mathcal{A}^c} x_{jb(k)k} = u_k,
-\qquad \forall k \in \mathcal{K}^c.
+\sum_{j : (i,j) \in A^c} x_{ijk} = serve_{ik},
+\qquad \forall i \in N^c,\ \forall k \in K^c
 $$
 
-Na implementacao atual, cada copia de viatura no subproblema possui:
+### 8.3 Saida e retorno na base da viatura
+
+Cada viatura usada sai da sua propria base e retorna para ela:
 
 $$
-\texttt{num\_available} = 1,
+\sum_{j : (base(k),j) \in A^c} x_{base(k)jk} = use_k,
+\qquad \forall k \in K^c
 $$
 
-o que implica uma unica rota por viatura **dentro de cada subproblema**.
+$$
+\sum_{j : (j,base(k)) \in A^c} x_{j\,base(k)\,k} = use_k,
+\qquad \forall k \in K^c
+$$
 
-### 8.4 Elegibilidade veiculo-ordem
-
-Uma ordem so pode ser atribuida a um veiculo elegivel:
+No payload atual, cada tipo de veiculo entra com:
 
 $$
-y_{ik} \le e_{ik},
-\qquad \forall i \in \mathcal{N}^c,\ \forall k \in \mathcal{K}^c.
+num\_available = 1,
+$$
+
+o que significa uma rota por copia de viatura dentro de cada subproblema.
+
+### 8.4 Elegibilidade entre viatura e ordem
+
+Uma ordem so pode ser atribuida a uma viatura elegivel:
+
+$$
+serve_{ik} \le eligible_{ik},
+\qquad \forall i \in N^c,\ \forall k \in K^c
 $$
 
 ### 8.5 Janelas de tempo
@@ -472,105 +385,71 @@ $$
 A propagacao temporal ao longo dos arcos segue a forma padrao:
 
 $$
-T_j \ge T_i + s_i + \tau_{ij} - \mathcal{M}(1 - x_{ijk}),
-\qquad \forall (i,j) \in \mathcal{A}^c,\ \forall k \in \mathcal{K}^c.
+start_j \ge start_i + service_i + time_{ij} - M (1 - x_{ijk}),
+\qquad \forall (i,j) \in A^c,\ \forall k \in K^c
 $$
 
-Para cada cliente, a meta de atendimento temporal e:
+Cada ordem deve respeitar sua janela:
 
 $$
-a_i \le T_i \le b_i.
+open_i \le start_i \le close_i,
+\qquad \forall i \in N^c
 $$
 
-Para cada viatura:
+E cada viatura deve respeitar sua propria janela de operacao:
 
 $$
-\alpha_k \le T_{\text{inicio}(k)}
+vehOpen_k \le \text{inicio da rota de } k
 \qquad \text{e} \qquad
-T_{\text{fim}(k)} \le \beta_k.
+\text{fim da rota de } k \le vehClose_k
 $$
 
-### 8.6 Observacao importante sobre janelas no solver
+### 8.6 Capacidade em duas dimensoes
 
-O solver recebe explicitamente os limites:
-
-$$
-[\alpha_k, \beta_k] \quad \text{e} \quad [a_i, b_i].
-$$
-
-Entretanto, o repositorio nao envia uma penalizacao monetaria do tipo $\rho_i w_i$ por cliente. Em termos computacionais:
-
-- a viabilidade temporal e tratada pelo solver;
-- a quantidade de `time_warp` e exposta no resultado;
-- o valor `penalidade_atraso` do dominio ainda nao e parametrizado no payload do PyVRP.
-
-### 8.7 Capacidade em duas dimensoes
-
-Como o repositorio separa suprimento e recolhimento em subproblemas distintos, a capacidade pode ser lida de modo mais simples e fiel do que num problema pickup-and-delivery misto.
-
-#### a) Suprimento
-
-Em $P^{\text{sup}}$, toda demanda e do tipo entrega. Logo, para cada rota $R_k$:
+Para qualquer rota da viatura $k$:
 
 $$
-\sum_{i \in R_k} q_i^V \le Q_k^V,
+\sum_{i \in rota(k)} dem_i^{vol} \le cap_k^{vol}
 $$
 
 $$
-\sum_{i \in R_k} q_i^F \le \widetilde{Q}_k^{F,\text{sup}} = Q_k^F.
+\sum_{i \in rota(k)} dem_i^{cash} \le cashCap_k^c
 $$
 
-#### b) Recolhimento
+Essa segunda restricao e a traducao direta do teto segurado no caso de recolhimento.
 
-Em $P^{\text{rec}}$, toda demanda e do tipo coleta. Logo, para cada rota $R_k$:
+### 8.7 Separacao entre suprimento e recolhimento
 
-$$
-\sum_{i \in R_k} q_i^V \le Q_k^V,
-$$
+Como $P^{sup}$ e $P^{rec}$ sao resolvidos separadamente:
 
 $$
-\sum_{i \in R_k} q_i^F \le \widetilde{Q}_k^{F,\text{rec}} = \min(Q_k^F, I_k).
+rota(k) \subseteq N^c
 $$
 
-Essa segunda restricao e a traducao direta do teto segurado no modelo atual.
+para uma unica classe $c$.
 
-### 8.8 Separacao estrita entre classes operacionais
+Nao existe mistura de suprimento e recolhimento dentro da mesma rota no modelo atual.
 
-O sistema resolve:
+## 9. O que fica fora do solver
 
-$$
-P^{\text{sup}} \quad \text{e} \quad P^{\text{rec}}
-$$
+Nem toda regra de negocio entra como restricao interna do modelo. Parte da logica e tratada antes ou depois da otimizacao.
 
-de forma independente. Assim, uma rota em um subproblema pertence integralmente a uma unica classe:
+Ficam fora do solver:
 
-$$
-R_k^c \subseteq \mathcal{N}^c.
-$$
-
-Nao ha mistura de clientes de suprimento e recolhimento numa mesma rota.
-
-## 9. Regras fora do solver
-
-Nem toda regra do sistema e implementada como restricao interna do modelo matematico. Parte da logica e tratada:
-
-- antes da otimizacao, na validacao e classificacao;
-- durante a construcao da instancia;
-- depois da otimizacao, na auditoria e no reporting.
-
-Em particular, ficam fora do solver:
-
-- ordens canceladas antes do cutoff;
-- ordens excluidas por contrato ou validacao;
+- ordens invalidas na validacao;
+- ordens canceladas antes do `cutoff`;
+- consolidacao de auditoria;
+- calculo de KPIs e relatorios;
 - materializacao de snapshot logistico;
-- consolidacao gerencial;
-- interpretacao de SLA e explicabilidade operacional.
+- idempotencia por `hash_cenario`.
 
-Isso e uma decisao de engenharia importante: o sistema foi construído como **pipeline de decisao**, e nao como um unico modelo monolitico.
+Tambem e importante notar:
 
-## 10. Correspondencia com a implementacao do repositorio
+- `penalidade_atraso` existe no dominio;
+- mas hoje ela nao entra explicitamente como custo de atraso no payload do PyVRP;
+- o atraso aparece depois como `time_warp`, alerta operacional e auditoria.
 
-O fluxo computacional pode ser resumido assim:
+## 10. Relacao com o codigo
 
 ```mermaid
 flowchart TD
@@ -578,124 +457,49 @@ flowchart TD
     B --> C[OptimizationInstanceBuilder]
     C --> D[InstanciaRoteirizacaoBase]
     D --> E[PyVRPAdapter]
-    E --> F[Modelagem computacional no PyVRP]
+    E --> F[PyVRP]
     F --> G[RoutePostProcessor]
-    G --> H[Auditoria e relatorios]
+    G --> H[PlanningAuditTrailBuilder]
+    H --> I[PlanningReportingBuilder]
 ```
 
-### 10.1 Correspondencias principais
+Correspondencia principal:
 
-- `PreparationPipeline`:
-  valida entradas, remove ordens invalidadas e organiza a massa de dados do dia;
+- `PreparationPipeline`: decide o que entra ou nao entra no solver;
+- `OptimizationInstanceBuilder`: monta nos, veiculos, capacidades, penalidades e elegibilidade;
+- `PyVRPAdapter`: traduz a instancia para clientes opcionais, custos, janelas e capacidades do PyVRP;
+- `RoutePostProcessor`: reconstrui rotas, horarios, espera, atraso e ordens nao atendidas;
+- `PlanningAuditTrailBuilder` e `PlanningReportingBuilder`: explicam e consolidam o resultado.
 
-- `OptimizationInstanceBuilder`:
-  constroi os subproblemas $P^{\text{sup}}$ e $P^{\text{rec}}$, define nos, veiculos, elegibilidade, penalidades e matriz logistica;
+## 11. Limites atuais da modelagem
 
-- `PyVRPAdapter`:
-  traduz a instancia solver-agnostic para o payload do PyVRP, usando:
-  - clientes opcionais (`required = False`);
-  - premio por atendimento (`prize = M + \pi_i`);
-  - capacidade multidimensional;
-  - custo fixo, custo por distancia e custo por duracao;
+Hoje o modelo ainda tem limites claros:
 
-- `RoutePostProcessor`:
-  reconstrui horarios, esperas, atrasos (`time_warp`), carga acumulada e ordens nao atendidas;
-
-- `PlanningReportingBuilder`:
-  consolida os indicadores operacionais e gerenciais.
-
-## 11. Limites cientificos da modelagem atual
-
-Embora o modelo seja tecnicamente coerente com o MVP, ele ainda possui limites claros do ponto de vista de Pesquisa Operacional:
-
-1. a mesma viatura fisica pode ser reutilizada em subproblemas distintos no mesmo dia;
-2. a penalizacao de atraso por cliente nao entra explicitamente na funcao objetivo;
-3. o modelo trabalha com uma viagem por viatura por subproblema;
+1. a mesma viatura fisica pode aparecer em `P^{sup}` e `P^{rec}`;
+2. nao existe custo explicito de atraso por cliente na funcao objetivo;
+3. cada copia de viatura faz no maximo uma rota por subproblema;
 4. nao ha reotimizacao dinamica;
-5. nao ha incerteza estocastica de tempo de viagem;
-6. nao ha mistura de suprimento e recolhimento numa mesma rota.
+5. os tempos de deslocamento sao tratados como deterministicos;
+6. suprimento e recolhimento nao se misturam na mesma rota.
 
-Esses pontos definem uma agenda natural de evolucao para investigacao academica e engenharia futura.
+## 12. Conclusao
 
-## 12. Extensoes naturais
-
-Do ponto de vista cientifico, as extensoes mais naturais sao:
-
-### 12.1 Acoplamento global da frota
-
-Introduzir restricoes do tipo:
+O que o backend resolve hoje pode ser resumido assim:
 
 $$
-u_k^{\text{sup}} + u_k^{\text{rec}} \le 1,
-\qquad \forall k,
+\text{um Rich Prize-Collecting VRPTW com dupla capacidade,}
 $$
 
-para evitar reuso simultaneo da mesma viatura fisica.
-
-### 12.2 Penalizacao explicita de atraso
-
-Introduzir variaveis de atraso:
-
 $$
-w_i \ge 0,
+\text{resolvido separadamente para suprimento e recolhimento.}
 $$
 
-e um termo objetivo:
+Essa leitura bate com o comportamento do codigo:
 
-$$
-\sum_{i \in \mathcal{N}^c} \rho_i w_i.
-$$
-
-### 12.3 Multiplas viagens por viatura
-
-Substituir a restricao de disponibilidade simples por formulacoes com:
-
-- multiplos circuitos por turno;
-- retorno e recarga na base;
-- possivel re-sequenciamento intradia.
-
-### 12.4 Tempo de viagem incerto
-
-Modelos robustos ou estocasticos poderiam substituir:
-
-$$
-\tau_{ij}
-$$
-
-por distribuicoes ou intervalos de confiabilidade.
-
-## 13. Conclusao
-
-O problema implementado neste repositorio nao e um VRP elementar. A formulacao atual corresponde, de modo mais fiel, a um:
-
-$$
-\text{Prize-Collecting Rich VRPTW multi-capacitado, decomposto por classe operacional}.
-$$
-
-Sua principal caracteristica economica hoje e:
-
-$$
-\text{maximizar atendimento primeiro e reduzir custo depois},
-$$
-
-e nao simplesmente minimizar custo puro.
-
-As caracteristicas mais distintivas do dominio sao:
-
-- dupla capacidade;
-- teto segurado em recolhimento;
+- optionalidade de ordens;
+- custo alto de nao atendimento;
 - janelas de tempo;
-- elegibilidade veiculo-ordem;
-- optionalidade de clientes;
-- separacao entre suprimento e recolhimento.
-
-Essa leitura justifica a arquitetura do sistema:
-
-- preparacao;
-- construcao solver-agnostic;
-- adaptacao ao solver;
-- pos-processamento;
-- auditoria;
-- reporting.
-
-Portanto, a modelagem matematica e a engenharia de software do repositorio estao alinhadas com uma visao moderna de sistemas de apoio a decisao em logistica: o solver e central, mas nao esgota o problema.
+- capacidade volumetrica e financeira;
+- teto segurado em recolhimento;
+- elegibilidade entre viatura e ordem;
+- pos-processamento, auditoria e relatorio fora do solver.
