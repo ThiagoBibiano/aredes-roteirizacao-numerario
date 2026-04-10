@@ -1,95 +1,130 @@
 # 2. Elementos da Rede Grafica
 
-## Do mundo real para o grafo
+## Do mapa da cidade para o grafo matematico
 
-Em Analise de Redes de Transporte, uma operacao logistica pode ser representada por um grafo.
+Depois de entender o contexto operacional, o proximo passo e traduzir o problema para a linguagem de redes.
 
-Essa traducao e poderosa porque transforma um problema operacional em um objeto matematico que pode ser analisado e otimizado.
+No mundo real, enxergamos:
 
-## Nos
+- uma base;
+- agencias e clientes;
+- ruas, tempos de viagem e distancias.
 
-No contexto desta aplicacao, os nos representam pontos relevantes da rede:
+Na modelagem, isso vira um grafo.
 
-- base operacional: inicio e fim das rotas;
-- agencias ou clientes: locais onde existe demanda de atendimento;
-- eventualmente, outros pontos logisticos de apoio.
+> Esta e a grande ponte entre o problema logistico e a analise quantitativa.
 
-Cada no pode carregar atributos importantes, como:
+![Mapa simplificado da cidade com base e pontos atendidos](../../caminho/para/imagens/mapa-operacional.jpg)
 
-- coordenadas geograficas;
+## O que sao os nos?
+
+Os nos representam os pontos relevantes da rede.
+
+No caso da transportadora de valores, os principais nos sao:
+
+- **base operacional**: inicio e fim das rotas;
+- **clientes ou agencias**: locais onde existe demanda;
+- **pontos especiais**: quando existirem, locais com funcao logistica adicional.
+
+Cada no pode carregar atributos como:
+
+- coordenadas;
 - janela de atendimento;
 - tempo de servico;
 - tipo de demanda.
 
-## Arestas
+## O que sao as arestas?
 
-As arestas representam as ligacoes possiveis entre os nos da rede.
+As arestas representam as ligacoes entre os nos.
 
-Cada aresta tem pelo menos dois pesos importantes:
+Cada aresta responde, no minimo, a duas perguntas:
+
+1. qual a distancia entre os pontos?
+2. quanto tempo a viagem consome?
+
+Em alguns casos, a aresta tambem pode refletir:
+
+- custo monetario;
+- indisponibilidade;
+- atrasos esperados;
+- restricoes de percurso.
+
+## Por que a matriz de tempos e distancias e tao importante?
+
+O solver precisa comparar sequencias possiveis de atendimento.
+
+Para isso, ele usa uma matriz que informa, para cada par de nos:
 
 - distancia;
 - tempo de deslocamento.
 
-Em uma formulacao mais completa, a aresta tambem pode carregar:
+Sem essa matriz, nao conseguimos avaliar se uma rota:
 
-- custo monetario;
-- restricao de trafego;
-- indisponibilidade de percurso.
-
-## Interpretacao da matriz de distancias e tempos
-
-Na pratica, o solver nao trabalha apenas com "ruas desenhadas no mapa". Ele trabalha com uma matriz que informa, para cada par de nos:
-
-- quantos quilometros separam os pontos;
-- quanto tempo a viagem consome.
-
-Isso permite comparar diferentes sequencias de atendimento e verificar se a rota ainda respeita o turno da viatura e a janela dos clientes.
+- cabe dentro do turno da viatura;
+- atende os clientes dentro da janela;
+- continua economicamente razoavel.
 
 ## Exemplo de subgrafo simplificado
 
-No diagrama abaixo:
+No exemplo abaixo:
 
 - `B0` e a base;
-- `C1`, `C2` e `C3` sao clientes;
-- cada aresta mostra um peso simplificado de tempo e distancia.
+- `A1`, `A2` e `A3` representam clientes ou agencias;
+- os pesos nas arestas mostram tempo e distancia.
 
 ```mermaid
 graph LR
     B0[Base B0]
-    C1[Cliente C1]
-    C2[Cliente C2]
-    C3[Cliente C3]
+    A1[Agencia A1]
+    A2[Cliente A2]
+    A3[Agencia A3]
 
-    B0 -- "10 min / 6 km" --> C1
-    B0 -- "18 min / 11 km" --> C2
-    B0 -- "14 min / 9 km" --> C3
-    C1 -- "7 min / 4 km" --> C2
-    C2 -- "6 min / 3 km" --> C1
-    C1 -- "8 min / 5 km" --> C3
-    C3 -- "9 min / 5 km" --> C1
-    C2 -- "5 min / 3 km" --> C3
-    C3 -- "5 min / 3 km" --> C2
-    C1 -- "10 min / 6 km" --> B0
-    C2 -- "18 min / 11 km" --> B0
-    C3 -- "14 min / 9 km" --> B0
+    B0 -- "12 min | 7 km" --> A1
+    B0 -- "18 min | 11 km" --> A2
+    B0 -- "15 min | 9 km" --> A3
+    A1 -- "6 min | 3 km" --> A2
+    A2 -- "5 min | 3 km" --> A3
+    A3 -- "8 min | 4 km" --> A1
+    A1 -- "12 min | 7 km" --> B0
+    A2 -- "18 min | 11 km" --> B0
+    A3 -- "15 min | 9 km" --> B0
 ```
 
-## Leitura do grafo para fins de otimização
+## Lendo a rede como um problema de transporte
 
-Uma rota e, em essencia, um caminho orientado no grafo:
+Uma rota pode ser vista como um caminho orientado:
 
 $$
-\text{Base} \rightarrow \text{Cliente 1} \rightarrow \text{Cliente 2} \rightarrow \text{Base}
+\text{Base} \rightarrow \text{Agencia 1} \rightarrow \text{Cliente 2} \rightarrow \text{Base}
 $$
 
-Mas o objetivo nao e apenas encontrar um caminho qualquer. O objetivo e encontrar um conjunto de caminhos que:
+Mas o objetivo nao e apenas construir um caminho.
 
-- cubra as demandas relevantes;
-- respeite as restricoes;
-- minimize o custo total da operacao.
+O que buscamos e um conjunto de caminhos que:
 
-![Subgrafo da rede de atendimento](../../caminho/para/imagem.png)
+- cubra os nos relevantes;
+- respeite as restricoes logisticas;
+- minimize o custo operacional.
 
-> 🎥 *[Inserir GIF mostrando a rede e a selecao de uma rota sobre o grafo aqui]*
+## Mapa real versus grafo abstrato
+
+Didaticamente, e interessante mostrar lado a lado:
+
+- o mapa real da operacao;
+- o grafo abstrato que alimenta o modelo.
+
+![Mapa real do atendimento no territorio](../../caminho/para/imagens/mapa-real-atendimento.png)
+
+![Esquema visual dos mesmos pontos convertidos em grafo](../../caminho/para/imagens/grafo-esquematico.png)
+
+> 🎥 *[Inserir GIF mostrando a transicao do mapa real para o grafo aqui]*
+
+## Pergunta de transicao
+
+Se a rede ja foi desenhada, ainda falta responder:
+
+> O que faz uma rota ser considerada boa, ruim, viavel ou inviavel?
+
+Essa pergunta leva diretamente a modelagem e a funcao objetivo.
 
 [⬅️ Anterior](./01-introducao-e-contexto.md) | [Próxima ➡️](./03-modelagem-e-funcao-objetivo.md)

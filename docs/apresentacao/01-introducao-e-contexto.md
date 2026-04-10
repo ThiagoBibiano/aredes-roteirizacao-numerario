@@ -1,75 +1,107 @@
 # 1. Introducao e Contexto
 
-## Logistica de uma transportadora de valores
+## A cena inicial: o problema comeca antes da primeira rota
 
-A operacao de transporte de numerario envolve o deslocamento planejado de viaturas entre uma base operacional e um conjunto de pontos de atendimento, como agencias bancarias, clientes corporativos, terminais e outros locais com demanda financeira.
+Imagine o inicio do dia operacional.
 
-Diferentemente de uma distribuicao urbana simples, aqui o roteamento precisa considerar simultaneamente:
+Uma viatura blindada sai da base com um plano que precisa funcionar no mundo real: horarios apertados, clientes espalhados pela cidade, risco financeiro acumulado e custo elevado de qualquer decisao ruim.
 
-- risco financeiro acumulado ao longo da rota;
-- janelas de tempo estritas de atendimento;
-- frota com capacidades diferentes;
-- restricoes de compatibilidade entre viatura e servico;
-- necessidade de sair e retornar a uma base.
+> Uma rota ruim nao significa apenas mais quilometros. Pode significar atraso em agencia, excesso de carga, uso ineficiente da frota e aumento de risco operacional.
 
-Em termos práticos, o problema nao e apenas "qual o menor caminho entre A e B". O desafio real e decidir:
+![Viatura blindada saindo da base](../../caminho/para/imagens/viatura-blindada.jpg)
 
-1. quais pontos entram em cada rota;
-2. qual viatura deve atender cada conjunto de pontos;
-3. em que sequencia o atendimento ocorre;
-4. se a rota continua viavel em tempo, custo e seguranca.
+![Itens que podem compor a carga: malotes, caixas, envelopes e numerario](../../caminho/para/imagens/carga-transportada.jpg)
 
-## Por que esse problema e complexo?
+## O que uma transportadora de valores realmente movimenta?
 
-Uma transportadora de valores normalmente opera com dois grandes tipos de servico:
+Quando pensamos em transporte de numerario, nao estamos falando apenas de dinheiro em especie. A operacao pode envolver:
 
-- suprimento: levar numerario ate o ponto;
-- recolhimento: retirar valores do ponto e trazelos de volta.
+- numerario para suprimento de agencias e caixas;
+- recolhimento de valores de clientes e pontos atendidos;
+- malotes e envelopes lacrados;
+- documentos operacionais vinculados ao atendimento;
+- cargas com restricoes de volume, seguranca e tempo.
 
-Isso gera uma complexidade adicional, porque o estado da carga muda ao longo da rota. Em especial no recolhimento, o valor embarcado cresce a cada visita, o que aproxima a rota de um limite segurado.
+Isso faz com que a viatura seja, ao mesmo tempo:
 
-Outros fatores importantes:
+- um veiculo de transporte;
+- um recurso operacional escasso;
+- um elemento central de uma rede de servicos.
 
-- uma agencia pode aceitar atendimento apenas em um intervalo curto;
-- uma viatura tem turno limitado;
-- duas viaturas podem ter custos e capacidades bem diferentes;
-- um conjunto de ordens pode ser inviavel para uma unica rota, exigindo divisao entre veiculos.
+## Por que esse problema e mais dificil do que parece?
 
-## Relacao com o Vehicle Routing Problem
+Em uma aula introdutoria, pode parecer que o objetivo seria apenas ligar pontos no mapa. Mas o problema real e muito mais rico.
 
-Em Pesquisa Operacional, o problema pode ser visto como uma variacao do Vehicle Routing Problem, ou VRP.
+Cada decisao precisa conciliar:
 
-No caso desta aplicacao, o modelo se aproxima de um VRP com:
+- janelas de tempo em agencias, clientes e bases;
+- frota heterogenea, com capacidades diferentes;
+- limite financeiro e limite fisico de carga;
+- custo de ativar mais viaturas;
+- necessidade de sair e retornar a uma base;
+- restricoes de compatibilidade entre servico, ponto e veiculo.
+
+## Dois tipos de operacao, duas leituras logisticas
+
+Na pratica, o problema possui dois grandes fluxos:
+
+- **suprimento**: a carga sai da base e vai sendo entregue;
+- **recolhimento**: a carga vai sendo acumulada ao longo da rota.
+
+Essa diferenca e importante porque altera o comportamento da capacidade da viatura:
+
+- no suprimento, a rota tende a descarregar;
+- no recolhimento, a rota tende a carregar;
+- no recolhimento, o valor embarcado pode aproximar a rota do limite segurado.
+
+```mermaid
+flowchart LR
+    A[Base operacional] --> B[Suprimento]
+    A --> C[Recolhimento]
+    B --> D[Entrega de carga]
+    C --> E[Acumulo de valor na rota]
+    D --> F[Restricoes de tempo e capacidade]
+    E --> F
+```
+
+## A pergunta central da disciplina
+
+Do ponto de vista de Analise de Redes de Transporte, a pergunta nao e:
+
+> Qual e o menor caminho?
+
+A pergunta correta e:
+
+> Como montar rotas viaveis, seguras e economicamente eficientes em uma rede com restricoes?
+
+## Como isso aparece em Pesquisa Operacional?
+
+Esse problema pode ser lido como uma variacao do Vehicle Routing Problem, ou VRP, com varios elementos adicionais:
 
 - janelas de tempo;
 - capacidade em mais de uma dimensao;
 - frota heterogenea;
 - clientes opcionais com alto custo de nao atendimento.
 
-Em outras palavras, a pergunta central e:
+Ou seja, a aplicacao real da transportadora de valores e um excelente estudo de caso porque conecta:
 
-> Como construir rotas viaveis e economicas para uma frota limitada, respeitando restricoes operacionais e logisticas?
+- rede fisica;
+- decisao combinatoria;
+- custo operacional;
+- restricoes logisticas.
 
-## Leitura pela disciplina de Analise de Redes de Transporte
+## O fio da apresentacao
 
-Para a disciplina, esse problema e interessante porque conecta tres ideias centrais:
+Nas proximas paginas, a historia sera a seguinte:
 
-- rede fisica: bases, clientes e vias;
-- decisao combinatoria: qual rota atender e em que ordem;
-- avaliacao operacional: custo, tempo, capacidade e cobertura da demanda.
+1. o mundo real sera traduzido para um grafo;
+2. o grafo sera transformado em um modelo de roteirizacao;
+3. a funcao objetivo mostrara o que significa uma "boa" solucao;
+4. uma heuristica moderna buscara rotas viaveis;
+5. por fim, veremos como interpretar os resultados.
 
-```mermaid
-flowchart LR
-    A[Base operacional] --> B[Decisao de roteamento]
-    C[Clientes e agencias] --> B
-    D[Tempos e distancias] --> B
-    E[Restricoes de capacidade] --> B
-    F[Janelas de atendimento] --> B
-    B --> G[Plano de rotas viavel]
-```
+> 🎥 *[Inserir video curto da viatura em operacao ou saindo da base aqui]*
 
-![Mapa da operacao de numerario](../../caminho/para/imagem.png)
-
-> 🎥 *[Inserir video curto apresentando o contexto operacional da transportadora aqui]*
+> 🎥 *[Inserir video ou GIF curto mostrando itens sendo preparados para embarque aqui]*
 
 [⬅️ Anterior](./01-introducao-e-contexto.md) | [Próxima ➡️](./02-elementos-da-rede-grafica.md)

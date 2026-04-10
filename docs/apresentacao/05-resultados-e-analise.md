@@ -1,93 +1,111 @@
 # 5. Resultados e Analise
 
-## Como a solucao aparece
+## A historia termina no mapa
 
-A saida do modelo e um conjunto de rotas associado a veiculos especificos.
+Depois de toda a modelagem, o que o problema entrega ao final nao e apenas um numero.
 
-Cada rota informa, de forma geral:
+O resultado aparece como um conjunto de rotas:
 
-- qual viatura foi usada;
-- qual base ela utiliza;
-- quais clientes foram atendidos;
-- em que sequencia o atendimento ocorre;
-- qual o horario previsto de cada parada;
-- qual o custo estimado da rota.
+- cada rota associada a uma viatura;
+- cada viatura ligada a uma base;
+- cada atendimento em uma sequencia e em um horario.
 
-## Leitura da solucao na perspectiva de redes
+Em outras palavras, a saida do modelo devolve um plano operacional.
 
-Em termos de rede grafica, a solucao final e um subconjunto orientado das arestas originais.
+## Como a solucao pode ser lida?
 
-Esse subconjunto precisa formar caminhos logisticamente validos:
+Cada rota responde perguntas concretas:
 
-- iniciando na base;
-- visitando os clientes selecionados;
+1. qual viatura foi usada?
+2. quais pontos ela vai atender?
+3. em que ordem?
+4. em que horario?
+5. com qual custo?
+
+## Leitura em linguagem de rede
+
+Na perspectiva de redes, a solucao final e um subconjunto orientado das arestas da rede original.
+
+Esse subconjunto precisa formar caminhos validos:
+
+- saindo da base;
+- visitando os nos escolhidos;
 - retornando ao deposito;
-- respeitando capacidades e janelas.
+- respeitando as restricoes do modelo.
 
 ```mermaid
 flowchart LR
-    B0[Base] --> C1[Cliente 1]
-    C1 --> C3[Cliente 3]
-    C3 --> C2[Cliente 2]
-    C2 --> B0
+    B0[Base] --> A1[Agencia 1]
+    A1 --> C2[Cliente 2]
+    C2 --> A3[Agencia 3]
+    A3 --> B0
 ```
 
-## O que analisar depois da otimizacao
+## O que deve ser analisado depois da otimizacao?
 
-Uma boa analise da solucao nao deve se limitar a olhar "a rota ficou bonita no mapa".
+Uma analise de qualidade nao deve parar na pergunta "a rota ficou curta?".
 
-Algumas perguntas importantes sao:
+Tambem e preciso observar:
 
-1. O numero de veiculos usados foi razoavel?
-2. As rotas respeitaram as janelas de tempo?
-3. Houve ordens nao atendidas?
-4. O custo total caiu em relacao a um planejamento manual?
-5. Alguma rota ficou perto do limite de capacidade ou do limite segurado?
+- a quantidade de viaturas usadas;
+- a aderencia as janelas de tempo;
+- a quantidade de ordens nao atendidas;
+- o custo total da operacao;
+- a proximidade de limites de capacidade e de risco segurado.
 
-## Indicadores de interesse
-
-Em uma apresentacao para a disciplina, vale destacar indicadores como:
+## Indicadores que merecem destaque em sala
 
 - distancia total percorrida;
 - tempo total em operacao;
 - numero de viaturas acionadas;
 - taxa de atendimento;
-- numero de ordens nao atendidas;
-- custo total estimado.
+- ordens nao atendidas;
+- custo total estimado;
+- rotas proximas do limite segurado.
 
-## Espacos para evidencias visuais do projeto
+## Sugestao de bloco visual para a apresentacao
 
-![Mapa real das rotas geradas](../../caminho/para/imagem.png)
+Nesta pagina, o ideal e mostrar a solucao em varias camadas:
 
-![Tabela de rotas e horarios](../../caminho/para/imagem.png)
+1. mapa da rota;
+2. tabela com sequencia e horario;
+3. painel com indicadores;
+4. comparacao antes e depois.
+
+![Mapa real das rotas geradas pelo projeto](../../caminho/para/imagens/mapa-rotas-geradas.png)
+
+![Tabela com veiculo, sequencia de paradas e horarios](../../caminho/para/imagens/tabela-rotas-horarios.png)
+
+![Painel com indicadores de custo, tempo e atendimento](../../caminho/para/imagens/painel-indicadores.png)
+
+![Comparacao visual entre planejamento manual e planejamento otimizado](../../caminho/para/imagens/antes-depois.png)
 
 > 🎥 *[Inserir GIF da evolucao das rotas no mapa aqui]*
 
-> 🎥 *[Inserir video curto com a execucao completa do projeto aqui]*
+> 🎥 *[Inserir video curto com a execucao completa do projeto e a solucao final aqui]*
 
-## Fechamento
+## O ganho logistico da otimizacao
 
-A otimizacao de redes de transporte traz ganhos diretos para a operacao:
+Do ponto de vista operacional, otimizar a rede pode trazer:
 
-- reducao de custos logisticos;
+- reducao de custo logistico;
 - melhor uso da frota;
-- maior aderencia a restricoes reais;
-- apoio quantitativo a tomada de decisao.
+- melhor aderencia a horarios;
+- maior transparencia na tomada de decisao;
+- apoio quantitativo para discutir cenarios.
 
-Para a disciplina de Analise de Redes de Transporte, esse tipo de problema e especialmente rico porque mostra como conceitos de:
+## Fechamento da narrativa
 
-- grafos;
-- custos generalizados;
-- restricoes;
-- formulacao matematica;
-- heuristicas de busca
+O caminho percorrido nesta apresentacao foi:
 
-se conectam em uma aplicacao real de alto impacto operacional.
+1. uma operacao real de transporte de valores;
+2. uma rede com nos e arestas;
+3. um modelo com custos e restricoes;
+4. uma heuristica de busca;
+5. uma solucao interpretavel no mapa.
 
-## Mensagem final
+Essa sequencia resume muito bem a contribuicao da Analise de Redes de Transporte:
 
-Mais do que encontrar caminhos, a roteirizacao busca organizar uma rede de servicos sob restricoes.
-
-Esse e exatamente o ponto em que a Analise de Redes de Transporte encontra a Pesquisa Operacional aplicada.
+> transformar um problema real de mobilidade e servico em uma estrutura analisavel, modelavel e otimizavel.
 
 [⬅️ Anterior](./04-tecnologia-solucao.md) | [Próxima ➡️](./05-resultados-e-analise.md)

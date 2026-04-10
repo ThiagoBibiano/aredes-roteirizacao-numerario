@@ -1,12 +1,35 @@
 # 3. Modelagem e Funcao Objetivo
 
-## Elementos principais da modelagem
+## Quando uma rota e boa?
 
-Para formular o problema de roteirizacao, precisamos descrever quem se move, o que precisa ser atendido e quais limites nao podem ser violados.
+Essa e a pergunta central da modelagem.
 
-## Veiculos
+Uma rota boa nao e necessariamente a rota mais curta. Ela precisa ser:
 
-Cada viatura pode ser vista como um recurso com caracteristicas proprias:
+- viavel no tempo;
+- viavel na capacidade;
+- coerente com a operacao;
+- economicamente eficiente.
+
+## Os tres blocos da modelagem
+
+Para tornar isso didatico, podemos pensar em tres blocos principais:
+
+1. **veiculos**
+2. **demandas**
+3. **tempo**
+
+```mermaid
+flowchart TD
+    A[Veiculos] --> D[Modelo]
+    B[Demandas] --> D
+    C[Janelas de tempo] --> D
+    D --> E[Rotas viaveis]
+```
+
+## 1. Veiculos
+
+Cada viatura entra no problema com caracteristicas proprias:
 
 - capacidade financeira;
 - capacidade fisica ou volumetrica;
@@ -14,48 +37,65 @@ Cada viatura pode ser vista como um recurso com caracteristicas proprias:
 - custo variavel de deslocamento;
 - janela de operacao.
 
-Isso significa que duas viaturas podem gerar solucoes diferentes mesmo atendendo os mesmos pontos.
+Isso significa que duas viaturas diferentes podem gerar solucoes muito diferentes para o mesmo conjunto de clientes.
 
-## Demandas
+![Viatura com indicacoes visuais de capacidade, custo e turno](../../caminho/para/imagens/viatura-capacidades.jpg)
 
-Cada ponto de atendimento pode gerar uma ordem com:
+## 2. Demandas
+
+Cada cliente ou agencia pode gerar uma ordem com:
 
 - valor financeiro;
 - volume estimado;
 - tempo de servico;
 - janela de atendimento;
-- tipo de operacao: suprimento ou recolhimento.
+- tipo de operacao.
 
-Do ponto de vista logistico:
+No problema estudado aqui:
 
-- no suprimento, a viatura sai carregada e vai entregando;
-- no recolhimento, a viatura vai acumulando valor ao longo da rota.
+- no **suprimento**, a carga e levada da base para o cliente;
+- no **recolhimento**, a carga e acumulada ao longo da rota.
 
-## Janelas de tempo
+Isso muda a leitura logistica da capacidade e, principalmente, do limite segurado.
 
-As janelas de tempo sao restricoes fundamentais.
+![Exemplo visual de itens transportados e demanda por atendimento](../../caminho/para/imagens/demanda-operacional.jpg)
 
-Se um cliente aceita atendimento apenas entre 9h e 11h, nao basta que ele esteja "na rota". O horario planejado precisa cair dentro desse intervalo.
+## 3. Janelas de tempo
 
-Assim, uma boa rota nao depende apenas da menor distancia, mas do encaixe temporal entre:
+Uma rota pode ser curta e ainda assim ser ruim.
+
+Por exemplo:
+
+- a agencia aceita atendimento so entre 9h e 10h;
+- a viatura chega 10h20;
+- a rota falhou operacionalmente, mesmo que a distancia total seja pequena.
+
+Por isso, o encaixe temporal e central na modelagem:
 
 - tempo de deslocamento;
 - tempo de servico;
-- horario permitido para cada cliente;
+- horario permitido em cada no;
 - turno total da viatura.
 
-## Ideia central da funcao objetivo
+## Intuicao da funcao objetivo
 
-Em linguagem simples, queremos minimizar o custo total da operacao.
+A funcao objetivo tenta equilibrar cobertura e eficiencia.
 
-Esse custo pode ser pensado como a soma de:
+Em forma simplificada, queremos minimizar:
 
-- custo de deslocamento;
-- custo do tempo de frota em operacao;
-- custo de ativar mais veiculos;
-- custo de nao atender ordens importantes.
+$$
+\text{custo total}
+=
+\text{custo de viaturas}
++
+\text{custo de deslocamento}
++
+\text{custo de tempo}
++
+\text{penalidade por nao atendimento}
+$$
 
-Uma versao didatica da funcao objetivo e:
+Uma escrita didatica e:
 
 $$
 \min Z =
@@ -68,87 +108,60 @@ $$
 \sum_{i \in N} P_i u_i
 $$
 
-## Significado de cada termo
+## Lendo a equacao passo a passo
 
-### 1. Custo fixo dos veiculos
+### Custo de ativar veiculos
 
 $$
 \sum_{k \in K} F_k y_k
 $$
 
-- $F_k$ representa o custo fixo de usar a viatura $k$;
-- $y_k$ vale 1 se a viatura for usada e 0 caso contrario.
+Esse termo indica que usar mais viaturas tende a encarecer a operacao.
 
-Interpretacao:
-
-- quanto mais veiculos forem acionados, maior tende a ser o custo operacional.
-
-### 2. Custo de deslocamento
+### Custo de percorrer a rede
 
 $$
 \sum_{k \in K}\sum_{(i,j)\in A} C_{ij}^k x_{ij}^k
 $$
 
-- $C_{ij}^k$ representa o custo de a viatura $k$ percorrer o arco $(i,j)$;
-- $x_{ij}^k$ vale 1 se esse arco for usado na rota da viatura $k$.
+Esse termo representa o custo de deslocamento nos arcos da rede.
 
-Interpretacao:
-
-- rotas mais longas ou mais caras pesam mais na solucao.
-
-### 3. Custo associado ao tempo
+### Custo do tempo em operacao
 
 $$
 \sum_{k \in K}\sum_{(i,j)\in A} T_{ij} x_{ij}^k
 $$
 
-- $T_{ij}$ representa o tempo de deslocamento entre os nos $i$ e $j$.
+Esse termo reforca que tempo tambem e recurso logístico.
 
-Interpretacao:
-
-- mesmo que duas rotas tenham distancia semelhante, a rota mais lenta pode ser pior por consumir mais tempo de operacao.
-
-### 4. Penalidade por nao atendimento
+### Penalidade por nao atendimento
 
 $$
 \sum_{i \in N} P_i u_i
 $$
 
-- $P_i$ representa a penalidade de nao atender a ordem $i$;
-- $u_i$ vale 1 se a ordem ficar sem atendimento.
+Esse termo evita que o modelo "economize" deixando ordens importantes fora da solucao.
 
-Interpretacao:
+## Restricoes fundamentais
 
-- o modelo pode aceitar deixar uma ordem fora da solucao, mas isso cobra um preco alto.
-
-## Leitura intuitiva da equacao
-
-Em linguagem natural, a funcao objetivo diz:
-
-> escolher rotas que atendam o maior numero possivel de ordens relevantes, usando poucos veiculos e percorrendo caminhos de menor custo e tempo.
-
-## Restricoes logisticas mais importantes
-
-Mesmo sem escrever o modelo completo em detalhes, as restricoes fundamentais sao:
+Mesmo sem escrever a formulacao completa, algumas restricoes sao indispensaveis:
 
 - cada ordem pode ser atendida no maximo uma vez;
 - a viatura deve respeitar sua capacidade financeira;
-- a viatura deve respeitar sua capacidade volumetrica;
+- a viatura deve respeitar sua capacidade fisica;
 - a rota deve respeitar as janelas de atendimento;
-- a rota deve comecar e terminar na base;
-- apenas viaturas elegiveis podem atender determinados clientes.
+- a viatura deve operar dentro do turno;
+- a rota deve sair e retornar a base;
+- nem toda viatura pode atender todo cliente.
 
-```mermaid
-flowchart TD
-    A[Demandas nos clientes] --> B[Capacidade da viatura]
-    A --> C[Janelas de atendimento]
-    A --> D[Tempos e distancias]
-    B --> E[Modelo de roteirizacao]
-    C --> E
-    D --> E
-    E --> F[Rotas viaveis e de menor custo]
-```
+## Leitura final desta pagina
 
-![Tabela ou print com variaveis e parametros](../../caminho/para/imagem.png)
+Se precisarmos resumir a modelagem em uma frase:
+
+> O problema e escolher quais arcos da rede serao percorridos por quais viaturas, de forma a atender a demanda com o menor custo possivel e sem violar as restricoes logisticas.
+
+![Esquema visual: veiculo, demanda e tempo alimentando a funcao objetivo](../../caminho/para/imagens/modelagem-visual.png)
+
+> 🎥 *[Inserir GIF curto com uma rota sendo avaliada por capacidade e horario aqui]*
 
 [⬅️ Anterior](./02-elementos-da-rede-grafica.md) | [Próxima ➡️](./04-tecnologia-solucao.md)
