@@ -84,8 +84,7 @@ A funcao objetivo tenta equilibrar cobertura e eficiencia.
 Em forma simplificada, queremos minimizar:
 
 $$
-\text{custo total}
-=
+\text{custo total} =
 \text{custo de viaturas}
 +
 \text{custo de deslocamento}
