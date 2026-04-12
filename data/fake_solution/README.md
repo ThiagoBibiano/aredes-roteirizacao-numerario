@@ -1,6 +1,6 @@
-# Dataset de demonstracao solucionavel
+# Operacao Controlada
 
-Este dataset foi montado para servir como caminho feliz da aplicacao.
+Este dataset foi montado para servir como cenario `operacao_controlada`, o caminho feliz da aplicacao.
 
 Objetivo:
 
@@ -29,5 +29,5 @@ O resultado sera gravado em `data/fake_solution/outputs/resultado-planejamento.j
 
 Observacao:
 
-- `data/fake_solution/` e o dataset de demonstracao;
-- `data/fake_smoke/` continua disponivel como dataset mais agressivo para estresse e explicabilidade.
+- `data/fake_solution/` e o dataset interno do cenario `operacao_controlada`;
+- `data/fake_smoke/` continua disponivel como dataset interno do cenario `operacao_sob_pressao`.

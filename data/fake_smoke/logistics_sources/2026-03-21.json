@@ -1,8 +1,8 @@
 {
-  "snapshot_id": "snap-fake_smoke-2026-03-21",
-  "generated_at": "2026-04-01T20:34:58.960311+00:00",
+  "snapshot_id": "snap-operacao_sob_pressao-2026-03-21",
+  "generated_at": "2026-04-11T20:52:32.996229+00:00",
   "strategy_name": "synthetic_geodesic_v1",
-  "source_name": "fake_smoke_source",
+  "source_name": "operacao_sob_pressao_source",
   "arcs": [
     {
       "id_origem": "dep-BASE-SP-CENTRO",
@@ -41,7 +41,7 @@
     },
     {
       "id_origem": "dep-BASE-SP-CENTRO",
-      "id_destino": "no-ORD-001- Paul-Sup",
+      "id_destino": "no-ORD-001-Paul-Sup",
       "distancia_metros": 5079,
       "tempo_segundos": 598,
       "custo": "15.24"
@@ -216,7 +216,7 @@
     },
     {
       "id_origem": "dep-BASE-SP-LESTE",
-      "id_destino": "no-ORD-001- Paul-Sup",
+      "id_destino": "no-ORD-001-Paul-Sup",
       "distancia_metros": 10511,
       "tempo_segundos": 1237,
       "custo": "31.53"
@@ -391,7 +391,7 @@
     },
     {
       "id_origem": "dep-BASE-SP-ABC",
-      "id_destino": "no-ORD-001- Paul-Sup",
+      "id_destino": "no-ORD-001-Paul-Sup",
       "distancia_metros": 21484,
       "tempo_segundos": 2528,
       "custo": "64.45"
@@ -566,7 +566,7 @@
     },
     {
       "id_origem": "dep-BASE-SP-SUL",
-      "id_destino": "no-ORD-001- Paul-Sup",
+      "id_destino": "no-ORD-001-Paul-Sup",
       "distancia_metros": 13746,
       "tempo_segundos": 1617,
       "custo": "41.24"
@@ -741,7 +741,7 @@
     },
     {
       "id_origem": "dep-BASE-SP-NORTE",
-      "id_destino": "no-ORD-001- Paul-Sup",
+      "id_destino": "no-ORD-001-Paul-Sup",
       "distancia_metros": 29140,
       "tempo_segundos": 3428,
       "custo": "87.42"
@@ -880,175 +880,175 @@
       "custo": "62.18"
     },
     {
-      "id_origem": "no-ORD-001- Paul-Sup",
+      "id_origem": "no-ORD-001-Paul-Sup",
       "id_destino": "dep-BASE-SP-CENTRO",
       "distancia_metros": 5079,
       "tempo_segundos": 598,
       "custo": "15.24"
     },
     {
-      "id_origem": "no-ORD-001- Paul-Sup",
+      "id_origem": "no-ORD-001-Paul-Sup",
       "id_destino": "dep-BASE-SP-LESTE",
       "distancia_metros": 10511,
       "tempo_segundos": 1237,
       "custo": "31.53"
     },
     {
-      "id_origem": "no-ORD-001- Paul-Sup",
+      "id_origem": "no-ORD-001-Paul-Sup",
       "id_destino": "dep-BASE-SP-ABC",
       "distancia_metros": 21484,
       "tempo_segundos": 2528,
       "custo": "64.45"
     },
     {
-      "id_origem": "no-ORD-001- Paul-Sup",
+      "id_origem": "no-ORD-001-Paul-Sup",
       "id_destino": "dep-BASE-SP-SUL",
       "distancia_metros": 13746,
       "tempo_segundos": 1617,
       "custo": "41.24"
     },
     {
-      "id_origem": "no-ORD-001- Paul-Sup",
+      "id_origem": "no-ORD-001-Paul-Sup",
       "id_destino": "dep-BASE-SP-NORTE",
       "distancia_metros": 29140,
       "tempo_segundos": 3428,
       "custo": "87.42"
     },
     {
-      "id_origem": "no-ORD-001- Paul-Sup",
-      "id_destino": "no-ORD-001- Paul-Sup",
+      "id_origem": "no-ORD-001-Paul-Sup",
+      "id_destino": "no-ORD-001-Paul-Sup",
       "distancia_metros": 0,
       "tempo_segundos": 0,
       "custo": "0.00"
     },
     {
-      "id_origem": "no-ORD-001- Paul-Sup",
+      "id_origem": "no-ORD-001-Paul-Sup",
       "id_destino": "no-ORD-002-Frei-Rec",
       "distancia_metros": 1154,
       "tempo_segundos": 180,
       "custo": "3.46"
     },
     {
-      "id_origem": "no-ORD-001- Paul-Sup",
+      "id_origem": "no-ORD-001-Paul-Sup",
       "id_destino": "no-ORD-003-Faria-Rec",
       "distancia_metros": 4821,
       "tempo_segundos": 567,
       "custo": "14.46"
     },
     {
-      "id_origem": "no-ORD-001- Paul-Sup",
+      "id_origem": "no-ORD-001-Paul-Sup",
       "id_destino": "no-ORD-004-Eldo-Sup",
       "distancia_metros": 5341,
       "tempo_segundos": 628,
       "custo": "16.02"
     },
     {
-      "id_origem": "no-ORD-001- Paul-Sup",
+      "id_origem": "no-ORD-001-Paul-Sup",
       "id_destino": "no-ORD-005-Tatu-Sup",
       "distancia_metros": 10755,
       "tempo_segundos": 1265,
       "custo": "32.26"
     },
     {
-      "id_origem": "no-ORD-001- Paul-Sup",
+      "id_origem": "no-ORD-001-Paul-Sup",
       "id_destino": "no-ORD-006-Alpha-Rec",
       "distancia_metros": 26122,
       "tempo_segundos": 3073,
       "custo": "78.37"
     },
     {
-      "id_origem": "no-ORD-001- Paul-Sup",
+      "id_origem": "no-ORD-001-Paul-Sup",
       "id_destino": "no-ORD-007-G Plaza-Rec",
       "distancia_metros": 19844,
       "tempo_segundos": 2335,
       "custo": "59.53"
     },
     {
-      "id_origem": "no-ORD-001- Paul-Sup",
+      "id_origem": "no-ORD-001-Paul-Sup",
       "id_destino": "no-ORD-008-Guaru-Sup",
       "distancia_metros": 20918,
       "tempo_segundos": 2461,
       "custo": "62.75"
     },
     {
-      "id_origem": "no-ORD-001- Paul-Sup",
+      "id_origem": "no-ORD-001-Paul-Sup",
       "id_destino": "no-ORD-009-S Miguel-Rec",
       "distancia_metros": 28397,
       "tempo_segundos": 3341,
       "custo": "85.19"
     },
     {
-      "id_origem": "no-ORD-001- Paul-Sup",
+      "id_origem": "no-ORD-001-Paul-Sup",
       "id_destino": "no-ORD-010-Morumb-Sup",
       "distancia_metros": 10090,
       "tempo_segundos": 1187,
       "custo": "30.27"
     },
     {
-      "id_origem": "no-ORD-001- Paul-Sup",
+      "id_origem": "no-ORD-001-Paul-Sup",
       "id_destino": "no-ORD-011-Merc-Rec",
       "distancia_metros": 4424,
       "tempo_segundos": 520,
       "custo": "13.27"
     },
     {
-      "id_origem": "no-ORD-001- Paul-Sup",
+      "id_origem": "no-ORD-001-Paul-Sup",
       "id_destino": "no-ORD-012-Analia-Sup",
       "distancia_metros": 13109,
       "tempo_segundos": 1542,
       "custo": "39.33"
     },
     {
-      "id_origem": "no-ORD-001- Paul-Sup",
+      "id_origem": "no-ORD-001-Paul-Sup",
       "id_destino": "no-ORD-013-Chaca-Rec",
       "distancia_metros": 10837,
       "tempo_segundos": 1275,
       "custo": "32.51"
     },
     {
-      "id_origem": "no-ORD-001- Paul-Sup",
+      "id_origem": "no-ORD-001-Paul-Sup",
       "id_destino": "no-ORD-014-SBC-Sup",
       "distancia_metros": 24985,
       "tempo_segundos": 2939,
       "custo": "74.96"
     },
     {
-      "id_origem": "no-ORD-001- Paul-Sup",
+      "id_origem": "no-ORD-001-Paul-Sup",
       "id_destino": "no-ORD-015-Guaru-CEF-Rec",
       "distancia_metros": 20509,
       "tempo_segundos": 2413,
       "custo": "61.53"
     },
     {
-      "id_origem": "no-ORD-001- Paul-Sup",
+      "id_origem": "no-ORD-001-Paul-Sup",
       "id_destino": "no-ORD-016-RDireita-Sup",
       "distancia_metros": 3367,
       "tempo_segundos": 396,
       "custo": "10.10"
     },
     {
-      "id_origem": "no-ORD-001- Paul-Sup",
+      "id_origem": "no-ORD-001-Paul-Sup",
       "id_destino": "no-ORD-017-Interlag-Rec",
       "distancia_metros": 16212,
       "tempo_segundos": 1907,
       "custo": "48.64"
     },
     {
-      "id_origem": "no-ORD-001- Paul-Sup",
+      "id_origem": "no-ORD-001-Paul-Sup",
       "id_destino": "no-ORD-018-Osasco-Sup",
       "distancia_metros": 15774,
       "tempo_segundos": 1856,
       "custo": "47.32"
     },
     {
-      "id_origem": "no-ORD-001- Paul-Sup",
+      "id_origem": "no-ORD-001-Paul-Sup",
       "id_destino": "no-ORD-019-Maua-Rec",
       "distancia_metros": 28949,
       "tempo_segundos": 3406,
       "custo": "86.85"
     },
     {
-      "id_origem": "no-ORD-001- Paul-Sup",
+      "id_origem": "no-ORD-001-Paul-Sup",
       "id_destino": "no-ORD-020-Mairi-Sup",
       "distancia_metros": 33515,
       "tempo_segundos": 3943,
@@ -1091,7 +1091,7 @@
     },
     {
       "id_origem": "no-ORD-002-Frei-Rec",
-      "id_destino": "no-ORD-001- Paul-Sup",
+      "id_destino": "no-ORD-001-Paul-Sup",
       "distancia_metros": 1154,
       "tempo_segundos": 180,
       "custo": "3.46"
@@ -1266,7 +1266,7 @@
     },
     {
       "id_origem": "no-ORD-003-Faria-Rec",
-      "id_destino": "no-ORD-001- Paul-Sup",
+      "id_destino": "no-ORD-001-Paul-Sup",
       "distancia_metros": 4821,
       "tempo_segundos": 567,
       "custo": "14.46"
@@ -1441,7 +1441,7 @@
     },
     {
       "id_origem": "no-ORD-004-Eldo-Sup",
-      "id_destino": "no-ORD-001- Paul-Sup",
+      "id_destino": "no-ORD-001-Paul-Sup",
       "distancia_metros": 5341,
       "tempo_segundos": 628,
       "custo": "16.02"
@@ -1616,7 +1616,7 @@
     },
     {
       "id_origem": "no-ORD-005-Tatu-Sup",
-      "id_destino": "no-ORD-001- Paul-Sup",
+      "id_destino": "no-ORD-001-Paul-Sup",
       "distancia_metros": 10755,
       "tempo_segundos": 1265,
       "custo": "32.26"
@@ -1791,7 +1791,7 @@
     },
     {
       "id_origem": "no-ORD-006-Alpha-Rec",
-      "id_destino": "no-ORD-001- Paul-Sup",
+      "id_destino": "no-ORD-001-Paul-Sup",
       "distancia_metros": 26122,
       "tempo_segundos": 3073,
       "custo": "78.37"
@@ -1966,7 +1966,7 @@
     },
     {
       "id_origem": "no-ORD-007-G Plaza-Rec",
-      "id_destino": "no-ORD-001- Paul-Sup",
+      "id_destino": "no-ORD-001-Paul-Sup",
       "distancia_metros": 19844,
       "tempo_segundos": 2335,
       "custo": "59.53"
@@ -2141,7 +2141,7 @@
     },
     {
       "id_origem": "no-ORD-008-Guaru-Sup",
-      "id_destino": "no-ORD-001- Paul-Sup",
+      "id_destino": "no-ORD-001-Paul-Sup",
       "distancia_metros": 20918,
       "tempo_segundos": 2461,
       "custo": "62.75"
@@ -2316,7 +2316,7 @@
     },
     {
       "id_origem": "no-ORD-009-S Miguel-Rec",
-      "id_destino": "no-ORD-001- Paul-Sup",
+      "id_destino": "no-ORD-001-Paul-Sup",
       "distancia_metros": 28397,
       "tempo_segundos": 3341,
       "custo": "85.19"
@@ -2491,7 +2491,7 @@
     },
     {
       "id_origem": "no-ORD-010-Morumb-Sup",
-      "id_destino": "no-ORD-001- Paul-Sup",
+      "id_destino": "no-ORD-001-Paul-Sup",
       "distancia_metros": 10090,
       "tempo_segundos": 1187,
       "custo": "30.27"
@@ -2666,7 +2666,7 @@
     },
     {
       "id_origem": "no-ORD-011-Merc-Rec",
-      "id_destino": "no-ORD-001- Paul-Sup",
+      "id_destino": "no-ORD-001-Paul-Sup",
       "distancia_metros": 4424,
       "tempo_segundos": 520,
       "custo": "13.27"
@@ -2841,7 +2841,7 @@
     },
     {
       "id_origem": "no-ORD-012-Analia-Sup",
-      "id_destino": "no-ORD-001- Paul-Sup",
+      "id_destino": "no-ORD-001-Paul-Sup",
       "distancia_metros": 13109,
       "tempo_segundos": 1542,
       "custo": "39.33"
@@ -3016,7 +3016,7 @@
     },
     {
       "id_origem": "no-ORD-013-Chaca-Rec",
-      "id_destino": "no-ORD-001- Paul-Sup",
+      "id_destino": "no-ORD-001-Paul-Sup",
       "distancia_metros": 10837,
       "tempo_segundos": 1275,
       "custo": "32.51"
@@ -3191,7 +3191,7 @@
     },
     {
       "id_origem": "no-ORD-014-SBC-Sup",
-      "id_destino": "no-ORD-001- Paul-Sup",
+      "id_destino": "no-ORD-001-Paul-Sup",
       "distancia_metros": 24985,
       "tempo_segundos": 2939,
       "custo": "74.96"
@@ -3366,7 +3366,7 @@
     },
     {
       "id_origem": "no-ORD-015-Guaru-CEF-Rec",
-      "id_destino": "no-ORD-001- Paul-Sup",
+      "id_destino": "no-ORD-001-Paul-Sup",
       "distancia_metros": 20509,
       "tempo_segundos": 2413,
       "custo": "61.53"
@@ -3541,7 +3541,7 @@
     },
     {
       "id_origem": "no-ORD-016-RDireita-Sup",
-      "id_destino": "no-ORD-001- Paul-Sup",
+      "id_destino": "no-ORD-001-Paul-Sup",
       "distancia_metros": 3367,
       "tempo_segundos": 396,
       "custo": "10.10"
@@ -3716,7 +3716,7 @@
     },
     {
       "id_origem": "no-ORD-017-Interlag-Rec",
-      "id_destino": "no-ORD-001- Paul-Sup",
+      "id_destino": "no-ORD-001-Paul-Sup",
       "distancia_metros": 16212,
       "tempo_segundos": 1907,
       "custo": "48.64"
@@ -3891,7 +3891,7 @@
     },
     {
       "id_origem": "no-ORD-018-Osasco-Sup",
-      "id_destino": "no-ORD-001- Paul-Sup",
+      "id_destino": "no-ORD-001-Paul-Sup",
       "distancia_metros": 15774,
       "tempo_segundos": 1856,
       "custo": "47.32"
@@ -4066,7 +4066,7 @@
     },
     {
       "id_origem": "no-ORD-019-Maua-Rec",
-      "id_destino": "no-ORD-001- Paul-Sup",
+      "id_destino": "no-ORD-001-Paul-Sup",
       "distancia_metros": 28949,
       "tempo_segundos": 3406,
       "custo": "86.85"
@@ -4241,7 +4241,7 @@
     },
     {
       "id_origem": "no-ORD-020-Mairi-Sup",
-      "id_destino": "no-ORD-001- Paul-Sup",
+      "id_destino": "no-ORD-001-Paul-Sup",
       "distancia_metros": 33515,
       "tempo_segundos": 3943,
       "custo": "100.54"

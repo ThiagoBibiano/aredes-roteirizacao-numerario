@@ -1,8 +1,14 @@
-# Smoke Test Fake de Estresse
+# Operacao Sob Pressao
 
-Este dataset existe para exercitar o fluxo operacional completo em um cenario mais agressivo, com maior dispersao geografica e mais excecoes.
+Este dataset existe para exercitar o fluxo operacional completo no cenario `operacao_sob_pressao`, com maior dispersao geografica, janelas mais tensas e maior heterogeneidade de frota e demanda.
 
-Se voce quer um caminho feliz que normalmente fecha com solucao completa, use `data/fake_solution/`.
+Escopo atual:
+
+- o dataset cobre apenas `suprimento` e `recolhimento`;
+- referencias antigas a `extraordinario` foram removidas do dataset-base;
+- o estresse vem da combinacao de dispersao geografica, capacidades menores, valores altos e ordens com janelas mais apertadas.
+
+Se voce quer um caminho feliz que normalmente fecha com solucao completa, use o cenario `operacao_controlada` em `data/fake_solution/`.
 
 ## Comandos
 
