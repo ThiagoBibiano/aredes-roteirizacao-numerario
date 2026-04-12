@@ -48,6 +48,8 @@ Ela e adequada ao caso estudado porque facilita:
 - capacidades em mais de uma dimensao;
 - busca de solucoes boas sem programar toda a heuristica do zero.
 
+No contexto desta apresentacao, ele aparece como o solver heuristico de referencia operacional.
+
 ## A ideia do HGS
 
 O PyVRP utiliza uma abordagem baseada em HGS, Hybrid Genetic Search.
@@ -82,6 +84,39 @@ Ou seja:
 
 > o solver nao "inventa" o problema. Ele procura boas solucoes para o problema que a modelagem definiu.
 
+## Onde entra o PuLP no experimento?
+
+PuLP nao entra aqui como substituto do backend nem como novo motor do produto.
+
+Ele entra como **baseline exato e controlado** para o subproblema compartilhado:
+
+- uma classe operacional por vez;
+- mesmas ordens;
+- mesmas viaturas;
+- mesmas janelas;
+- mesmas capacidades;
+- mesmo objetivo comum recalculado fora do solver.
+
+Essa separacao e importante porque o PyVRP e o solver mais adequado para escala e operacao, enquanto o PuLP ajuda a validar qualidade em instancias pequenas.
+
+## O que foi rodado de fato no benchmark
+
+No estado atual do projeto, o notebook experimental foi organizado assim:
+
+- cenario-base: **operacao_sob_pressao**;
+- benchmark amostral com `20%`, `40%`, `60%` e `80%` das ordens;
+- `5` repeticoes por escala;
+- amostragem aleatoria independente, estratificada por `classe_operacional`;
+- rodada exaustiva separada com `100%` das ordens.
+
+Isso permite contar a historia certa:
+
+- em pequena e media escala, o PuLP ajuda a validar cobertura e custo comum;
+- conforme a escala cresce, o custo computacional do baseline sobe rapidamente;
+- o PyVRP continua muito mais aderente ao uso operacional em tempo de resposta.
+
+![Recorte comparavel e protocolo do experimento](./assets/metodologia-experimental.svg)
+
 ## Leitura visual da solucao computacional
 
 ```mermaid
@@ -93,7 +128,7 @@ flowchart TD
     E --> F[Melhor conjunto de rotas]
 ```
 
-![Fluxo visual entre dados da rede, modelo e solver](../../caminho/para/imagens/solver-fluxo.png)
+![Fluxo visual entre dados da rede, modelo e solver](./assets/solver-fluxo.svg)
 
 ## O ganho pedagogico
 
@@ -104,6 +139,14 @@ Usar uma biblioteca especializada permite que o foco da aula permaneça onde int
 - comparacao entre solucoes;
 - analise dos resultados sobre a rede.
 
-> 🎥 *[Inserir video curto mostrando a execucao do solver e a melhoria gradual das rotas aqui]*
+![Leitura visual da comparacao em diferentes escalas](./assets/gifs/benchmark-escala.gif)
+
+## O ganho metodologico
+
+Separar **solver operacional** e **baseline exato** melhora muito a qualidade da argumentacao:
+
+- o PyVRP pode ser defendido pelo que ele faz bem: buscar solucoes boas muito rapido;
+- o PuLP pode ser defendido pelo que ele faz bem: servir como referencia controlada de qualidade;
+- a apresentacao deixa de parecer "competicao de ferramenta" e passa a mostrar um **trade-off entre otimalidade controlada e escalabilidade**.
 
 [⬅️ Anterior](./03-modelagem-e-funcao-objetivo.md) | [Próxima ➡️](./05-resultados-e-analise.md)

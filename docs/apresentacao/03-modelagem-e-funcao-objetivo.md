@@ -39,7 +39,7 @@ Cada viatura entra no problema com caracteristicas proprias:
 
 Isso significa que duas viaturas diferentes podem gerar solucoes muito diferentes para o mesmo conjunto de clientes.
 
-![Viatura com indicacoes visuais de capacidade, custo e turno](../../caminho/para/imagens/viatura-capacidades.jpg)
+![Viatura com indicacoes visuais de capacidade, custo e turno](./assets/viatura-capacidades.svg)
 
 ## 2. Demandas
 
@@ -58,7 +58,7 @@ No problema estudado aqui:
 
 Isso muda a leitura logistica da capacidade e, principalmente, do limite segurado.
 
-![Exemplo visual de itens transportados e demanda por atendimento](../../caminho/para/imagens/demanda-operacional.jpg)
+![Exemplo visual de atributos da demanda operacional](./assets/demanda-operacional.svg)
 
 ## 3. Janelas de tempo
 
@@ -107,6 +107,27 @@ $$
 \sum_{i \in N} P_i u_i
 $$
 
+## Da funcao gerencial para a comparacao cientifica
+
+No produto, a leitura final do resultado ainda passa por pos-processamento, auditoria, KPIs e regras de negocio fora do solver.
+
+No benchmark, a comparacao e mais estreita: PyVRP e PuLP sao medidos sobre um **objetivo comum recalculado fora do solver**, para evitar uma comparacao injusta entre o sistema inteiro e apenas o motor de busca.
+
+Em linguagem direta, o benchmark mede:
+
+$$
+\text{objective\_common} =
+\text{custo fixo de viatura}
++
+\text{custo de deslocamento}
++
+\text{custo de duracao}
++
+\text{penalidade por nao atendimento}
+$$
+
+Isso nao substitui a leitura gerencial completa do produto. Isso apenas congela o **nucleo matematico comum** que pode ser comparado com rigor.
+
 ## Lendo a equacao passo a passo
 
 ### Custo de ativar veiculos
@@ -153,14 +174,20 @@ Mesmo sem escrever a formulacao completa, algumas restricoes sao indispensaveis:
 - a rota deve sair e retornar a base;
 - nem toda viatura pode atender todo cliente.
 
+No experimento comparativo, uma restricao merece destaque adicional:
+
+- `suprimento` e `recolhimento` continuam sendo resolvidos em instancias separadas;
+- a rodada exaustiva de `100%` nao deve ser lida como frota unica acoplada entre as duas classes;
+- o que se compara e a qualidade/custo da solucao em cada classe operacional isolada.
+
 ## Leitura final desta pagina
 
 Se precisarmos resumir a modelagem em uma frase:
 
 > O problema e escolher quais arcos da rede serao percorridos por quais viaturas, de forma a atender a demanda com o menor custo possivel e sem violar as restricoes logisticas.
 
-![Esquema visual: veiculo, demanda e tempo alimentando a funcao objetivo](../../caminho/para/imagens/modelagem-visual.png)
+![Esquema visual: veiculo, demanda e tempo alimentando a funcao objetivo](./assets/modelagem-visual.svg)
 
-> 🎥 *[Inserir GIF curto com uma rota sendo avaliada por capacidade e horario aqui]*
+![Transicao da rede-base para a solucao](./assets/gifs/rede-base-para-solucao.gif)
 
 [⬅️ Anterior](./02-elementos-da-rede-grafica.md) | [Próxima ➡️](./04-tecnologia-solucao.md)

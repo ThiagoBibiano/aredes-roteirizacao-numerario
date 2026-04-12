@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720" viewBox="0 0 1280 720">
+  <rect width="1280" height="720" fill="#f9fbfd"/>
+  <text x="80" y="95" fill="#143642" font-family="Verdana, sans-serif" font-size="40" font-weight="700">Do mapa para o grafo</text>
+  <text x="80" y="138" fill="#52616b" font-family="Verdana, sans-serif" font-size="24">A rede operacional vira um conjunto de nos e arestas com tempo, distancia e custo.</text>
+
+  <circle cx="260" cy="360" r="56" fill="#143642"/>
+  <text x="222" y="370" fill="#ffffff" font-family="Verdana, sans-serif" font-size="28" font-weight="700">Base</text>
+
+  <circle cx="560" cy="210" r="46" fill="#2a9d8f"/>
+  <text x="528" y="220" fill="#ffffff" font-family="Verdana, sans-serif" font-size="24" font-weight="700">A1</text>
+
+  <circle cx="860" cy="340" r="46" fill="#f4a261"/>
+  <text x="828" y="350" fill="#143642" font-family="Verdana, sans-serif" font-size="24" font-weight="700">C2</text>
+
+  <circle cx="600" cy="520" r="46" fill="#e76f51"/>
+  <text x="568" y="530" fill="#ffffff" font-family="Verdana, sans-serif" font-size="24" font-weight="700">A3</text>
+
+  <line x1="305" y1="330" x2="520" y2="235" stroke="#64748b" stroke-width="8"/>
+  <line x1="304" y1="385" x2="556" y2="502" stroke="#64748b" stroke-width="8"/>
+  <line x1="602" y1="223" x2="818" y2="327" stroke="#64748b" stroke-width="8"/>
+  <line x1="835" y1="375" x2="635" y2="498" stroke="#64748b" stroke-width="8"/>
+  <line x1="552" y1="252" x2="584" y2="472" stroke="#64748b" stroke-width="8" stroke-dasharray="16 10"/>
+
+  <text x="372" y="272" fill="#475569" font-family="Verdana, sans-serif" font-size="22">12 min | 7 km</text>
+  <text x="390" y="470" fill="#475569" font-family="Verdana, sans-serif" font-size="22">15 min | 9 km</text>
+  <text x="662" y="255" fill="#475569" font-family="Verdana, sans-serif" font-size="22">6 min | 3 km</text>
+  <text x="690" y="470" fill="#475569" font-family="Verdana, sans-serif" font-size="22">5 min | 3 km</text>
+</svg>

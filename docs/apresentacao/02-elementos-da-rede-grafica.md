@@ -14,7 +14,7 @@ Na modelagem, isso vira um grafo.
 
 > Esta e a grande ponte entre o problema logistico e a analise quantitativa.
 
-![Mapa simplificado da cidade com base e pontos atendidos](../../caminho/para/imagens/mapa-operacional.jpg)
+![Mapa sintetico da rede-base usada no notebook](./assets/generated/operacao_controlada_rede_base.png)
 
 ## O que sao os nos?
 
@@ -113,11 +113,11 @@ Didaticamente, e interessante mostrar lado a lado:
 - o mapa real da operacao;
 - o grafo abstrato que alimenta o modelo.
 
-![Mapa real do atendimento no territorio](../../caminho/para/imagens/mapa-real-atendimento.png)
+![Mapa sintetico do atendimento no territorio](./assets/generated/operacao_controlada_rede_base.png)
 
-![Esquema visual dos mesmos pontos convertidos em grafo](../../caminho/para/imagens/grafo-esquematico.png)
+![Esquema visual dos mesmos pontos convertidos em grafo](./assets/grafo-esquematico.svg)
 
-> 🎥 *[Inserir GIF mostrando a transicao do mapa real para o grafo aqui]*
+![Transicao da rede-base para a solucao](./assets/gifs/rede-base-para-solucao.gif)
 
 ## Pergunta de transicao
 

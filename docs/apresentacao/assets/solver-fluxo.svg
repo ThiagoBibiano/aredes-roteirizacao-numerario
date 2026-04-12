@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720" viewBox="0 0 1280 720">
+  <rect width="1280" height="720" fill="#f7fafc"/>
+  <text x="80" y="95" fill="#143642" font-family="Verdana, sans-serif" font-size="40" font-weight="700">Da instancia para a busca de rotas</text>
+  <text x="80" y="138" fill="#52616b" font-family="Verdana, sans-serif" font-size="24">O solver entra depois da modelagem. Primeiro definimos o problema, depois buscamos solucoes.</text>
+
+  <rect x="90" y="300" width="220" height="140" rx="26" fill="#143642"/>
+  <text x="132" y="380" fill="#ffffff" font-family="Verdana, sans-serif" font-size="30" font-weight="700">Dados da rede</text>
+
+  <rect x="390" y="300" width="220" height="140" rx="26" fill="#2a9d8f"/>
+  <text x="454" y="380" fill="#ffffff" font-family="Verdana, sans-serif" font-size="30" font-weight="700">Modelo</text>
+
+  <rect x="690" y="300" width="220" height="140" rx="26" fill="#f4a261"/>
+  <text x="757" y="380" fill="#143642" font-family="Verdana, sans-serif" font-size="30" font-weight="700">PyVRP</text>
+
+  <rect x="990" y="300" width="220" height="140" rx="26" fill="#bc3908"/>
+  <text x="1032" y="380" fill="#ffffff" font-family="Verdana, sans-serif" font-size="30" font-weight="700">Melhores rotas</text>
+
+  <path d="M310 370 H390" stroke="#143642" stroke-width="10" stroke-linecap="round"/>
+  <polygon points="380,354 410,370 380,386" fill="#143642"/>
+  <path d="M610 370 H690" stroke="#143642" stroke-width="10" stroke-linecap="round"/>
+  <polygon points="680,354 710,370 680,386" fill="#143642"/>
+  <path d="M910 370 H990" stroke="#143642" stroke-width="10" stroke-linecap="round"/>
+  <polygon points="980,354 1010,370 980,386" fill="#143642"/>
+</svg>

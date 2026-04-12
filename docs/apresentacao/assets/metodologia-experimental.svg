@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720" viewBox="0 0 1280 720">
+  <rect width="1280" height="720" fill="#fcfaf6"/>
+  <text x="70" y="90" fill="#143642" font-family="Verdana, sans-serif" font-size="40" font-weight="700">Recorte comparavel do experimento</text>
+  <text x="70" y="132" fill="#52616b" font-family="Verdana, sans-serif" font-size="24">Comparamos os solvers no mesmo nucleo matematico, nao no produto inteiro.</text>
+
+  <rect x="80" y="220" width="320" height="360" rx="30" fill="#143642"/>
+  <text x="130" y="300" fill="#ffffff" font-family="Verdana, sans-serif" font-size="30" font-weight="700">Entra no comparativo</text>
+  <text x="130" y="350" fill="#d7e3ea" font-family="Verdana, sans-serif" font-size="22">mesma instancia por classe</text>
+  <text x="130" y="388" fill="#d7e3ea" font-family="Verdana, sans-serif" font-size="22">mesmas viaturas e ordens</text>
+  <text x="130" y="426" fill="#d7e3ea" font-family="Verdana, sans-serif" font-size="22">mesmas janelas e capacidades</text>
+  <text x="130" y="464" fill="#d7e3ea" font-family="Verdana, sans-serif" font-size="22">mesmo objective_common</text>
+
+  <rect x="480" y="220" width="320" height="360" rx="30" fill="#f4a261"/>
+  <text x="545" y="300" fill="#143642" font-family="Verdana, sans-serif" font-size="30" font-weight="700">Metricas</text>
+  <text x="545" y="350" fill="#143642" font-family="Verdana, sans-serif" font-size="22">runtime</text>
+  <text x="545" y="388" fill="#143642" font-family="Verdana, sans-serif" font-size="22">objective_common</text>
+  <text x="545" y="426" fill="#143642" font-family="Verdana, sans-serif" font-size="22">service_rate</text>
+  <text x="545" y="464" fill="#143642" font-family="Verdana, sans-serif" font-size="22">frota, distancia e duracao</text>
+
+  <rect x="880" y="220" width="320" height="360" rx="30" fill="#bc3908"/>
+  <text x="935" y="300" fill="#ffffff" font-family="Verdana, sans-serif" font-size="30" font-weight="700">Fora do escopo</text>
+  <text x="935" y="350" fill="#fde6de" font-family="Verdana, sans-serif" font-size="22">auditoria</text>
+  <text x="935" y="388" fill="#fde6de" font-family="Verdana, sans-serif" font-size="22">reporting</text>
+  <text x="935" y="426" fill="#fde6de" font-family="Verdana, sans-serif" font-size="22">pos-processamento rico</text>
+  <text x="935" y="464" fill="#fde6de" font-family="Verdana, sans-serif" font-size="22">acoplamento sup x rec</text>
+</svg>

@@ -8,9 +8,9 @@ Uma viatura blindada sai da base com um plano que precisa funcionar no mundo rea
 
 > Uma rota ruim nao significa apenas mais quilometros. Pode significar atraso em agencia, excesso de carga, uso ineficiente da frota e aumento de risco operacional.
 
-![Viatura blindada saindo da base](../../caminho/para/imagens/viatura-blindada.jpg)
+![Visao operacional da saida da base](./assets/visao-operacional.svg)
 
-![Itens que podem compor a carga: malotes, caixas, envelopes e numerario](../../caminho/para/imagens/carga-transportada.jpg)
+![Leitura das cargas e restricoes da operacao](./assets/cargas-e-restricoes.svg)
 
 ## O que uma transportadora de valores realmente movimenta?
 
@@ -64,6 +64,18 @@ flowchart LR
     E --> F
 ```
 
+## Dois cenarios publicos para contar a historia
+
+Ao longo da apresentacao, a leitura do projeto passa por dois cenarios sinteticos com papeis diferentes:
+
+- **operacao_controlada**: cenario didatico, visual e facil de explicar em sala;
+- **operacao_sob_pressao**: cenario de benchmark, com mais conflito entre tempo, frota, cobertura e custo.
+
+Essa separacao e importante porque evita misturar dois objetivos diferentes:
+
+- demonstrar o funcionamento do modelo;
+- comparar cientificamente dois solvers sobre um nucleo comum do problema.
+
 ## A pergunta central da disciplina
 
 Do ponto de vista de Analise de Redes de Transporte, a pergunta nao e:
@@ -97,11 +109,12 @@ Nas proximas paginas, a historia sera a seguinte:
 1. o mundo real sera traduzido para um grafo;
 2. o grafo sera transformado em um modelo de roteirizacao;
 3. a funcao objetivo mostrara o que significa uma "boa" solucao;
-4. uma heuristica moderna buscara rotas viaveis;
-5. por fim, veremos como interpretar os resultados.
+4. o PyVRP aparecera como solver heuristico de referencia operacional;
+5. o PuLP aparecera como baseline exato para o nucleo comparavel;
+6. por fim, veremos como interpretar resultados operacionais e resultados experimentais.
 
-> 🎥 *[Inserir video curto da viatura em operacao ou saindo da base aqui]*
+![Transicao da rede-base para a solucao](./assets/gifs/rede-base-para-solucao.gif)
 
-> 🎥 *[Inserir video ou GIF curto mostrando itens sendo preparados para embarque aqui]*
+![Recorte comparavel do experimento](./assets/metodologia-experimental.svg)
 
 [⬅️ Anterior](./01-introducao-e-contexto.md) | [Próxima ➡️](./02-elementos-da-rede-grafica.md)
