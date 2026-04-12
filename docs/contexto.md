@@ -6,7 +6,7 @@
 
 ## 1. Resumo executivo
 
-Este projeto tem como objetivo estruturar um sistema de roteirização para transporte de numerário capaz de gerar, diariamente, um plano operacional viável e economicamente eficiente para atendimento de ordens de **suprimento**, **recolhimento** e **serviços extraordinários**, com tratamento prioritário para **ordens especiais**.
+Este projeto já possui um backend executável de roteirização para transporte de numerário capaz de gerar, diariamente, um plano operacional viável e economicamente eficiente para atendimento de ordens de **suprimento** e **recolhimento**, com tratamento prioritário para **ordens especiais**.
 
 O problema será tratado, no MVP, com apoio do **PyVRP** como motor de otimização. A modelagem considera restrições operacionais típicas do setor, com destaque para:
 
@@ -17,6 +17,8 @@ O problema será tratado, no MVP, com apoio do **PyVRP** como motor de otimizaç
 * **isolamento de estado físico do numerário**;
 * **teto de valor vinculado à apólice de seguro**;
 * **necessidade de reduzir previsibilidade operacional**.
+
+Além do fluxo operacional principal, o repositório passou a incluir uma camada experimental explícita para comparação **PyVRP x PuLP**, um catálogo de cenários sintéticos, um notebook de demonstração do solver e um notebook separado para benchmark visual e análise metodológica.
 
 A decisão central de negócio já assumida para o MVP é que **suprimento e recolhimento não serão misturados na mesma viagem operacional**, salvo futura exceção formalmente modelada. Em termos práticos, a viatura sai da base em um estado operacional definido e retorna à base antes de mudar esse estado.
 
@@ -118,6 +120,17 @@ No MVP, por simplicidade, considera-se o retorno à base como comportamento padr
 
 Como diretriz de segurança, a roteirização não deve buscar apenas a menor distância. O plano também deve, sempre que possível, **reduzir previsibilidade operacional**, evitando repetição rígida de horários e trajetos.
 No MVP, isso entra como diretriz de projeto e critério futuro de evolução, ainda sem modelagem probabilística completa.
+
+### 4.8 Recorte comparável do benchmark
+
+A camada experimental do projeto não compara o sistema inteiro “como produto”. O benchmark compara um **núcleo comum solver-agnostic** do problema, sempre por **classe operacional isolada**.
+
+No protocolo atual, isso significa:
+
+* `suprimento` e `recolhimento` são resolvidos em instâncias separadas;
+* a comparação usa as mesmas ordens, viaturas, janelas, capacidades e custos-base para os dois solvers;
+* pós-processamento, auditoria, reporting e quaisquer efeitos fora do solver ficam fora da medida comparativa;
+* mesmo na rodada exaustiva de `100%`, a leitura continua sendo por classe isolada, e não por frota acoplada entre `suprimento` e `recolhimento`.
 
 ---
 
@@ -320,6 +333,23 @@ P_{esp} \geq P_{evt} \geq P_{pad} \gg C_f
 
 para garantir que o modelo não “economize frota” à custa do descumprimento de ordens prioritárias.
 
+### Função objetivo comum do benchmark
+
+Para a comparação metodológica entre **PyVRP** e **PuLP**, o projeto recalcula uma função objetivo comum fora do solver:
+
+\[
+\text{objective\_common} =
+\text{custo fixo de viatura}
++
+\text{custo de deslocamento}
++
+\text{custo de duração}
++
+\text{penalidade por não atendimento}
+\]
+
+Esse valor é usado para medir qualidade relativa em uma base comparável, independentemente da formulação interna de cada solver.
+
 ---
 
 ## 10. Fluxo lógico do backend atual
@@ -500,8 +530,11 @@ O projeto não está mais apenas em fase de desenho. Hoje já existe um backend 
 * `src/roteirizacao/domain`: contratos, enums, serialização, validação e classificação;
 * `src/roteirizacao/application`: carregamento de dataset, snapshots, matriz logística, construção de instância, execução, pós-processamento, auditoria, reporting e orquestração;
 * `src/roteirizacao/optimization`: adaptador para PyVRP;
+* `src/roteirizacao/benchmark`: baseline PuLP, catálogo de cenários, runner experimental e agregação de métricas;
 * `src/roteirizacao/api`: camada FastAPI sobre o orquestrador;
-* `apps/ui_streamlit`: frontend que consome a API HTTP.
+* `apps/ui_streamlit`: frontend que consome a API HTTP;
+* `notebook/modelo_solver_workbench.ipynb`: workbench narrativo para demonstração do solver;
+* `notebook/benchmark_solver_comparison.ipynb`: caderno experimental para comparação PyVRP x PuLP.
 
 ## 19. Fluxo atual do planejamento diário
 
@@ -552,6 +585,32 @@ O endpoint `run` materializa internamente um dataset em `data/api_runs/` e reuti
 
 A UI não executa o solver diretamente. Ela funciona como cliente da API e deriva a visualização a partir do contrato de resposta do backend.
 
+### 20.5 Notebooks públicos
+
+O repositório expõe dois artefatos interativos com objetivos distintos:
+
+* `modelo_solver_workbench.ipynb`: demonstração top-down do solver, com leitura de rede-base, gargalo dominante, solução, KPIs e takeaway;
+* `benchmark_solver_comparison.ipynb`: experimento analítico com benchmarking por amostragem, dispersão, erro relativo da função objetivo e rodada exaustiva de `100%`.
+
+Os cadernos trabalham com os nomes públicos de cenário:
+
+* `operacao_controlada`: cenário de demonstração, materializado internamente em `data/fake_solution`;
+* `operacao_sob_pressao`: cenário de estresse e benchmark, materializado internamente em `data/fake_smoke`.
+
+### 20.6 Benchmark experimental
+
+O benchmark atual opera em dois regimes:
+
+* benchmark amostral sobre `operacao_sob_pressao`, com `20%`, `40%`, `60%` e `80%` das ordens e `5` repetições por escala;
+* rodada exaustiva separada com `100%` das ordens.
+
+As saídas experimentais principais são:
+
+* `results.csv`;
+* `summary.json`;
+* plots em português;
+* painel visual da rodada exaustiva organizado por `solver x classe operacional`.
+
 ## 21. Persistência, cache e idempotência
 
 Para cada `hash_cenario`, o backend mantém em disco:
@@ -569,6 +628,8 @@ Além disso:
 * `recovered_previous_context` indica recuperação de contexto persistido;
 * `snapshot_materialization` registra a materialização realizada durante a execução, quando aplicável.
 
+Na camada experimental, a persistência é separada da operação principal e fica em diretórios de benchmark com artefatos tabulares e visuais reutilizáveis.
+
 ## 22. Estratégia atual de testes
 
 O repositório já cobre o backend com testes por contrato e integração leve:
@@ -585,6 +646,9 @@ O repositório já cobre o backend com testes por contrato e integração leve:
 * `tests/contract/test_orchestration.py`
 * `tests/contract/test_api.py`
 * `tests/contract/test_cli.py`
+* `tests/contract/test_benchmark_catalog.py`
+* `tests/contract/test_benchmark_runner.py`
+* `tests/contract/test_benchmark_workbench_support.py`
 * `tests/ui/` para o contrato entre frontend e backend
 
 ## 23. Resultado atual esperado da aplicação
@@ -608,4 +672,5 @@ O núcleo executável existe, e a prioridade documental passa a ser:
 
 * manter o contexto de negócio alinhado ao backend real;
 * preservar o desacoplamento entre domínio e solver;
-* registrar com clareza o contrato entre CLI, API, UI e persistência operacional.
+* registrar com clareza o contrato entre CLI, API, UI, notebooks e persistência operacional;
+* sustentar a narrativa metodológica do benchmark, distinguindo claramente operação do produto e comparação científica controlada.
