@@ -21,9 +21,18 @@ from roteirizacao import (
 from roteirizacao.domain.serialization import serialize_value
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
-DEFAULT_SCENARIOS = {
-    "fake_solution": PROJECT_ROOT / "data" / "fake_solution",
-    "fake_smoke": PROJECT_ROOT / "data" / "fake_smoke",
+SCENARIO_DATASETS = {
+    "operacao_controlada": PROJECT_ROOT / "data" / "fake_solution",
+    "operacao_sob_pressao": PROJECT_ROOT / "data" / "fake_smoke",
+}
+LEGACY_SCENARIO_ALIASES = {
+    "fake_solution": "operacao_controlada",
+    "fake_smoke": "operacao_sob_pressao",
+}
+DEFAULT_SCENARIO = "operacao_controlada"
+SCENARIO_LABELS = {
+    "operacao_controlada": "Operacao Controlada",
+    "operacao_sob_pressao": "Operacao Sob Pressao",
 }
 
 
@@ -42,16 +51,28 @@ class ScenarioArtifacts:
     node_kind: dict[str, str]
 
 
-def resolve_dataset_dir(scenario: str | Path = "fake_solution") -> tuple[str, Path]:
+def scenario_public_label(scenario_name: str) -> str:
+    canonical = LEGACY_SCENARIO_ALIASES.get(scenario_name, scenario_name)
+    return SCENARIO_LABELS.get(canonical, canonical.replace("_", " ").title())
+
+
+def resolve_dataset_dir(scenario: str | Path = DEFAULT_SCENARIO) -> tuple[str, Path]:
     if isinstance(scenario, Path):
         resolved = scenario
         scenario_name = scenario.name
     else:
-        resolved = DEFAULT_SCENARIOS.get(scenario, PROJECT_ROOT / str(scenario))
-        scenario_name = Path(str(scenario)).name
+        raw_name = str(scenario)
+        canonical_name = LEGACY_SCENARIO_ALIASES.get(raw_name, raw_name)
+        resolved = SCENARIO_DATASETS.get(canonical_name, PROJECT_ROOT / raw_name)
+        scenario_name = canonical_name
 
     if not resolved.is_absolute():
         resolved = PROJECT_ROOT / resolved
+
+    for canonical_name, dataset_path in SCENARIO_DATASETS.items():
+        if resolved == dataset_path:
+            scenario_name = canonical_name
+            break
 
     if not resolved.exists():
         raise FileNotFoundError(f"dataset nao encontrado: {resolved}")
@@ -75,7 +96,7 @@ def _load_matrix_script_module():
 
 
 def compile_scenario(
-    scenario: str | Path = "fake_solution",
+    scenario: str | Path = DEFAULT_SCENARIO,
     *,
     detour_factor: float = 1.25,
     average_speed_mps: float = 8.5,
@@ -94,7 +115,7 @@ def compile_scenario(
     )
     locations = matrix_module.build_locations(dataset_dir)
     arcs = matrix_module.build_arcs(locations, config)
-    dataset_token = dataset_dir.name.strip() or "fake"
+    dataset_token = scenario_name.strip() or dataset_dir.name.strip() or "cenario"
     payload = {
         "snapshot_id": f"snap-{dataset_token}-{data_operacao}",
         "generated_at": datetime.now(timezone.utc).isoformat(),
@@ -127,12 +148,12 @@ def compile_scenario(
 
 def compile_default_scenarios() -> list[dict[str, Any]]:
     return [
-        compile_scenario("fake_solution"),
-        compile_scenario("fake_smoke"),
+        compile_scenario("operacao_controlada"),
+        compile_scenario("operacao_sob_pressao"),
     ]
 
 
-def load_scenario_artifacts(scenario: str | Path = "fake_solution") -> ScenarioArtifacts:
+def load_scenario_artifacts(scenario: str | Path = DEFAULT_SCENARIO) -> ScenarioArtifacts:
     scenario_name, dataset_dir = resolve_dataset_dir(scenario)
     contexto = _read_json(dataset_dir / "contexto.json")
     bases = _read_json(dataset_dir / "bases.json")
@@ -189,6 +210,7 @@ def load_scenario_artifacts(scenario: str | Path = "fake_solution") -> ScenarioA
 def summarize_dataset(artifacts: ScenarioArtifacts) -> dict[str, Any]:
     return {
         "cenario": artifacts.scenario_name,
+        "cenario_legivel": scenario_public_label(artifacts.scenario_name),
         "dataset_dir": str(artifacts.dataset_dir),
         "data_operacao": artifacts.contexto["data_operacao"],
         "bases": len(artifacts.bases),
@@ -198,6 +220,83 @@ def summarize_dataset(artifacts: ScenarioArtifacts) -> dict[str, Any]:
         "arcos_matriz": len(artifacts.matrix_payload.get("arcs", [])),
         "estrategia_matriz": artifacts.matrix_payload.get("strategy_name"),
         "fonte_matriz": artifacts.matrix_payload.get("source_name"),
+    }
+
+
+def analyze_scenario(artifacts: ScenarioArtifacts) -> dict[str, Any]:
+    ordens = artifacts.ordens
+    viaturas = artifacts.viaturas
+    total_ordens = len(ordens)
+    total_viaturas = len(viaturas)
+    total_especiais = sum(1 for ordem in ordens if str(ordem.get("classe_planejamento", "")).lower() == "especial")
+    avg_window_hours = (
+        round(
+            sum(
+                (
+                    datetime.fromisoformat(str(ordem["fim_janela"]))
+                    - datetime.fromisoformat(str(ordem["inicio_janela"]))
+                ).total_seconds()
+                for ordem in ordens
+            )
+            / max(total_ordens, 1)
+            / 3600,
+            2,
+        )
+        if ordens
+        else 0.0
+    )
+    avg_value = (
+        float(sum(Decimal(str(ordem.get("valor_estimado", "0"))) for ordem in ordens) / Decimal(max(total_ordens, 1)))
+        if ordens
+        else 0.0
+    )
+    avg_volume = (
+        float(sum(Decimal(str(ordem.get("volume_estimado", "0"))) for ordem in ordens) / Decimal(max(total_ordens, 1)))
+        if ordens
+        else 0.0
+    )
+    avg_cash_capacity = (
+        float(sum(Decimal(str(viatura.get("capacidade_financeira", "0"))) for viatura in viaturas) / Decimal(max(total_viaturas, 1)))
+        if viaturas
+        else 0.0
+    )
+    avg_volume_capacity = (
+        float(sum(Decimal(str(viatura.get("capacidade_volumetrica", "0"))) for viatura in viaturas) / Decimal(max(total_viaturas, 1)))
+        if viaturas
+        else 0.0
+    )
+    cash_pressure_ratio = round(avg_value / avg_cash_capacity, 3) if avg_cash_capacity else 0.0
+    volume_pressure_ratio = round(avg_volume / avg_volume_capacity, 3) if avg_volume_capacity else 0.0
+    longitudes = [point[0] for point in artifacts.positions.values()]
+    latitudes = [point[1] for point in artifacts.positions.values()]
+    geo_span = {
+        "longitude": round(max(longitudes) - min(longitudes), 4) if longitudes else 0.0,
+        "latitude": round(max(latitudes) - min(latitudes), 4) if latitudes else 0.0,
+    }
+    dominant_bottleneck = "cobertura_balanceada"
+    if avg_window_hours <= 3.0:
+        dominant_bottleneck = "janela_tempo"
+    elif cash_pressure_ratio >= 0.55:
+        dominant_bottleneck = "limite_financeiro"
+    elif volume_pressure_ratio >= 0.55:
+        dominant_bottleneck = "capacidade_volumetrica"
+    elif geo_span["longitude"] >= 0.18 or geo_span["latitude"] >= 0.18:
+        dominant_bottleneck = "dispersao_geografica"
+
+    return {
+        "cenario": artifacts.scenario_name,
+        "total_ordens": total_ordens,
+        "total_viaturas": total_viaturas,
+        "total_especiais": total_especiais,
+        "priority_ratio": round(total_especiais / max(total_ordens, 1), 3),
+        "avg_window_hours": avg_window_hours,
+        "avg_value": round(avg_value, 2),
+        "avg_volume": round(avg_volume, 2),
+        "cash_pressure_ratio": cash_pressure_ratio,
+        "volume_pressure_ratio": volume_pressure_ratio,
+        "geo_span_longitude": geo_span["longitude"],
+        "geo_span_latitude": geo_span["latitude"],
+        "dominant_bottleneck": dominant_bottleneck,
     }
 
 
@@ -286,7 +385,7 @@ def build_base_graph(artifacts: ScenarioArtifacts):
 
 
 def run_scenario(
-    scenario: str | Path = "fake_solution",
+    scenario: str | Path = DEFAULT_SCENARIO,
     *,
     max_iterations: int = 50,
     seed: int = 1,
@@ -356,13 +455,13 @@ def compare_default_scenarios(
 ) -> list[dict[str, Any]]:
     return [
         run_and_summarize(
-            "fake_solution",
+            "operacao_controlada",
             max_iterations=max_iterations,
             seed=seed,
             materialize_snapshot=materialize_snapshot,
         ),
         run_and_summarize(
-            "fake_smoke",
+            "operacao_sob_pressao",
             max_iterations=max_iterations,
             seed=seed,
             materialize_snapshot=materialize_snapshot,
@@ -716,6 +815,20 @@ def serialize_orchestration(orchestration) -> dict[str, Any]:
     }
 
 
+def build_takeaway(orchestration, artifacts: ScenarioArtifacts) -> str:
+    analysis = analyze_scenario(artifacts)
+    summary = summarize_orchestration(orchestration)
+    bottleneck = analysis["dominant_bottleneck"].replace("_", " ")
+    scenario_label = scenario_public_label(analysis["cenario"])
+    return (
+        f"No cenario {scenario_label}, o gargalo dominante e {bottleneck}. "
+        f"O solver encerrou com status {summary['status_final']}, planejou {summary['ordens_planejadas']} ordem(ns), "
+        f"deixou {summary['ordens_nao_atendidas']} nao atendida(s) e acionou {summary['total_rotas']} rota(s). "
+        f"A leitura principal para apresentacao e comparar cobertura e custo com esse gargalo em mente, "
+        f"sem tratar a sequencia exata de visitas como criterio cientifico principal."
+    )
+
+
 def plot_base_graph(
     artifacts: ScenarioArtifacts,
     *,
@@ -731,7 +844,7 @@ def plot_base_graph(
     figure, axis = plt.subplots(figsize=figsize)
     basemap_added = _maybe_add_basemap(axis, positions) if with_basemap else False
     title_suffix = " com basemap" if basemap_added else ""
-    axis.set_title(f"Rede-base do cenario {artifacts.scenario_name}{title_suffix}")
+    axis.set_title(f"Rede-base do cenario {scenario_public_label(artifacts.scenario_name)}{title_suffix}")
 
     base_nodes = [node for node, kind in artifacts.node_kind.items() if kind == "base"]
     order_nodes = [node for node, kind in artifacts.node_kind.items() if kind == "ordem"]
@@ -1013,3 +1126,60 @@ def plot_solution_graph(
         _draw_route_summary_panel(summary_axis, orchestration, node_state, colors)
     axis.grid(alpha=0.2)
     return figure, axis
+
+
+def plot_kpi_dashboard(orchestration, *, figsize: tuple[int, int] = (12, 4)):
+    _, plt = _require_network_stack()
+    result = orchestration.resultado_planejamento
+    figure, axes = plt.subplots(1, 4, figsize=figsize, constrained_layout=True)
+    cards = [
+        ("Taxa de atendimento", f"{Decimal(str(result.kpi_operacional.taxa_atendimento)) * 100:.1f}%"),
+        ("Viaturas acionadas", str(result.kpi_operacional.viaturas_acionadas)),
+        ("Distancia total", f"{result.kpi_operacional.distancia_total_estimada / 1000:.1f} km"),
+        ("Custo estimado", f"R$ {_format_brl(result.kpi_gerencial.custo_total_estimado)}"),
+    ]
+    palette = ["#12355b", "#2a9d8f", "#f4a261", "#bc3908"]
+    for axis, (title, value), color in zip(axes, cards, palette):
+        axis.axis("off")
+        axis.add_patch(plt.Rectangle((0, 0), 1, 1, color=color, alpha=0.92, transform=axis.transAxes))
+        axis.text(0.08, 0.68, title, color="white", fontsize=11, fontweight="bold", transform=axis.transAxes)
+        axis.text(0.08, 0.32, value, color="white", fontsize=22, fontweight="bold", transform=axis.transAxes)
+    return figure, axes
+
+
+def export_presentation_bundle(
+    orchestration,
+    artifacts: ScenarioArtifacts,
+    *,
+    output_dir: str | Path,
+    with_basemap: bool = False,
+) -> dict[str, str]:
+    _, plt = _require_network_stack()
+    output_path = Path(output_dir)
+    if not output_path.is_absolute():
+        output_path = PROJECT_ROOT / output_path
+    output_path.mkdir(parents=True, exist_ok=True)
+
+    base_figure, _ = plot_base_graph(artifacts, with_basemap=with_basemap)
+    base_path = output_path / f"{artifacts.scenario_name}_rede_base.png"
+    base_figure.savefig(base_path, dpi=180, bbox_inches="tight")
+    plt.close(base_figure)
+
+    solution_figure, _ = plot_solution_graph(orchestration, artifacts, with_basemap=with_basemap)
+    solution_path = output_path / f"{artifacts.scenario_name}_solucao.png"
+    solution_figure.savefig(solution_path, dpi=180, bbox_inches="tight")
+    plt.close(solution_figure)
+
+    kpi_figure, _ = plot_kpi_dashboard(orchestration)
+    kpi_path = output_path / f"{artifacts.scenario_name}_kpis.png"
+    kpi_figure.savefig(kpi_path, dpi=180, bbox_inches="tight")
+    plt.close(kpi_figure)
+
+    takeaway_path = output_path / f"{artifacts.scenario_name}_takeaway.txt"
+    takeaway_path.write_text(build_takeaway(orchestration, artifacts) + "\n")
+    return {
+        "base_map": str(base_path),
+        "solution_map": str(solution_path),
+        "kpi_panel": str(kpi_path),
+        "takeaway": str(takeaway_path),
+    }
