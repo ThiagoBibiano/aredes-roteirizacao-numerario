@@ -228,6 +228,9 @@ data/fake_solution/logistics_snapshots/
 data/fake_solution/outputs/*.json
 data/fake_solution/outputs/executions/
 data/api_runs/
+data/benchmarks/
+data/scenarios/generated/
+docs/apresentacao/assets/generated/notebook/
 notebook/.ipynb_checkpoints/
 
 apps/ui_streamlit/settings.local.toml
