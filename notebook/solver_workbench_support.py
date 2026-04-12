@@ -601,7 +601,7 @@ def _build_solution_node_state(orchestration, artifacts: ScenarioArtifacts) -> d
     return node_state
 
 
-def _draw_solution_semantic_legend(axis) -> None:
+def _draw_semantic_legend(axis, *, include_unserved: bool, include_routes: bool) -> None:
     from matplotlib.lines import Line2D
 
     handles = [
@@ -649,35 +649,52 @@ def _draw_solution_semantic_legend(axis) -> None:
             markersize=10,
             label="Especial",
         ),
-        Line2D(
-            [0],
-            [0],
-            marker="X",
-            linestyle="None",
-            markerfacecolor="#cbd5e1",
-            markeredgecolor="#475569",
-            markeredgewidth=1.0,
-            markersize=9,
-            label="Nao atendida",
-        ),
-        Line2D(
-            [0, 1],
-            [0, 0],
-            color="#64748b",
-            linewidth=2.4,
-            linestyle="solid",
-            label="Rota de suprimento",
-        ),
-        Line2D(
-            [0, 1],
-            [0, 0],
-            color="#64748b",
-            linewidth=2.4,
-            linestyle=(0, (6, 4)),
-            label="Rota de recolhimento",
-        ),
     ]
+
+    if include_unserved:
+        handles.append(
+            Line2D(
+                [0],
+                [0],
+                marker="X",
+                linestyle="None",
+                markerfacecolor="#cbd5e1",
+                markeredgecolor="#475569",
+                markeredgewidth=1.0,
+                markersize=9,
+                label="Nao atendida",
+            )
+        )
+    if include_routes:
+        handles.extend(
+            [
+                Line2D(
+                    [0, 1],
+                    [0, 0],
+                    color="#64748b",
+                    linewidth=2.4,
+                    linestyle="solid",
+                    label="Rota de suprimento",
+                ),
+                Line2D(
+                    [0, 1],
+                    [0, 0],
+                    color="#64748b",
+                    linewidth=2.4,
+                    linestyle=(0, (6, 4)),
+                    label="Rota de recolhimento",
+                ),
+            ]
+        )
     axis.legend(handles=handles, loc="upper left", frameon=True, fontsize=8.5)
+
+
+def _draw_solution_semantic_legend(axis) -> None:
+    _draw_semantic_legend(axis, include_unserved=True, include_routes=True)
+
+
+def _draw_base_semantic_legend(axis) -> None:
+    _draw_semantic_legend(axis, include_unserved=False, include_routes=False)
 
 
 def _draw_route_summary_panel(axis, orchestration, node_state: dict[str, dict[str, Any]], colors) -> None:
@@ -847,7 +864,7 @@ def plot_base_graph(
     axis.set_title(f"Rede-base do cenario {scenario_public_label(artifacts.scenario_name)}{title_suffix}")
 
     base_nodes = [node for node, kind in artifacts.node_kind.items() if kind == "base"]
-    order_nodes = [node for node, kind in artifacts.node_kind.items() if kind == "ordem"]
+    order_metadata = _order_metadata_map(artifacts)
 
     nx.draw_networkx_edges(
         graph,
@@ -865,21 +882,35 @@ def plot_base_graph(
         ax=axis,
         node_color="#12355b",
         node_size=420,
+        node_shape="s",
         edgecolors="white",
         linewidths=1.2,
-        label="Bases",
     )
-    nx.draw_networkx_nodes(
-        graph,
-        pos=positions,
-        nodelist=order_nodes,
-        ax=axis,
-        node_color="#f8961e",
-        node_size=260,
-        edgecolors="white",
-        linewidths=0.8,
-        label="Ordens do dia",
-    )
+
+    grouped_order_nodes: dict[tuple[str, str], list[str]] = {}
+    for ordem_id, metadata in order_metadata.items():
+        key = (
+            metadata.get("tipo_servico", "desconhecido"),
+            metadata.get("classe_planejamento", "nao_informada"),
+        )
+        grouped_order_nodes.setdefault(key, []).append(f"no-{ordem_id}")
+
+    for (tipo_servico, classe_planejamento), node_ids in grouped_order_nodes.items():
+        style = _service_style(tipo_servico)
+        edge_color = "#d4a017" if classe_planejamento == "especial" else "white"
+        line_width = 2.2 if classe_planejamento == "especial" else 0.9
+        node_size = 360 if classe_planejamento == "especial" else 300
+        nx.draw_networkx_nodes(
+            graph,
+            pos=positions,
+            nodelist=node_ids,
+            ax=axis,
+            node_color=style["fill"],
+            node_size=node_size,
+            node_shape=style["marker"],
+            edgecolors=edge_color,
+            linewidths=line_width,
+        )
 
     if with_labels:
         label_map = {
@@ -901,7 +932,7 @@ def plot_base_graph(
             fontsize=9,
             bbox={"facecolor": "white", "alpha": 0.8, "edgecolor": "#cccccc"},
         )
-    axis.legend(loc="best")
+    _draw_base_semantic_legend(axis)
     axis.grid(alpha=0.2)
     figure.tight_layout()
     return figure, axis
