@@ -31,8 +31,8 @@ LEGACY_SCENARIO_ALIASES = {
 }
 DEFAULT_SCENARIO = "operacao_controlada"
 SCENARIO_LABELS = {
-    "operacao_controlada": "Operacao Controlada",
-    "operacao_sob_pressao": "Operacao Sob Pressao",
+    "operacao_controlada": "Operação Controlada",
+    "operacao_sob_pressao": "Operação Sob Pressão",
 }
 
 
@@ -662,7 +662,7 @@ def _draw_semantic_legend(axis, *, include_unserved: bool, include_routes: bool)
                 markeredgecolor="#475569",
                 markeredgewidth=1.0,
                 markersize=9,
-                label="Nao atendida",
+                label="Não atendida",
             )
         )
     if include_routes:
@@ -710,7 +710,7 @@ def _draw_route_summary_panel(axis, orchestration, node_state: dict[str, dict[st
         f"Rotas: {len(routes)}\n"
         f"Atendidas: {len(served_nodes)} | Especiais: {special_served}\n"
         f"SUP: {services.get('suprimento', 0)} | REC: {services.get('recolhimento', 0)}\n"
-        f"Nao atendidas: {unserved_count}"
+        f"Não atendidas: {unserved_count}"
     )
     axis.text(
         0.0,
@@ -835,14 +835,26 @@ def serialize_orchestration(orchestration) -> dict[str, Any]:
 def build_takeaway(orchestration, artifacts: ScenarioArtifacts) -> str:
     analysis = analyze_scenario(artifacts)
     summary = summarize_orchestration(orchestration)
-    bottleneck = analysis["dominant_bottleneck"].replace("_", " ")
+    bottleneck = {
+        "cobertura_balanceada": "cobertura balanceada",
+        "janela_tempo": "janela de tempo",
+        "limite_financeiro": "limite financeiro",
+        "capacidade_volumetrica": "capacidade volumétrica",
+        "dispersao_geografica": "dispersão geográfica",
+    }.get(analysis["dominant_bottleneck"], analysis["dominant_bottleneck"].replace("_", " "))
     scenario_label = scenario_public_label(analysis["cenario"])
+    status_label = {
+        "concluida": "concluída",
+        "concluida_com_ressalvas": "concluída com ressalvas",
+        "inviavel": "inviável",
+        "erro": "erro",
+    }.get(summary["status_final"], str(summary["status_final"]).replace("_", " "))
     return (
-        f"No cenario {scenario_label}, o gargalo dominante e {bottleneck}. "
-        f"O solver encerrou com status {summary['status_final']}, planejou {summary['ordens_planejadas']} ordem(ns), "
-        f"deixou {summary['ordens_nao_atendidas']} nao atendida(s) e acionou {summary['total_rotas']} rota(s). "
-        f"A leitura principal para apresentacao e comparar cobertura e custo com esse gargalo em mente, "
-        f"sem tratar a sequencia exata de visitas como criterio cientifico principal."
+        f"No cenário {scenario_label}, o gargalo dominante é {bottleneck}. "
+        f"O solver encerrou com status {status_label}, planejou {summary['ordens_planejadas']} ordem(ns), "
+        f"deixou {summary['ordens_nao_atendidas']} não atendida(s) e acionou {summary['total_rotas']} rota(s). "
+        f"A leitura principal para apresentação é comparar cobertura e custo com esse gargalo em mente, "
+        f"sem tratar a sequência exata de visitas como critério científico principal."
     )
 
 
@@ -861,7 +873,7 @@ def plot_base_graph(
     figure, axis = plt.subplots(figsize=figsize)
     basemap_added = _maybe_add_basemap(axis, positions) if with_basemap else False
     title_suffix = " com basemap" if basemap_added else ""
-    axis.set_title(f"Rede-base do cenario {scenario_public_label(artifacts.scenario_name)}{title_suffix}")
+    axis.set_title(f"Rede-base do cenário {scenario_public_label(artifacts.scenario_name)}{title_suffix}")
 
     base_nodes = [node for node, kind in artifacts.node_kind.items() if kind == "base"]
     order_metadata = _order_metadata_map(artifacts)
@@ -926,7 +938,7 @@ def plot_base_graph(
         axis.text(
             0.02,
             0.98,
-            "Basemap indisponivel; renderizacao mantida em networkx puro.",
+            "Basemap indisponível; renderização mantida em networkx puro.",
             transform=axis.transAxes,
             va="top",
             fontsize=9,
@@ -975,7 +987,7 @@ def plot_solution_graph(
     title_suffix = " com basemap" if basemap_added else ""
     subtitle = (
         f"{result.resumo_operacional.total_ordens_planejadas} ordem(ns) planejada(s)"
-        f" | {result.resumo_operacional.total_ordens_nao_atendidas} nao atendida(s)"
+        f" | {result.resumo_operacional.total_ordens_nao_atendidas} não atendida(s)"
     )
     axis.set_title(f"Rede escolhida pelo solver{title_suffix}\n{subtitle}", loc="left")
 
@@ -1117,7 +1129,7 @@ def plot_solution_graph(
             x_coord, y_coord = position
             label_prefix = metadata.get("label_short", metadata.get("id_ordem", node_id))
             planning_label = _planning_label(metadata.get("classe_planejamento", "nao_informada"))
-            status_label = "NAO ATENDIDA" if metadata.get("served") is False else metadata.get("route_label", "")
+            status_label = "NÃO ATENDIDA" if metadata.get("served") is False else metadata.get("route_label", "")
             detail_label = (
                 f"{metadata.get('service_label', '---')} | {planning_label} | {metadata.get('criticidade', '--').upper()}\n"
                 f"{status_label} | R$ {_format_brl(metadata.get('valor_estimado', '0'))}"
@@ -1146,7 +1158,7 @@ def plot_solution_graph(
         axis.text(
             0.02,
             0.98,
-            "Basemap indisponivel; renderizacao mantida em networkx puro.",
+            "Basemap indisponível; renderização mantida em networkx puro.",
             transform=axis.transAxes,
             va="top",
             fontsize=9,
@@ -1166,7 +1178,7 @@ def plot_kpi_dashboard(orchestration, *, figsize: tuple[int, int] = (12, 4)):
     cards = [
         ("Taxa de atendimento", f"{Decimal(str(result.kpi_operacional.taxa_atendimento)) * 100:.1f}%"),
         ("Viaturas acionadas", str(result.kpi_operacional.viaturas_acionadas)),
-        ("Distancia total", f"{result.kpi_operacional.distancia_total_estimada / 1000:.1f} km"),
+        ("Distância total", f"{result.kpi_operacional.distancia_total_estimada / 1000:.1f} km"),
         ("Custo estimado", f"R$ {_format_brl(result.kpi_gerencial.custo_total_estimado)}"),
     ]
     palette = ["#12355b", "#2a9d8f", "#f4a261", "#bc3908"]
@@ -1184,6 +1196,7 @@ def export_presentation_bundle(
     *,
     output_dir: str | Path,
     with_basemap: bool = False,
+    show_order_details: bool = True,
 ) -> dict[str, str]:
     _, plt = _require_network_stack()
     output_path = Path(output_dir)
@@ -1196,7 +1209,12 @@ def export_presentation_bundle(
     base_figure.savefig(base_path, dpi=180, bbox_inches="tight")
     plt.close(base_figure)
 
-    solution_figure, _ = plot_solution_graph(orchestration, artifacts, with_basemap=with_basemap)
+    solution_figure, _ = plot_solution_graph(
+        orchestration,
+        artifacts,
+        with_basemap=with_basemap,
+        show_order_details=show_order_details,
+    )
     solution_path = output_path / f"{artifacts.scenario_name}_solucao.png"
     solution_figure.savefig(solution_path, dpi=180, bbox_inches="tight")
     plt.close(solution_figure)

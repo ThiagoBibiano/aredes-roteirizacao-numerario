@@ -25,6 +25,7 @@ from solver_workbench_support import (
     route_sequences,
     run_scenario,
 )
+from benchmark_workbench_support import regenerate_benchmark_plots_from_summary
 
 
 ASSETS_DIR = PROJECT_ROOT / "docs" / "apresentacao" / "assets"
@@ -41,7 +42,13 @@ def main() -> int:
     compile_scenario(scenario_name)
     artifacts = load_scenario_artifacts(scenario_name)
     orchestration = run_scenario(scenario_name, max_iterations=500, seed=1, materialize_snapshot=True)
-    bundle = export_presentation_bundle(orchestration, artifacts, output_dir=GENERATED_DIR, with_basemap=False)
+    bundle = export_presentation_bundle(
+        orchestration,
+        artifacts,
+        output_dir=GENERATED_DIR,
+        with_basemap=True,
+        show_order_details=False,
+    )
 
     _generate_route_table_png(orchestration, GENERATED_DIR / "operacao_sob_pressao_rotas_tabela.png")
     _generate_before_after_png(
@@ -56,6 +63,11 @@ def main() -> int:
     )
 
     plots_dir = BENCHMARK_OUTPUT_DIR / "plots"
+    regenerate_benchmark_plots_from_summary(
+        BENCHMARK_OUTPUT_DIR / "summary.json",
+        plots_dir=plots_dir,
+        with_basemap=True,
+    )
     _copy_benchmark_plots(plots_dir)
     _generate_benchmark_panel(plots_dir, GENERATED_DIR / "benchmark_comparison_panel.png")
     _generate_benchmark_gif(
@@ -71,7 +83,7 @@ def _generate_route_table_png(orchestration, output_path: Path) -> None:
     import matplotlib.pyplot as plt
 
     sequences = route_sequences(orchestration)
-    headers = ["Rota", "Viatura", "Classe", "Inicio", "Fim", "Sequencia"]
+    headers = ["Rota", "Viatura", "Classe", "Início", "Fim", "Sequência"]
     rows = []
     for sequence in sequences:
         rows.append(
@@ -111,7 +123,7 @@ def _generate_before_after_png(*, before_path: Path, after_path: Path, output_pa
 
     canvas = Image.new("RGB", (before.width + after.width + 80, target_height + 110), "#f7fafc")
     draw = ImageDraw.Draw(canvas)
-    font_title = ImageFont.load_default()
+    font_title = _load_font(size=20)
     canvas.paste(before, (20, 70))
     canvas.paste(after, (before.width + 60, 70))
     draw.text((20, 24), "Antes: rede-base", fill="#143642", font=font_title)
@@ -172,6 +184,15 @@ def _resize_to_height(image: Image.Image, height: int) -> Image.Image:
         return image
     width = int(image.width * (height / image.height))
     return image.resize((width, height))
+
+
+def _load_font(*, size: int) -> ImageFont.ImageFont:
+    for font_name in ("DejaVuSans.ttf", "Arial.ttf", "LiberationSans-Regular.ttf"):
+        try:
+            return ImageFont.truetype(font_name, size=size)
+        except OSError:
+            continue
+    return ImageFont.load_default()
 
 
 if __name__ == "__main__":

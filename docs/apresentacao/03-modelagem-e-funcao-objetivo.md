@@ -1,59 +1,49 @@
-# 3. Modelagem e Funcao Objetivo
+# 3. Modelagem e Função Objetivo
 
 ## O que define uma boa rota
 
-Uma rota boa nao e apenas curta. Ela precisa ser:
+Uma rota boa não é apenas curta. Ela precisa ser:
 
-- viavel no tempo;
-- viavel na capacidade;
-- coerente com o tipo de operacao;
+- viável no tempo;
+- viável na capacidade;
+- coerente com o tipo de operação;
 - eficiente em custo.
 
 ## Blocos da modelagem
 
-O problema pode ser lido em tres blocos:
+O problema pode ser lido em três blocos:
 
-1. **veiculos**: custo, turno e capacidades;
-2. **demandas**: volume, valor, janela e servico;
-3. **tempo**: deslocamento, atendimento e retorno a base.
+1. **veículos**: custo, turno e capacidades;
+2. **demandas**: volume, valor, janela e serviço;
+3. **tempo**: deslocamento, atendimento e retorno à base.
 
-```mermaid
-flowchart TD
-    A[Veiculos] --> D[Modelo]
-    B[Demandas] --> D
-    C[Tempo] --> D
-    D --> E[Rotas viaveis]
-```
+![Viatura blindada utilizada como referência visual](./assets/viatura_carro_forte.png)
 
-![Viatura com indicacoes visuais de capacidade, custo e turno](./assets/viatura-capacidades.svg)
+## Função objetivo
 
-## Funcao objetivo
-
-No produto e no benchmark, a intuicao economica e a mesma:
+No produto e no benchmark, a intuição econômica é a mesma: minimizar o custo total da operação sem violar as restrições logísticas.
 
 $$
-\text{custo total} =
-\text{custo fixo de viatura}
+\min Z =
+\underbrace{\sum_{k \in K} F_k y_k}_{\text{custo fixo de viatura}}
 +
-\text{custo de deslocamento}
+\underbrace{\sum_{k \in K}\sum_{(i,j)\in A} C_{ij}^k x_{ij}^k}_{\text{custo de deslocamento}}
 +
-\text{custo de duracao}
+\underbrace{\sum_{k \in K}\sum_{(i,j)\in A} T_{ij} x_{ij}^k}_{\text{custo de duração}}
 +
-\text{penalidade por nao atendimento}
+\underbrace{\sum_{i \in N} P_i u_i}_{\text{penalidade por não atendimento}}
 $$
 
-No benchmark, esse valor e recalculado fora do solver como `objective_common`, para garantir comparacao justa entre PyVRP e PuLP.
+No benchmark, esse valor é recalculado fora do solver como `objective_common`, para garantir comparação justa entre PyVRP e PuLP.
 
-## Restricoes que importam
+## Restrições que importam
 
-- uma ordem nao pode ser atendida mais de uma vez;
-- a viatura respeita capacidade volumetrica e financeira;
+- uma ordem não pode ser atendida mais de uma vez;
+- a viatura respeita capacidade volumétrica e financeira;
 - a rota respeita janela de tempo e turno;
-- toda rota sai e retorna a base;
+- toda rota sai e retorna à base;
 - `suprimento` e `recolhimento` continuam isolados.
 
-Essa ultima regra e importante: a comparacao experimental nao mistura as duas classes na mesma rota.
-
-![Esquema visual: veiculo, demanda e tempo alimentando a funcao objetivo](./assets/modelagem-visual.svg)
+Essa última regra é importante: a comparação experimental não mistura as duas classes na mesma rota.
 
 [⬅️ Anterior](./02-elementos-da-rede-grafica.md) | [Próxima ➡️](./04-tecnologia-solucao.md)

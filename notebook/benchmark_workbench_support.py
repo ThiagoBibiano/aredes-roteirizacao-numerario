@@ -59,16 +59,16 @@ SOLVER_OFFSETS = {
 METRIC_SPECS = (
     {
         "key": "runtime_s",
-        "label": "Tempo de solucao (s)",
-        "title": "Tempo de solucao por percentual de ordens",
+        "label": "Tempo de solução (s)",
+        "title": "Tempo de solução por percentual de ordens",
         "summary_key": "runtime_s",
         "transform": lambda value: value,
         "ylim": None,
     },
     {
         "key": "objective_common",
-        "label": "Funcao objetivo comum",
-        "title": "Funcao objetivo comum por percentual de ordens",
+        "label": "Função objetivo comum",
+        "title": "Função objetivo comum por percentual de ordens",
         "summary_key": "objective_common",
         "transform": lambda value: value,
         "ylim": None,
@@ -115,6 +115,38 @@ def load_benchmark_summary(path: str | Path) -> dict[str, Any]:
     if not summary_path.is_absolute():
         summary_path = PROJECT_ROOT / summary_path
     return json.loads(summary_path.read_text())
+
+
+def regenerate_benchmark_plots_from_summary(
+    summary_path: str | Path,
+    *,
+    plots_dir: str | Path | None = None,
+    with_basemap: bool = False,
+) -> dict[str, dict[str, str]]:
+    summary = load_benchmark_summary(summary_path)
+    resolved_summary_path = Path(summary_path)
+    if not resolved_summary_path.is_absolute():
+        resolved_summary_path = PROJECT_ROOT / resolved_summary_path
+
+    target_plots_dir = Path(plots_dir) if plots_dir is not None else resolved_summary_path.parent / "plots"
+    if not target_plots_dir.is_absolute():
+        target_plots_dir = PROJECT_ROOT / target_plots_dir
+    target_plots_dir.mkdir(parents=True, exist_ok=True)
+
+    records = list(summary.get("records", []))
+    aggregates = list(summary.get("aggregates", [])) or aggregate_records(records)
+    relative_error_records = list(summary.get("relative_objective_error_records", []))
+    if not relative_error_records:
+        relative_error_records = compute_relative_objective_error_records(records)
+    full_run = _deserialize_full_run(summary.get("full_run", {}))
+    return _write_plots(
+        plots_dir=target_plots_dir,
+        records=records,
+        aggregates=aggregates,
+        relative_error_records=relative_error_records,
+        full_run=full_run,
+        with_basemap=with_basemap,
+    )
 
 
 def rows_to_markdown_table(rows: list[dict[str, Any]]) -> str:
@@ -360,12 +392,12 @@ def summarize_records(records_or_aggregates: list[dict[str, Any]]) -> list[dict[
                 "Solver": item["solver_label"],
                 "Escala": item["order_share_label"],
                 "Repeticoes": item["repetitions"],
-                "Tempo medio (s)": _fmt(item["mean_runtime_s"], 4),
+                "Tempo médio (s)": _fmt(item["mean_runtime_s"], 4),
                 "DP tempo (s)": _fmt(item["std_runtime_s"], 4),
-                "FO media": _fmt(item["mean_objective_common"], 2),
+                "FO média": _fmt(item["mean_objective_common"], 2),
                 "DP FO": _fmt(item["std_objective_common"], 2),
-                "Atendimento medio (%)": _fmt(item["mean_service_rate"] * 100.0, 2),
-                "Viaturas medias": _fmt(item["mean_vehicles_used"], 2),
+                "Atendimento médio (%)": _fmt(item["mean_service_rate"] * 100.0, 2),
+                "Viaturas médias": _fmt(item["mean_vehicles_used"], 2),
                 "Viabilidade (%)": _fmt(item["feasible_rate"] * 100.0, 1),
             }
         )
@@ -464,7 +496,7 @@ def summarize_relative_objective_errors(relative_error_records: list[dict[str, A
             {
                 "Escala": item["order_share_label"],
                 "Referencias PuLP validas": f"{item['valid_reference_count']}/{item['repetitions']}",
-                "Erro relativo medio da FO (%)": _fmt_nullable(item["mean_relative_objective_error_pct"], 4),
+                "Erro relativo médio da FO (%)": _fmt_nullable(item["mean_relative_objective_error_pct"], 4),
                 "Erro relativo mediano (%)": _fmt_nullable(item["median_relative_objective_error_pct"], 4),
                 "Erro relativo maximo (%)": _fmt_nullable(item["max_relative_objective_error_pct"], 4),
             }
@@ -499,7 +531,7 @@ def summarize_pulp_viability(summary_or_aggregates: dict[str, Any] | list[dict[s
             {
                 "Escala": item["order_share_label"],
                 "Repeticoes": item["repetitions"],
-                "PuLP viavel": item["repetitions_feasible"],
+                "PuLP viável": item["repetitions_feasible"],
                 "Taxa de viabilidade do PuLP (%)": _fmt(item["feasible_rate"] * 100.0, 1),
                 "Referencias validas para erro de FO": f"{reference_counts.get(share_pct, 0)}/{repetitions.get(share_pct, item['repetitions'])}",
             }
@@ -521,8 +553,8 @@ def summarize_full_run(full_run: dict[str, Any]) -> list[dict[str, Any]]:
                 "FO": _fmt(_as_float(record["objective_common"]), 2),
                 "Atendimento (%)": _fmt(_as_float(record["service_rate"]) * 100.0, 2),
                 "Viaturas": int(record["vehicles_used"]),
-                "Distancia total (km)": _fmt(_as_float(record["distance_total_m"]) / 1000.0, 2),
-                "Duracao total (min)": _fmt(_as_float(record["duration_total_s"]) / 60.0, 1),
+                "Distância total (km)": _fmt(_as_float(record["distance_total_m"]) / 1000.0, 2),
+                "Duração total (min)": _fmt(_as_float(record["duration_total_s"]) / 60.0, 1),
                 "Escopo": "saldo agregado de duas execucoes isoladas por classe operacional",
             }
         )
@@ -551,8 +583,8 @@ def summarize_full_run_by_class(full_run: dict[str, Any]) -> list[dict[str, Any]
                     "FO": _fmt(_as_float(record["objective_common"]), 2),
                     "Atendimento (%)": _fmt(_as_float(record["service_rate"]) * 100.0, 2),
                     "Viaturas": int(record["vehicles_used"]),
-                    "Distancia total (km)": _fmt(_as_float(record["distance_total_m"]) / 1000.0, 2),
-                    "Duracao total (min)": _fmt(_as_float(record["duration_total_s"]) / 60.0, 1),
+                    "Distância total (km)": _fmt(_as_float(record["distance_total_m"]) / 1000.0, 2),
+                    "Duração total (min)": _fmt(_as_float(record["duration_total_s"]) / 60.0, 1),
                 }
             )
     return rows
@@ -590,9 +622,9 @@ def full_run_route_sequences(
                     "Base": route.depot_id,
                     "Paradas": len(route.visited_node_ids),
                     "Sequencia": " -> ".join(_route_display_label(artifacts, node_id) for node_id in sequence),
-                    "Leitura correta": "execucao isolada desta classe operacional",
-                    "Distancia (km)": _fmt(route.distance_total_m / 1000.0, 2),
-                    "Duracao (min)": _fmt(route.duration_total_s / 60.0, 1),
+                    "Leitura correta": "execução isolada desta classe operacional",
+                    "Distância (km)": _fmt(route.distance_total_m / 1000.0, 2),
+                    "Duração (min)": _fmt(route.duration_total_s / 60.0, 1),
                 }
             )
     return rows
@@ -625,8 +657,8 @@ def build_benchmark_takeaway(summary_or_records: dict[str, Any] | list[dict[str,
     if pyvrp_error_rows:
         error_row = pyvrp_error_rows[0]
         error_line = (
-            f" Nas repeticoes com referencia valida do PuLP em {largest_share}% das ordens, "
-            f"o erro relativo mediano da FO do PyVRP foi { _fmt_nullable(error_row['median_relative_objective_error_pct'], 4) }%."
+            f" Nas repetições com referência válida do PuLP em {largest_share}% das ordens, "
+            f"o erro relativo mediano da FO do PyVRP foi {_fmt_nullable(error_row['median_relative_objective_error_pct'], 4)}%."
         )
 
     full_run_line = ""
@@ -641,9 +673,9 @@ def build_benchmark_takeaway(summary_or_records: dict[str, Any] | list[dict[str,
 
     return (
         "O benchmark amostral confirma o trade-off esperado entre controle de otimalidade e escalabilidade. "
-        f"No recorte de {largest_share}% das ordens, o PyVRP teve tempo medio de {pyvrp_row['mean_runtime_s']:.4f}s, "
+        f"No recorte de {largest_share}% das ordens, o PyVRP teve tempo médio de {pyvrp_row['mean_runtime_s']:.4f}s, "
         f"enquanto o PuLP exigiu {pulp_row['mean_runtime_s']:.4f}s. "
-        f"A taxa media de atendimento permaneceu em {pyvrp_row['mean_service_rate'] * 100.0:.2f}% para o PyVRP "
+        f"A taxa média de atendimento permaneceu em {pyvrp_row['mean_service_rate'] * 100.0:.2f}% para o PyVRP "
         f"e {pulp_row['mean_service_rate'] * 100.0:.2f}% para o PuLP."
         f"{error_line}{full_run_line}"
     )
@@ -1012,7 +1044,7 @@ def _plot_dispersion_panel(plots_dir: Path, records: list[dict[str, Any]]) -> Pa
                 cap.set_color(color)
                 cap.set_alpha(0.65)
 
-        axis.set_title(f"Dispersao - {metric['label']}")
+        axis.set_title(f"Dispersão - {metric['label']}")
         axis.set_ylabel(metric["label"])
         axis.set_xticks(share_values)
         axis.set_xticklabels([_share_label(item) for item in share_values])
@@ -1088,7 +1120,7 @@ def _plot_relative_error_panel(
         axis.text(
             0.5,
             0.5,
-            "Nao houve repeticoes com referencia valida do PuLP para calcular o erro relativo da FO.",
+            "Não houve repetições com referência válida do PuLP para calcular o erro relativo da FO.",
             ha="center",
             va="center",
             transform=axis.transAxes,
@@ -1110,8 +1142,8 @@ def _plot_relative_error_panel(
             color="#334155",
         )
 
-    axis.axhline(0.0, color=SOLVER_COLORS["pulp"], linestyle="--", linewidth=1.6, label="PuLP = referencia global")
-    axis.set_title("Erro relativo da funcao objetivo em relacao ao PuLP (%)")
+    axis.axhline(0.0, color=SOLVER_COLORS["pulp"], linestyle="--", linewidth=1.6, label="PuLP = referência global")
+    axis.set_title("Erro relativo da função objetivo em relação ao PuLP (%)")
     axis.set_xlabel("Escala do experimento")
     axis.set_ylabel("Erro relativo da FO (%)")
     axis.set_xticks(share_values)
@@ -1148,7 +1180,7 @@ def _plot_pulp_viability_panel(
         axis.text(
             share_pct,
             min(pct_value + 2.5, 102.0),
-            f"{item['repetitions_feasible']}/{item['repetitions']} viavel\nrefs FO: {reference_counts.get(share_pct, 0)}/{item['repetitions']}",
+            f"{item['repetitions_feasible']}/{item['repetitions']} viável\nrefs FO: {reference_counts.get(share_pct, 0)}/{item['repetitions']}",
             ha="center",
             va="bottom",
             fontsize=8.8,
@@ -1176,7 +1208,7 @@ def _plot_full_run_route_panel(plots_dir: Path, full_run: dict[str, Any], *, wit
 
     figure, axes = plt.subplots(2, 2, figsize=(18, 12), constrained_layout=True)
     figure.suptitle(
-        "Rodada exaustiva de 100% das ordens\nCada painel representa uma execucao isolada por classe operacional",
+        "Rodada exaustiva de 100% das ordens\nCada painel representa uma execução isolada por classe operacional",
         fontsize=14,
         fontweight="bold",
     )
@@ -1254,7 +1286,7 @@ def _draw_full_run_solver_panel(axis, *, solver: str, solver_payload: dict[str, 
         axis.text(
             0.5,
             0.5,
-            f"Nao ha resultado para {classe_operacional} neste solver.",
+            f"Não há resultado para {classe_operacional} neste solver.",
             transform=axis.transAxes,
             ha="center",
             va="center",
@@ -1352,13 +1384,19 @@ def _draw_full_run_solver_panel(axis, *, solver: str, solver_payload: dict[str, 
     axis.grid(alpha=0.18)
     _draw_full_run_legend(axis, solver)
 
+    status_label = {
+        "concluida": "concluída",
+        "concluida_com_ressalvas": "concluída com ressalvas",
+        "inviavel": "inviável",
+        "erro": "erro",
+    }.get(str(scenario_record["status"]), str(scenario_record["status"]).replace("_", " "))
     summary_text = (
-        f"Status: {scenario_record['status']}\n"
+        f"Status: {status_label}\n"
         f"FO: {scenario_record['objective_common']}\n"
         f"Atendimento: {float(scenario_record['service_rate']) * 100.0:.2f}%\n"
         f"Viaturas: {scenario_record['vehicles_used']}\n"
-        f"Distancia: {int(scenario_record['distance_total_m']) / 1000.0:.2f} km\n"
-        f"Duracao: {int(scenario_record['duration_total_s']) / 60.0:.1f} min"
+        f"Distância: {int(scenario_record['distance_total_m']) / 1000.0:.2f} km\n"
+        f"Duração: {int(scenario_record['duration_total_s']) / 60.0:.1f} min"
     )
     axis.text(
         0.02,
@@ -1375,7 +1413,7 @@ def _draw_full_run_solver_panel(axis, *, solver: str, solver_payload: dict[str, 
         axis.text(
             0.5,
             0.08,
-            "Nao houve solucao viavel completa neste solver.\nA visualizacao mostra apenas o que foi efetivamente roteirizado.",
+            "Não houve solução viável completa neste solver.\nA visualização mostra apenas o que foi efetivamente roteirizado.",
             transform=axis.transAxes,
             ha="center",
             va="bottom",
@@ -1392,7 +1430,7 @@ def _draw_full_run_legend(axis, solver: str) -> None:
         Line2D([0], [0], marker="s", linestyle="None", markerfacecolor="#12355b", markeredgecolor="white", markeredgewidth=1.2, markersize=9, label="Base"),
         Line2D([0], [0], marker="^", linestyle="None", markerfacecolor=_service_style("suprimento")["fill"], markeredgecolor="white", markeredgewidth=1.0, markersize=9, label="Ordem atendida - suprimento"),
         Line2D([0], [0], marker="v", linestyle="None", markerfacecolor=_service_style("recolhimento")["fill"], markeredgecolor="white", markeredgewidth=1.0, markersize=9, label="Ordem atendida - recolhimento"),
-        Line2D([0], [0], marker="X", linestyle="None", markerfacecolor="#cbd5e1", markeredgecolor="#475569", markeredgewidth=1.0, markersize=9, label="Ordem nao atendida"),
+        Line2D([0], [0], marker="X", linestyle="None", markerfacecolor="#cbd5e1", markeredgecolor="#475569", markeredgewidth=1.0, markersize=9, label="Ordem não atendida"),
         Line2D([0, 1], [0, 0], color=SOLVER_COLORS[solver], linewidth=2.6, linestyle="solid", label="Rota de suprimento"),
         Line2D([0, 1], [0, 0], color=SOLVER_COLORS[solver], linewidth=2.6, linestyle=(0, (6, 4)), label="Rota de recolhimento"),
     ]
@@ -1479,6 +1517,56 @@ def _serialize_route(route: BenchmarkRoute) -> dict[str, Any]:
         "distance_total_m": int(route.distance_total_m),
         "duration_total_s": int(route.duration_total_s),
     }
+
+
+def _deserialize_full_run(full_run: dict[str, Any]) -> dict[str, Any]:
+    if not full_run:
+        return {}
+
+    deserialized_solvers: dict[str, Any] = {}
+    for solver, payload in full_run.get("solvers", {}).items():
+        deserialized_solvers[solver] = {
+            "scenario_record": payload.get("scenario_record"),
+            "class_records": payload.get("class_records", []),
+            "solutions_by_class": {
+                classe_operacional: _deserialize_solution(solution)
+                for classe_operacional, solution in payload.get("solutions_by_class", {}).items()
+            },
+        }
+
+    return {
+        "manifest": full_run.get("manifest"),
+        "scenario_records": full_run.get("scenario_records", []),
+        "class_records": full_run.get("class_records", []),
+        "solvers": deserialized_solvers,
+        "plots": full_run.get("plots", {}),
+    }
+
+
+def _deserialize_solution(payload: dict[str, Any]) -> BenchmarkSolution:
+    return BenchmarkSolution(
+        solver=str(payload.get("solver", "")),
+        status=str(payload.get("status", "")),
+        runtime_s=float(payload.get("runtime_s", 0.0)),
+        feasible=bool(payload.get("feasible")),
+        routes=tuple(_deserialize_route(route) for route in payload.get("routes", [])),
+        served_node_ids=tuple(str(item) for item in payload.get("served_node_ids", [])),
+        missing_node_ids=tuple(str(item) for item in payload.get("missing_node_ids", [])),
+        best_bound=None if payload.get("best_bound") is None else Decimal(str(payload["best_bound"])),
+        gap_pct=None if payload.get("gap_pct") is None else Decimal(str(payload["gap_pct"])),
+        notes=tuple(str(item) for item in payload.get("notes", [])),
+    )
+
+
+def _deserialize_route(payload: dict[str, Any]) -> BenchmarkRoute:
+    return BenchmarkRoute(
+        vehicle_id=str(payload.get("vehicle_id", "")),
+        depot_id=str(payload.get("depot_id", "")),
+        location_sequence=tuple(str(item) for item in payload.get("location_sequence", [])),
+        visited_node_ids=tuple(str(item) for item in payload.get("visited_node_ids", [])),
+        distance_total_m=int(payload.get("distance_total_m", 0)),
+        duration_total_s=int(payload.get("duration_total_s", 0)),
+    )
 
 
 def _route_display_label(artifacts, node_id: str) -> str:
