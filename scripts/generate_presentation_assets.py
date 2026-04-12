@@ -2,14 +2,12 @@
 from __future__ import annotations
 
 import os
+import shutil
 from pathlib import Path
 
 os.environ.setdefault("MPLCONFIGDIR", "/tmp/matplotlib-codex")
 
 from PIL import Image, ImageDraw, ImageFont
-
-from roteirizacao.benchmark.runner import BenchmarkRunner
-
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 NOTEBOOK_DIR = PROJECT_ROOT / "notebook"
@@ -32,28 +30,24 @@ from solver_workbench_support import (
 ASSETS_DIR = PROJECT_ROOT / "docs" / "apresentacao" / "assets"
 GENERATED_DIR = ASSETS_DIR / "generated"
 GIFS_DIR = ASSETS_DIR / "gifs"
-BENCHMARK_OUTPUT_DIR = PROJECT_ROOT / "data" / "benchmarks" / "presentation_suite"
-BENCHMARK_SCENARIO_IDS = {
-    "balanced_control_didatica_seed01_suprimento",
-    "balanced_control_benchmark_seed01_suprimento",
-}
+BENCHMARK_OUTPUT_DIR = PROJECT_ROOT / "data" / "benchmarks" / "operacao_sob_pressao_subsample"
 
 
 def main() -> int:
     GENERATED_DIR.mkdir(parents=True, exist_ok=True)
     GIFS_DIR.mkdir(parents=True, exist_ok=True)
 
-    scenario_name = "operacao_controlada"
+    scenario_name = "operacao_sob_pressao"
     compile_scenario(scenario_name)
     artifacts = load_scenario_artifacts(scenario_name)
-    orchestration = run_scenario(scenario_name, max_iterations=50, seed=1, materialize_snapshot=True)
+    orchestration = run_scenario(scenario_name, max_iterations=500, seed=1, materialize_snapshot=True)
     bundle = export_presentation_bundle(orchestration, artifacts, output_dir=GENERATED_DIR, with_basemap=False)
 
-    _generate_route_table_png(orchestration, GENERATED_DIR / "operacao_controlada_rotas_tabela.png")
+    _generate_route_table_png(orchestration, GENERATED_DIR / "operacao_sob_pressao_rotas_tabela.png")
     _generate_before_after_png(
         before_path=Path(bundle["base_map"]),
         after_path=Path(bundle["solution_map"]),
-        output_path=GENERATED_DIR / "operacao_controlada_antes_depois.png",
+        output_path=GENERATED_DIR / "operacao_sob_pressao_antes_depois.png",
     )
     _generate_solution_gif(
         before_path=Path(bundle["base_map"]),
@@ -61,13 +55,11 @@ def main() -> int:
         output_path=GIFS_DIR / "rede-base-para-solucao.gif",
     )
 
-    benchmark_artifacts = BenchmarkRunner(output_dir=BENCHMARK_OUTPUT_DIR).run(
-        scenario_ids=BENCHMARK_SCENARIO_IDS,
-        overwrite_scenarios=True,
-    )
-    _generate_benchmark_panel(benchmark_artifacts.plots_dir, GENERATED_DIR / "benchmark_comparison_panel.png")
+    plots_dir = BENCHMARK_OUTPUT_DIR / "plots"
+    _copy_benchmark_plots(plots_dir)
+    _generate_benchmark_panel(plots_dir, GENERATED_DIR / "benchmark_comparison_panel.png")
     _generate_benchmark_gif(
-        plots_dir=benchmark_artifacts.plots_dir,
+        plots_dir=plots_dir,
         output_path=GIFS_DIR / "benchmark-escala.gif",
     )
     print(GENERATED_DIR)
@@ -135,10 +127,10 @@ def _generate_solution_gif(*, before_path: Path, after_path: Path, output_path: 
 
 
 def _generate_benchmark_panel(plots_dir: Path, output_path: Path) -> None:
-    runtime = Image.open(plots_dir / "runtime_s_x_orders.png").convert("RGB")
-    objective = Image.open(plots_dir / "objective_common_x_orders.png").convert("RGB")
-    service = Image.open(plots_dir / "service_rate_x_orders.png").convert("RGB")
-    vehicles = Image.open(plots_dir / "vehicles_used_x_orders.png").convert("RGB")
+    runtime = Image.open(plots_dir / "painel_tendencias.png").convert("RGB")
+    objective = Image.open(plots_dir / "painel_dispersao.png").convert("RGB")
+    service = Image.open(plots_dir / "erro_relativo_fo_pct.png").convert("RGB")
+    vehicles = Image.open(plots_dir / "taxa_viabilidade_pulp.png").convert("RGB")
     width = max(runtime.width, objective.width)
     height = max(runtime.height, objective.height)
     runtime = runtime.resize((width, height))
@@ -155,11 +147,24 @@ def _generate_benchmark_panel(plots_dir: Path, output_path: Path) -> None:
 
 
 def _generate_benchmark_gif(*, plots_dir: Path, output_path: Path) -> None:
-    runtime = Image.open(plots_dir / "runtime_s_x_orders.png").convert("P", palette=Image.ADAPTIVE)
-    objective = Image.open(plots_dir / "objective_common_x_orders.png").convert("P", palette=Image.ADAPTIVE)
-    service = Image.open(plots_dir / "service_rate_x_orders.png").convert("P", palette=Image.ADAPTIVE)
-    frames = [runtime, objective, service]
-    frames[0].save(output_path, save_all=True, append_images=frames[1:], duration=[900, 900, 900], loop=0)
+    trends = Image.open(plots_dir / "painel_tendencias.png").convert("P", palette=Image.ADAPTIVE)
+    dispersion = Image.open(plots_dir / "painel_dispersao.png").convert("P", palette=Image.ADAPTIVE)
+    error = Image.open(plots_dir / "erro_relativo_fo_pct.png").convert("P", palette=Image.ADAPTIVE)
+    full_run = Image.open(plots_dir / "rodada_exaustiva_100_rotas.png").convert("P", palette=Image.ADAPTIVE)
+    frames = [trends, dispersion, error, full_run]
+    frames[0].save(output_path, save_all=True, append_images=frames[1:], duration=[900, 900, 900, 1100], loop=0)
+
+
+def _copy_benchmark_plots(plots_dir: Path) -> None:
+    copies = {
+        "painel_tendencias.png": GENERATED_DIR / "benchmark_painel_tendencias.png",
+        "painel_dispersao.png": GENERATED_DIR / "benchmark_painel_dispersao.png",
+        "erro_relativo_fo_pct.png": GENERATED_DIR / "benchmark_erro_relativo_fo.png",
+        "taxa_viabilidade_pulp.png": GENERATED_DIR / "benchmark_taxa_viabilidade_pulp.png",
+        "rodada_exaustiva_100_rotas.png": GENERATED_DIR / "benchmark_rodada_exaustiva_100_rotas.png",
+    }
+    for source_name, target_path in copies.items():
+        shutil.copyfile(plots_dir / source_name, target_path)
 
 
 def _resize_to_height(image: Image.Image, height: int) -> Image.Image:

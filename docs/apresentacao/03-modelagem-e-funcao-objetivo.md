@@ -1,122 +1,38 @@
 # 3. Modelagem e Funcao Objetivo
 
-## Quando uma rota e boa?
+## O que define uma boa rota
 
-Essa e a pergunta central da modelagem.
-
-Uma rota boa nao e necessariamente a rota mais curta. Ela precisa ser:
+Uma rota boa nao e apenas curta. Ela precisa ser:
 
 - viavel no tempo;
 - viavel na capacidade;
-- coerente com a operacao;
-- economicamente eficiente.
+- coerente com o tipo de operacao;
+- eficiente em custo.
 
-## Os tres blocos da modelagem
+## Blocos da modelagem
 
-Para tornar isso didatico, podemos pensar em tres blocos principais:
+O problema pode ser lido em tres blocos:
 
-1. **veiculos**
-2. **demandas**
-3. **tempo**
+1. **veiculos**: custo, turno e capacidades;
+2. **demandas**: volume, valor, janela e servico;
+3. **tempo**: deslocamento, atendimento e retorno a base.
 
 ```mermaid
 flowchart TD
     A[Veiculos] --> D[Modelo]
     B[Demandas] --> D
-    C[Janelas de tempo] --> D
+    C[Tempo] --> D
     D --> E[Rotas viaveis]
 ```
 
-## 1. Veiculos
-
-Cada viatura entra no problema com caracteristicas proprias:
-
-- capacidade financeira;
-- capacidade fisica ou volumetrica;
-- custo fixo de uso;
-- custo variavel de deslocamento;
-- janela de operacao.
-
-Isso significa que duas viaturas diferentes podem gerar solucoes muito diferentes para o mesmo conjunto de clientes.
-
 ![Viatura com indicacoes visuais de capacidade, custo e turno](./assets/viatura-capacidades.svg)
 
-## 2. Demandas
+## Funcao objetivo
 
-Cada cliente ou agencia pode gerar uma ordem com:
-
-- valor financeiro;
-- volume estimado;
-- tempo de servico;
-- janela de atendimento;
-- tipo de operacao.
-
-No problema estudado aqui:
-
-- no **suprimento**, a carga e levada da base para o cliente;
-- no **recolhimento**, a carga e acumulada ao longo da rota.
-
-Isso muda a leitura logistica da capacidade e, principalmente, do limite segurado.
-
-![Exemplo visual de atributos da demanda operacional](./assets/demanda-operacional.svg)
-
-## 3. Janelas de tempo
-
-Uma rota pode ser curta e ainda assim ser ruim.
-
-Por exemplo:
-
-- a agencia aceita atendimento so entre 9h e 10h;
-- a viatura chega 10h20;
-- a rota falhou operacionalmente, mesmo que a distancia total seja pequena.
-
-Por isso, o encaixe temporal e central na modelagem:
-
-- tempo de deslocamento;
-- tempo de servico;
-- horario permitido em cada no;
-- turno total da viatura.
-
-## Intuicao da funcao objetivo
-
-A funcao objetivo tenta equilibrar cobertura e eficiencia.
-
-Em forma simplificada, queremos minimizar:
+No produto e no benchmark, a intuicao economica e a mesma:
 
 $$
 \text{custo total} =
-\text{custo de viaturas}
-+
-\text{custo de deslocamento}
-+
-\text{custo de tempo}
-+
-\text{penalidade por nao atendimento}
-$$
-
-Uma escrita didatica e:
-
-$$
-\min Z =
-\sum_{k \in K} F_k y_k
-+
-\sum_{k \in K}\sum_{(i,j)\in A} C_{ij}^k x_{ij}^k
-+
-\sum_{k \in K}\sum_{(i,j)\in A} T_{ij} x_{ij}^k
-+
-\sum_{i \in N} P_i u_i
-$$
-
-## Da funcao gerencial para a comparacao cientifica
-
-No produto, a leitura final do resultado ainda passa por pos-processamento, auditoria, KPIs e regras de negocio fora do solver.
-
-No benchmark, a comparacao e mais estreita: PyVRP e PuLP sao medidos sobre um **objetivo comum recalculado fora do solver**, para evitar uma comparacao injusta entre o sistema inteiro e apenas o motor de busca.
-
-Em linguagem direta, o benchmark mede:
-
-$$
-\text{objective\_common} =
 \text{custo fixo de viatura}
 +
 \text{custo de deslocamento}
@@ -126,68 +42,18 @@ $$
 \text{penalidade por nao atendimento}
 $$
 
-Isso nao substitui a leitura gerencial completa do produto. Isso apenas congela o **nucleo matematico comum** que pode ser comparado com rigor.
+No benchmark, esse valor e recalculado fora do solver como `objective_common`, para garantir comparacao justa entre PyVRP e PuLP.
 
-## Lendo a equacao passo a passo
+## Restricoes que importam
 
-### Custo de ativar veiculos
+- uma ordem nao pode ser atendida mais de uma vez;
+- a viatura respeita capacidade volumetrica e financeira;
+- a rota respeita janela de tempo e turno;
+- toda rota sai e retorna a base;
+- `suprimento` e `recolhimento` continuam isolados.
 
-$$
-\sum_{k \in K} F_k y_k
-$$
-
-Esse termo indica que usar mais viaturas tende a encarecer a operacao.
-
-### Custo de percorrer a rede
-
-$$
-\sum_{k \in K}\sum_{(i,j)\in A} C_{ij}^k x_{ij}^k
-$$
-
-Esse termo representa o custo de deslocamento nos arcos da rede.
-
-### Custo do tempo em operacao
-
-$$
-\sum_{k \in K}\sum_{(i,j)\in A} T_{ij} x_{ij}^k
-$$
-
-Esse termo reforca que tempo tambem e recurso logístico.
-
-### Penalidade por nao atendimento
-
-$$
-\sum_{i \in N} P_i u_i
-$$
-
-Esse termo evita que o modelo "economize" deixando ordens importantes fora da solucao.
-
-## Restricoes fundamentais
-
-Mesmo sem escrever a formulacao completa, algumas restricoes sao indispensaveis:
-
-- cada ordem pode ser atendida no maximo uma vez;
-- a viatura deve respeitar sua capacidade financeira;
-- a viatura deve respeitar sua capacidade fisica;
-- a rota deve respeitar as janelas de atendimento;
-- a viatura deve operar dentro do turno;
-- a rota deve sair e retornar a base;
-- nem toda viatura pode atender todo cliente.
-
-No experimento comparativo, uma restricao merece destaque adicional:
-
-- `suprimento` e `recolhimento` continuam sendo resolvidos em instancias separadas;
-- a rodada exaustiva de `100%` nao deve ser lida como frota unica acoplada entre as duas classes;
-- o que se compara e a qualidade/custo da solucao em cada classe operacional isolada.
-
-## Leitura final desta pagina
-
-Se precisarmos resumir a modelagem em uma frase:
-
-> O problema e escolher quais arcos da rede serao percorridos por quais viaturas, de forma a atender a demanda com o menor custo possivel e sem violar as restricoes logisticas.
+Essa ultima regra e importante: a comparacao experimental nao mistura as duas classes na mesma rota.
 
 ![Esquema visual: veiculo, demanda e tempo alimentando a funcao objetivo](./assets/modelagem-visual.svg)
-
-![Transicao da rede-base para a solucao](./assets/gifs/rede-base-para-solucao.gif)
 
 [⬅️ Anterior](./02-elementos-da-rede-grafica.md) | [Próxima ➡️](./04-tecnologia-solucao.md)
