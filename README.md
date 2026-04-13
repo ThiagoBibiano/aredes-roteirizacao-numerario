@@ -14,6 +14,16 @@ Hoje o repositorio ja contem:
 - CLI operacional;
 - API FastAPI para consumo por frontend externo.
 
+Frentes experimentais adicionadas nesta fase:
+
+- protocolo experimental para comparacao PyVRP x PuLP;
+- catalogo declarativo de cenarios em `data/scenarios/`;
+- baseline PuLP para o subproblema compartilhado;
+- runner de benchmark com `results.csv`, `summary.json` e plots;
+- notebook de apresentacao separado do notebook de benchmark analitico;
+- benchmark visual em portugues com dispersao, erro relativo da FO e rodada exaustiva de `100%`;
+- ativos estaticos e GIFs para a apresentacao final.
+
 ## O que o sistema resolve
 
 Para cada dia operacional, a aplicacao responde:
@@ -38,7 +48,7 @@ O projeto nao esta mais apenas em estruturacao. O nucleo executavel e o backend 
 
 Entregas principais ja concluidas:
 
-- Etapa 1: especificacao formal dos contratos em [`docs/etapa-1/`](docs/etapa-1/)
+- Contratos e arquitetura do backend em [`docs/contratos-e-arquitetura/`](docs/contratos-e-arquitetura/)
 - Etapa 2: ingestao, validacao e classificacao
 - Etapa 3: instancia solver-agnostic
 - Etapa 4: adaptador PyVRP
@@ -73,6 +83,14 @@ Principios mantidos:
 - a execucao diaria e idempotente por `hash_cenario`;
 - a saida final preserva auditoria, KPIs e contexto de execucao.
 
+## Documentacao tecnica
+
+- Contexto funcional e diretrizes do MVP em [`docs/contexto.md`](docs/contexto.md)
+- API HTTP em [`docs/api.md`](docs/api.md)
+- Formulacao cientifica do problema de otimizacao em [`docs/formulacao-matematica.md`](docs/formulacao-matematica.md)
+- Contratos, invariantes e decisoes de arquitetura em [`docs/contratos-e-arquitetura/`](docs/contratos-e-arquitetura/)
+- Protocolo experimental em [`docs/benchmark/protocolo-experimental.md`](docs/benchmark/protocolo-experimental.md)
+
 ## Estrutura real do repositorio
 
 ```text
@@ -81,22 +99,38 @@ Principios mantidos:
 ├─ docs/
 │  ├─ api.md
 │  ├─ contexto.md
-│  └─ etapa-1/
+│  ├─ formulacao-matematica.md
+│  └─ contratos-e-arquitetura/
+├─ apps/
+│  └─ ui_streamlit/
+├─ notebook/
+│  ├─ modelo_solver_workbench.ipynb
+│  ├─ benchmark_solver_comparison.ipynb
+│  ├─ solver_workbench_support.py
+│  ├─ benchmark_workbench_support.py
+│  └─ README.md
 ├─ data/
+│  ├─ fake_solution/
 │  ├─ fake_smoke/
+│  ├─ scenarios/
 │  ├─ logistics_snapshots/
 │  └─ logistics_sources/
 ├─ scripts/
+│  ├─ generate_benchmark_catalog.py
+│  ├─ materialize_benchmark_scenarios.py
+│  ├─ run_solver_benchmark.py
 │  └─ roteirizacao_cli.py
 ├─ src/
 │  └─ roteirizacao/
 │     ├─ api/
 │     ├─ application/
+│     ├─ benchmark/
 │     ├─ domain/
 │     ├─ optimization/
 │     └─ cli.py
 ├─ tests/
-│  └─ contract/
+│  ├─ contract/
+│  └─ ui/
 ├─ pyproject.toml
 └─ .python-version
 ```
@@ -106,11 +140,13 @@ Principios mantidos:
 - `pyenv` com Python `3.13.7`
 - ambiente virtual `.venv`
 - `PyVRP` instalado para executar o planejamento completo
+- `PuLP` instalado para executar o baseline exato do benchmark
 
 Versoes usadas no ambiente de desenvolvimento atual:
 
 - Python `3.13.7`
 - PyVRP `0.13.3`
+- PuLP `2.9.0`
 - FastAPI `0.135.1`
 - Uvicorn `0.42.0`
 
@@ -120,8 +156,9 @@ Versoes usadas no ambiente de desenvolvimento atual:
 pyenv local 3.13.7
 pyenv exec python -m venv .venv
 .venv/bin/pip install -e .
-.venv/bin/pip install '.[dev]'
+.venv/bin/pip install '.[dev,ui]'
 .venv/bin/pip install pyvrp==0.13.3
+.venv/bin/pip install '.[benchmark]'
 ```
 
 Se quiser apenas validar que o ambiente foi criado corretamente:
@@ -142,13 +179,16 @@ A suite atual cobre contratos do pipeline, adaptador do solver, snapshots, orque
 
 ## Smoke test com dataset fake
 
-O repositorio ja inclui um dataset minimo em [`data/fake_smoke/`](data/fake_smoke/).
+O repositorio inclui dois cenarios publicos de exemplo:
+
+- `operacao_controlada`: caminho feliz para demonstracao e UI, implementado no dataset interno [`data/fake_solution/`](data/fake_solution/)
+- `operacao_sob_pressao`: cenario mais agressivo para estresse e explicabilidade, implementado no dataset interno [`data/fake_smoke/`](data/fake_smoke/)
 
 Execucao pela CLI:
 
 ```bash
 .venv/bin/python scripts/roteirizacao_cli.py run-planning \
-  --dataset-dir data/fake_smoke \
+  --dataset-dir data/fake_solution \
   --materialize-snapshot \
   --max-iterations 50 \
   --seed 1
@@ -156,9 +196,11 @@ Execucao pela CLI:
 
 Esse comando produz:
 
-- resultado consolidado em `data/fake_smoke/outputs/resultado-planejamento.json`;
-- estado idempotente em `data/fake_smoke/outputs/executions/`;
+- resultado consolidado em `data/fake_solution/outputs/resultado-planejamento.json`;
+- estado idempotente em `data/fake_solution/outputs/executions/`;
 - reaproveitamento automatico do mesmo cenario em reexecucoes identicas.
+
+Esse exemplo corresponde ao cenario publico `operacao_controlada`.
 
 ## CLI operacional
 
@@ -220,13 +262,124 @@ O endpoint `run-dataset` reutiliza um dataset existente em disco.
 
 O endpoint `run` aceita payload inline, materializa internamente os arquivos em `data/api_runs/` e executa o mesmo orquestrador idempotente usado pela CLI.
 
+## Benchmark experimental
+
+Gerar o catalogo declarativo:
+
+```bash
+.venv/bin/python scripts/generate_benchmark_catalog.py
+```
+
+Materializar os cenarios:
+
+```bash
+.venv/bin/python scripts/materialize_benchmark_scenarios.py
+```
+
+Executar o benchmark PyVRP x PuLP:
+
+```bash
+.venv/bin/python scripts/run_solver_benchmark.py
+```
+
+As saidas padronizadas ficam em:
+
+- `data/benchmarks/results.csv`
+- `data/benchmarks/summary.json`
+- `data/benchmarks/plots/`
+
+### Notebook experimental do benchmark
+
+O caderno [`notebook/benchmark_solver_comparison.ipynb`](notebook/benchmark_solver_comparison.ipynb) trabalha sobre o cenario publico `operacao_sob_pressao` e separa dois regimes:
+
+- benchmark amostral com `20%`, `40%`, `60%` e `80%` das ordens;
+- `5` repeticoes por escala, com amostragem aleatoria independente e estratificada por `classe_operacional`;
+- rodada exaustiva separada com `100%` das ordens.
+
+As leituras visuais principais do notebook sao:
+
+- painel de tendencias;
+- painel de dispersao;
+- erro relativo da funcao objetivo em relacao ao PuLP;
+- taxa de viabilidade do PuLP;
+- painel de rotas da rodada exaustiva.
+
+Saida tipica do notebook:
+
+- `data/benchmarks/operacao_sob_pressao_subsample/results.csv`
+- `data/benchmarks/operacao_sob_pressao_subsample/summary.json`
+- `data/benchmarks/operacao_sob_pressao_subsample/plots/`
+
+Leitura importante da rodada de `100%`:
+
+- `suprimento` e `recolhimento` continuam sendo comparados como execucoes isoladas;
+- os paineis e tabelas dessa secao nao representam uma frota unica acoplada entre as duas classes;
+- no painel final, a comparacao e organizada por `solver x classe operacional`.
+
+Regra pratica de uso:
+
+- mudanca apenas visual em grafico, legenda, eixo ou texto: basta recarregar o `summary.json` e rerodar as celulas de visualizacao;
+- mudanca de experimento, amostragem, parametros de solver ou agregacao: exige rerodar o benchmark.
+
+## UI Streamlit
+
+A interface web vive em `apps/ui_streamlit/` e consome exclusivamente a API HTTP do projeto.
+
+Suba primeiro o backend FastAPI e, em seguida, execute a UI:
+
+```bash
+streamlit run apps/ui_streamlit/app.py
+```
+
+A UI agora carrega defaults de `apps/ui_streamlit/settings.toml` e aceita override local em `apps/ui_streamlit/settings.local.toml`.
+
+Exemplo de override local para evitar preencher tudo manualmente a cada uso:
+
+```toml
+api_base_url = "http://127.0.0.1:8000"
+
+[execution]
+default_mode = "dataset"
+auto_check_health = true
+
+[execution.parameters]
+materialize_snapshot = true
+max_iterations = 50
+seed = 1
+collect_stats = false
+display = false
+
+[execution.dataset]
+dataset_dir = "data/fake_solution"
+
+[execution.inline.files]
+contexto = "data/fake_solution/contexto.json"
+bases = "data/fake_solution/bases.json"
+pontos = "data/fake_solution/pontos.json"
+viaturas = "data/fake_solution/viaturas.json"
+ordens = "data/fake_solution/ordens.json"
+```
+
+Fluxos principais disponiveis na UI:
+
+- execucao inline por upload dos JSONs obrigatorios
+- execucao tecnica por `dataset_dir`
+- resultados com KPIs, tabela de rotas, detalhe de paradas e mapa operacional
+- auditoria, excecoes, exportacao e inspecao offline
+
+A suite dedicada da UI pode ser executada com:
+
+```bash
+.venv/bin/python -m unittest discover -s tests/ui -p 'test_*.py' -v
+```
+
 Exemplo rapido de chamada HTTP com dataset existente:
 
 ```bash
 curl -X POST http://127.0.0.1:8000/api/v1/planning/run-dataset \
   -H 'Content-Type: application/json' \
   -d '{
-    "dataset_dir": "data/fake_smoke",
+    "dataset_dir": "data/fake_solution",
     "materialize_snapshot": true,
     "max_iterations": 50,
     "seed": 1
@@ -234,6 +387,41 @@ curl -X POST http://127.0.0.1:8000/api/v1/planning/run-dataset \
 ```
 
 Detalhes adicionais da camada HTTP estao em [`docs/api.md`](docs/api.md).
+
+## Notebooks
+
+O diretorio `notebook/` contem dois cadernos com papeis separados:
+
+- [`notebook/modelo_solver_workbench.ipynb`](notebook/modelo_solver_workbench.ipynb): demonstracao do solver e leitura operacional da solucao;
+- [`notebook/benchmark_solver_comparison.ipynb`](notebook/benchmark_solver_comparison.ipynb): experimento comparativo PyVRP x PuLP.
+
+O workbench do solver executa o orquestrador diretamente, desenha a rede-base do cenario com `networkx` e, na sequencia, sobrepoe a rede escolhida pelo solver com as rotas resultantes. Quando o stack cartografico estiver disponivel, a visualizacao usa um basemap de fundo sem abandonar o desenvolvimento em `networkx`.
+
+O fluxo dos cadernos trabalha com os nomes publicos `operacao_controlada` e `operacao_sob_pressao`, mas continua materializando os datasets internos `data/fake_solution` e `data/fake_smoke`.
+
+Instalacao sugerida para o ambiente controlado:
+
+```bash
+.venv/bin/pip install -e '.[dev,notebook]'
+```
+
+Execucao recomendada:
+
+```bash
+jupyter lab notebook/modelo_solver_workbench.ipynb
+```
+
+Para abrir o benchmark experimental:
+
+```bash
+jupyter lab notebook/benchmark_solver_comparison.ipynb
+```
+
+Observacao:
+
+- prefira `jupyter lab` ou VS Code; como o repositorio tem um diretorio chamado `notebook/`, o modo classico `python -m notebook` pode causar conflito de import com o pacote `notebook`.
+- o workbench do solver trabalha direto sobre `DailyPlanningOrchestrator`, entao ele e o melhor caminho para validar o modelo em isolamento;
+- o notebook de benchmark deve ser lido como artefato experimental, nao como substituto do fluxo operacional do produto.
 
 ## Idempotencia e rastreabilidade
 
@@ -260,7 +448,8 @@ Convencoes relevantes do repositorio:
 
 - [`data/logistics_sources/README.md`](data/logistics_sources/README.md): formato esperado da fonte bruta de malha
 - [`data/logistics_snapshots/README.md`](data/logistics_snapshots/README.md): formato materializado e versionado do snapshot
-- [`data/fake_smoke/README.md`](data/fake_smoke/README.md): dataset minimo para smoke de ponta a ponta
+- [`data/fake_solution/README.md`](data/fake_solution/README.md): dataset interno do cenario `operacao_controlada`
+- [`data/fake_smoke/README.md`](data/fake_smoke/README.md): dataset interno do cenario `operacao_sob_pressao`
 
 ## Modulos principais
 
@@ -304,7 +493,7 @@ Ainda nao fazem parte do escopo implementado:
 
 - [`docs/contexto.md`](docs/contexto.md)
 - [`docs/api.md`](docs/api.md)
-- [`docs/etapa-1/`](docs/etapa-1/)
+- [`docs/contratos-e-arquitetura/`](docs/contratos-e-arquitetura/)
 
 ## Proximos passos recomendados
 

@@ -6,7 +6,7 @@
 
 ## 1. Resumo executivo
 
-Este projeto tem como objetivo estruturar um sistema de roteirização para transporte de numerário capaz de gerar, diariamente, um plano operacional viável e economicamente eficiente para atendimento de ordens de **suprimento**, **recolhimento** e **serviços especiais**.
+Este projeto já possui um backend executável de roteirização para transporte de numerário capaz de gerar, diariamente, um plano operacional viável e economicamente eficiente para atendimento de ordens de **suprimento** e **recolhimento**, com tratamento prioritário para **ordens especiais**.
 
 O problema será tratado, no MVP, com apoio do **PyVRP** como motor de otimização. A modelagem considera restrições operacionais típicas do setor, com destaque para:
 
@@ -17,6 +17,8 @@ O problema será tratado, no MVP, com apoio do **PyVRP** como motor de otimizaç
 * **isolamento de estado físico do numerário**;
 * **teto de valor vinculado à apólice de seguro**;
 * **necessidade de reduzir previsibilidade operacional**.
+
+Além do fluxo operacional principal, o repositório passou a incluir uma camada experimental explícita para comparação **PyVRP x PuLP**, um catálogo de cenários sintéticos, um notebook de demonstração do solver e um notebook separado para benchmark visual e análise metodológica.
 
 A decisão central de negócio já assumida para o MVP é que **suprimento e recolhimento não serão misturados na mesma viagem operacional**, salvo futura exceção formalmente modelada. Em termos práticos, a viatura sai da base em um estado operacional definido e retorna à base antes de mudar esse estado.
 
@@ -41,7 +43,7 @@ O MVP será voltado ao **planejamento diário** das rotas, e não ao despacho di
 * planejamento de rotas saindo e retornando à base;
 * roteirização de ordens de **suprimento**;
 * roteirização de ordens de **recolhimento**;
-* tratamento priorizado de **serviços especiais**;
+* tratamento priorizado de **ordens especiais** e atendimentos extraordinários compatíveis;
 * uso de matriz de tempo e distância como insumo da otimização;
 * geração de plano diário, custos estimados e logs de inviabilidade;
 * controle de **limite de valor segurado por rota/viatura**;
@@ -76,16 +78,24 @@ Essa decisão simplifica o MVP, aumenta aderência operacional e evita modelar, 
 
 ### 4.3 Horizonte de planejamento das ordens
 
-As demandas serão tratadas segundo sua antecedência de solicitação:
+As demandas são tratadas segundo a combinação entre `classe_planejamento`, `timestamp_criacao` e `data_operacao`.
 
-| Classe da ordem | Antecedência típica | Natureza                                        | Papel no planejamento                                         |
-| --------------- | ------------------: | ----------------------------------------------- | ------------------------------------------------------------- |
-| Padrão          |     D-2 ou superior | Suprimento ou recolhimento recorrente           | Forma a base da malha do dia                                  |
-| Especial        |                 D-1 | Suprimento, recolhimento ou serviço excepcional | Tem prioridade elevada e maior penalidade por não atendimento |
+No estado atual da aplicação:
+
+* ordens explicitamente classificadas como `padrao` permanecem `padrao`;
+* ordens não `padrao` com antecedência menor ou igual a zero em relação à `data_operacao` são normalizadas para `especial`;
+* ordens não `padrao` com antecedência positiva são normalizadas para `eventual`;
+* a normalização é feita a partir de `timestamp_criacao`, preservando a distinção entre carteira base e demanda extraordinária do dia.
+
+| Classe da ordem | Regra efetiva no backend               | Natureza                                                     | Papel no planejamento                                                |
+| --------------- | -------------------------------------- | ------------------------------------------------------------ | -------------------------------------------------------------------- |
+| Padrão          | valor informado como `padrao`          | Carteira base ou recorrente                                  | Forma a base da malha do dia                                         |
+| Eventual        | não `padrao` com antecedência positiva | Solicitação não padrão recebida antes do dia operacional     | Requer encaixe adicional e prioridade intermediária conforme o SLA   |
+| Especial        | não `padrao` com antecedência `<= 0`   | Solicitação no próprio dia operacional ou atendimento urgente | Tem prioridade elevada e maior sensibilidade operacional e contratual |
 
 ### 4.4 Cut-off operacional
 
-O plano diário será consolidado em um **cut-off time** definido no dia **D-1**, momento em que as ordens elegíveis para D0 são congeladas para roteirização.
+O backend recebe um `cutoff` explícito no `contexto` da execução. Em operação típica, esse marco tende a ser definido em `D-1`, mas o código não fixa essa data: ele apenas aplica a comparação temporal entre `cutoff` e `instante_cancelamento` para decidir exclusão antes do planejamento ou cancelamento tardio com impacto.
 
 ### 4.5 Dinâmica multi-cliente por setor
 
@@ -111,6 +121,17 @@ No MVP, por simplicidade, considera-se o retorno à base como comportamento padr
 Como diretriz de segurança, a roteirização não deve buscar apenas a menor distância. O plano também deve, sempre que possível, **reduzir previsibilidade operacional**, evitando repetição rígida de horários e trajetos.
 No MVP, isso entra como diretriz de projeto e critério futuro de evolução, ainda sem modelagem probabilística completa.
 
+### 4.8 Recorte comparável do benchmark
+
+A camada experimental do projeto não compara o sistema inteiro “como produto”. O benchmark compara um **núcleo comum solver-agnostic** do problema, sempre por **classe operacional isolada**.
+
+No protocolo atual, isso significa:
+
+* `suprimento` e `recolhimento` são resolvidos em instâncias separadas;
+* a comparação usa as mesmas ordens, viaturas, janelas, capacidades e custos-base para os dois solvers;
+* pós-processamento, auditoria, reporting e quaisquer efeitos fora do solver ficam fora da medida comparativa;
+* mesmo na rodada exaustiva de `100%`, a leitura continua sendo por classe isolada, e não por frota acoplada entre `suprimento` e `recolhimento`.
+
 ---
 
 ## 5. Contexto operacional do problema
@@ -129,7 +150,7 @@ Cada ponto pode demandar diferentes serviços, entre eles:
 * recolhimento de valores;
 * troca de malotes;
 * atendimento extraordinário;
-* serviço especial solicitado em janela reduzida.
+* ordem especial solicitada em janela reduzida.
 
 A execução é realizada por **viaturas blindadas com guarnição embarcada**, sujeitas a restrições operacionais, contratuais e de segurança.
 
@@ -166,19 +187,22 @@ Na prática, a operação é tipicamente organizada por **setores geográficos**
 | ---------------------------- | ----------------------------------------------------- |
 | `id_ordem`                   | Identificador único da ordem                          |
 | `data_operacao`              | Data prevista do atendimento                          |
-| `tipo_servico`               | Suprimento, recolhimento ou especial                  |
-| `classe_planejamento`        | Padrão ou Especial                                    |
+| `timestamp_criacao`          | Instante usado para normalizar `especial` e `eventual` |
+| `tipo_servico`               | `suprimento`, `recolhimento` ou `extraordinario`      |
+| `classe_planejamento`        | Padrão, Especial ou Eventual                          |
+| `classe_operacional`         | Obrigatória quando `tipo_servico = extraordinario`    |
 | `id_ponto`                   | Referência ao ponto atendido                          |
 | `valor_estimado`             | Valor monetário movimentado                           |
 | `volume_estimado`            | Volume físico previsto                                |
 | `inicio_janela`              | Início permitido do atendimento                       |
 | `fim_janela`                 | Fim permitido do atendimento                          |
 | `tempo_servico`              | Duração estimada da parada                            |
-| `criticidade`                | Obrigatória, prioritária, adiável                     |
+| `criticidade`                | Valor canônico (`baixa`, `media`, `alta`, `critica`) ou alias aceito na ingestão |
 | `penalidade_nao_atendimento` | Peso econômico/contratual                             |
 | `penalidade_atraso`          | Peso por violação de SLA                              |
 | `status_cancelamento`        | Indica se houve cancelamento antes da execução        |
-| `janela_cancelamento`        | Momento em que o cancelamento foi comunicado          |
+| `instante_cancelamento`      | Instante explícito do cancelamento, quando houver     |
+| `janela_cancelamento`        | Janela opcional usada para derivar o instante do cancelamento |
 | `taxa_improdutiva`           | Valor contratual devido em caso de parada improdutiva |
 
 ---
@@ -251,8 +275,8 @@ Como há isolamento de estado físico, o planejamento diário será organizado e
 
 | Classe de rota       | Conteúdo permitido                                                              |
 | -------------------- | ------------------------------------------------------------------------------- |
-| Rota de suprimento   | Apenas ordens de suprimento e serviços especiais compatíveis com suprimento     |
-| Rota de recolhimento | Apenas ordens de recolhimento e serviços especiais compatíveis com recolhimento |
+| Rota de suprimento   | Apenas ordens de suprimento e serviços extraordinários compatíveis com suprimento     |
+| Rota de recolhimento | Apenas ordens de recolhimento e serviços extraordinários compatíveis com recolhimento |
 
 No caso das rotas de recolhimento, o modelo deve controlar explicitamente a **acumulação de valor ao longo da sequência de visitas**, pois o teto segurado pode encerrar a viabilidade da rota antes do limite de tempo ou da quantidade de paradas.
 
@@ -265,7 +289,7 @@ A lógica do MVP deve priorizar primeiro o cumprimento do serviço e, em seguida
 ### Hierarquia de decisão
 
 1. minimizar não atendimento de **ordens especiais**;
-2. minimizar não atendimento de **ordens padrão**;
+2. minimizar não atendimento de **ordens padrão e eventuais**;
 3. minimizar violações de SLA;
 4. minimizar número de viaturas acionadas;
 5. minimizar custo total de deslocamento e tempo em rota;
@@ -276,6 +300,8 @@ A lógica do MVP deve priorizar primeiro o cumprimento do serviço e, em seguida
 [
 \text{Minimizar } Z =
 P_{esp} \cdot N_{esp_nao_atendidas}
++
+P_{evt} \cdot N_{evt_nao_atendidas}
 +
 P_{pad} \cdot N_{pad_nao_atendidas}
 +
@@ -291,6 +317,7 @@ C_v \cdot C_{deslocamento}
 Onde:
 
 * (P_{esp}): penalidade de ordem especial não atendida;
+* (P_{evt}): penalidade de ordem eventual não atendida;
 * (P_{pad}): penalidade de ordem padrão não atendida;
 * (P_{sla}): penalidade por atraso/violação contratual;
 * (P_{imp}): custo associado a parada improdutiva ou cancelamento tardio;
@@ -298,40 +325,51 @@ Onde:
 * (C_v): custo variável de operação.
 
 **Diretriz importante:**
-deve valer a relação:
+na prática, a aplicação materializa prioridade por ordem via criticidade, SLA e penalidades contratuais. Uma parametrização coerente com essa regra é:
 
 [
-P_{esp} \gg P_{pad} \gg C_f
+P_{esp} \geq P_{evt} \geq P_{pad} \gg C_f
 ]
 
 para garantir que o modelo não “economize frota” à custa do descumprimento de ordens prioritárias.
 
+### Função objetivo comum do benchmark
+
+Para a comparação metodológica entre **PyVRP** e **PuLP**, o projeto recalcula uma função objetivo comum fora do solver:
+
+\[
+\text{objective\_common} =
+\text{custo fixo de viatura}
++
+\text{custo de deslocamento}
++
+\text{custo de duração}
++
+\text{penalidade por não atendimento}
+\]
+
+Esse valor é usado para medir qualidade relativa em uma base comparável, independentemente da formulação interna de cada solver.
+
 ---
 
-## 10. Fluxo lógico do projeto
+## 10. Fluxo lógico do backend atual
 
 ```mermaid
 flowchart TD
-    A[Cadastros Mestre<br/>Bases, Pontos, Frota, Regras] --> D[Repositório Operacional]
-    B[Ordens Padrão<br/>D-2 ou mais] --> D
-    C[Ordens Especiais<br/>D-1] --> D
-    X[Cancelamentos e alterações<br/>antes do cut-off] --> D
-
-    D --> E[Validação de Dados<br/>coordenadas, janelas, capacidades, elegibilidade]
-    E --> F[Consolidação no Cut-off de D-1]
-
-    F --> G[Motor de Malha<br/>matriz de tempo e distância]
-    G --> H[Montagem do Problema]
-    D --> H
-
-    H --> I[Separação por Classe Operacional<br/>Suprimento / Recolhimento]
-    I --> J[Otimização com PyVRP]
-
-    J --> K[Plano Diário de Rotas]
-    J --> L[Log de Inviabilidades e Cancelamentos]
-    K --> M[Visão Operacional]
-    K --> N[Visão Gerencial]
-    L --> O[Visão de Auditoria]
+    A[Dataset local ou payload inline] --> B[DailyPlanningOrchestrator]
+    B --> C[PlanningDatasetLoader]
+    C --> D[PreparationPipeline]
+    D --> E[OptimizationInstanceBuilder]
+    E --> F[Snapshot persistido<br/>ou fallback haversine]
+    E --> G[InstanciaRoteirizacaoBase]
+    G --> H[PyVRPAdapter]
+    H --> I[PyVRP]
+    I --> J[RoutePostProcessor]
+    J --> K[PlanningAuditTrailBuilder]
+    K --> L[PlanningReportingBuilder]
+    L --> M[ResultadoPlanejamento]
+    M --> N[Persistencia por hash_cenario]
+    M --> O[CLI, API e UI]
 ```
 
 ---
@@ -356,7 +394,7 @@ flowchart TD
 * custo total estimado;
 * tempo total de deslocamento;
 * tempo total de atendimento;
-* impacto operacional dos serviços especiais D-1;
+* impacto operacional de ordens especiais e eventuais;
 * valor de **taxas de parada improdutiva**;
 * impacto financeiro de cancelamentos.
 
@@ -367,7 +405,15 @@ flowchart TD
 * restrição dominante violada;
 * parâmetros usados na geração do plano;
 * registro de cancelamentos e seu momento de ocorrência;
-* estimativa de custo evitado versus custo incorrido.
+* `hash_cenario` e trilha de reexecução.
+
+## 11.4 Artefatos de execução
+
+* `ResultadoPlanejamento` consolidado;
+* `hash_cenario` estável por cenário;
+* manifesto e estado de execução persistidos em disco;
+* indicação de reaproveitamento de cache e de recuperação de contexto anterior;
+* materialização de snapshot, quando solicitada.
 
 ---
 
@@ -396,7 +442,7 @@ Para permitir implementação rápida e validação do conceito, o MVP assume:
 | Capacidade financeira    | Subdimensionamento do limite de risco inviabiliza rotas úteis                                   |
 | Apólice de seguro        | O teto segurado pode encurtar rotas de recolhimento mesmo em setores próximos                   |
 | SLA heterogêneo          | Regras contratuais muito diferentes exigem modelagem mais refinada                              |
-| Serviços especiais D-1   | Podem pressionar a malha e aumentar muito o acionamento de viaturas                             |
+| Ordens especiais e extraordinárias | Podem pressionar a malha e aumentar muito o acionamento de viaturas                    |
 | Cancelamentos tardios    | Podem gerar custo sem ganho operacional e distorcer a produtividade planejada                   |
 | Segurança operacional    | Rotas excessivamente repetitivas podem elevar risco por previsibilidade                         |
 | Trânsito                 | Sem histórico por faixa horária, a matriz pode subestimar atrasos reais                         |
@@ -423,7 +469,7 @@ A evolução natural do modelo pode seguir a ordem abaixo:
 | Termo                       | Definição                                                                                       |
 | --------------------------- | ----------------------------------------------------------------------------------------------- |
 | Base operacional            | Ponto de origem e retorno das viaturas                                                          |
-| Ponto atendido              | Local que recebe serviço de suprimento, recolhimento ou atendimento especial                    |
+| Ponto atendido              | Local que recebe serviço de suprimento, recolhimento ou atendimento extraordinário              |
 | Ordem de atendimento        | Demanda operacional a ser executada em determinada data                                         |
 | Viatura blindada            | Veículo utilizado no transporte de numerário                                                    |
 | Guarnição                   | Equipe embarcada responsável pela execução operacional                                          |
@@ -432,9 +478,10 @@ A evolução natural do modelo pode seguir a ordem abaixo:
 | Capacidade de valor         | Limite financeiro transportável pela viatura                                                    |
 | Capacidade volumétrica      | Limite físico de carga da viatura                                                               |
 | SLA                         | Regra contratual de prazo e nível de serviço                                                    |
-| Cut-off time                | Horário de congelamento das ordens elegíveis para o plano do dia seguinte                       |
-| Ordem padrão                | Ordem conhecida com antecedência de D-2 ou superior                                             |
-| Ordem especial              | Ordem com solicitação em D-1 e tratamento prioritário                                           |
+| Cut-off time                | Marco temporal configurado no `contexto` que separa exclusão pré-planejamento de cancelamento tardio |
+| Ordem padrão                | Ordem explicitamente classificada como `padrao`, representando a carteira base                  |
+| Ordem eventual              | Ordem não `padrao` normalizada para `eventual` por antecedência positiva                         |
+| Ordem especial              | Ordem não `padrao` normalizada para `especial` quando criada no próprio dia ou sem antecedência |
 | Isolamento de estado físico | Regra que impede mistura de suprimento e recolhimento na mesma viagem                           |
 | Teto segurado               | Valor máximo coberto pela apólice para a carga transportada                                     |
 | Parada improdutiva          | Custo gerado por atendimento cancelado ou frustrado sem aproveitamento logístico correspondente |
@@ -458,869 +505,155 @@ A evolução natural do modelo pode seguir a ordem abaixo:
 ### Referência tecnológica
 
 * **PyVRP** como motor de otimização do MVP;
-* motor de malha logística baseado em matriz de **tempo** e **distância**;
-* possível uso de **OSRM** ou provedor equivalente para construção da malha.
+* snapshots logísticos persistidos como fonte preferencial da malha;
+* fallback geométrico local (`haversine_v1`) quando o snapshot está ausente ou incompleto;
+* formulação matemática detalhada em `docs/formulacao-matematica.md`.
 
 ---
 
 ## 17. Conclusão
 
-O projeto passa a ter um recorte claro para execução:
-um **MVP de planejamento diário**, com **PyVRP**, baseado em **rotas fechadas**, **dupla capacidade**, **controle por apólice**, **priorização por SLA**, **tratamento de ordens especiais**, **registro de cancelamentos** e **isolamento entre suprimento e recolhimento**.
+O projeto já possui um backend executável para o recorte principal:
+um **planejamento diário**, com **PyVRP**, baseado em **rotas fechadas**, **dupla capacidade**, **controle por apólice**, **priorização por SLA**, **tratamento de ordens padrão, eventuais e especiais**, **registro de cancelamentos**, **materialização de snapshots** e **isolamento entre suprimento e recolhimento**.
 
 Com isso, o modelo já reflete elementos centrais da operação real: atendimento multi-cliente por setor, limitação por risco segurado, impacto econômico de cancelamentos e preocupação com previsibilidade operacional.
 
 
 ---
 
-# Planejamento de desenvolvimento da aplicação
+# Arquitetura atual da aplicação
 
-## Abordagem orientada a contratos, TDD e baixo acoplamento
+## 18. Estado atual da implementação
 
-## 1. Diretriz arquitetural
+O projeto não está mais apenas em fase de desenho. Hoje já existe um backend executável com os seguintes blocos:
 
-O desenvolvimento seguirá uma arquitetura orientada a módulos com **contratos explícitos de entrada e saída**, priorizando:
+* `src/roteirizacao/domain`: contratos, enums, serialização, validação e classificação;
+* `src/roteirizacao/application`: carregamento de dataset, snapshots, matriz logística, construção de instância, execução, pós-processamento, auditoria, reporting e orquestração;
+* `src/roteirizacao/optimization`: adaptador para PyVRP;
+* `src/roteirizacao/benchmark`: baseline PuLP, catálogo de cenários, runner experimental e agregação de métricas;
+* `src/roteirizacao/api`: camada FastAPI sobre o orquestrador;
+* `apps/ui_streamlit`: frontend que consome a API HTTP;
+* `notebook/modelo_solver_workbench.ipynb`: workbench narrativo para demonstração do solver;
+* `notebook/benchmark_solver_comparison.ipynb`: caderno experimental para comparação PyVRP x PuLP.
 
-* **TDD** como estratégia principal de construção;
-* **separação entre domínio, infraestrutura e otimização**;
-* **inversão de dependência**, para que o domínio não dependa diretamente de PyVRP, banco, API de malha ou formato de arquivo;
-* **idempotência da execução**, permitindo reprocessamento seguro.
+## 19. Fluxo atual do planejamento diário
 
-A consequência prática disso é simples:
+1. `DailyPlanningOrchestrator` resolve caminhos, parâmetros e calcula `hash_cenario`.
+2. `PlanningDatasetLoader` lê `contexto.json`, `bases.json`, `pontos.json`, `viaturas.json` e `ordens.json`.
+3. `PreparationPipeline` valida os contratos e classifica as ordens.
+4. `OptimizationInstanceBuilder` monta uma `InstanciaRoteirizacaoBase` por `ClasseOperacional`.
+5. Para a malha, o backend tenta primeiro `PersistedSnapshotLogisticsMatrixProvider`; se o snapshot estiver ausente, inválido ou incompleto, usa `FallbackLogisticsMatrixProvider` com `LogisticsMatrixBuilder`.
+6. `PlanningExecutor` usa `PyVRPAdapter`, executa o solver e consolida `RoutePostProcessor`, `PlanningAuditTrailBuilder` e `PlanningReportingBuilder`.
+7. O orquestrador persiste artefatos por cenário e expõe o resultado para CLI, API e UI.
 
-* a lógica de negócio deve produzir uma **instância interna genérica de roteirização**;
-* o PyVRP entra apenas como **adaptador externo**;
-* o fluxo completo deve poder ser reexecutado com o mesmo cenário sem corromper estado nem duplicar resultados.
+## 20. Interfaces públicas do sistema
 
----
+### 20.1 Dataset local canônico
 
-# 2. Visão geral do fluxo
+O formato principal de entrada em disco é JSON, com os arquivos:
 
-```mermaid id="a3n6yk"
-flowchart LR
-    A[1. Contratos de Dados] --> B[2. Ingestão]
-    B --> C[3. Validação e Normalização]
-    C --> D[4. Classificação Operacional]
-    D --> E[5. Geração da Malha]
-    E --> F[6. Separação por Classe Operacional]
-    F --> G[7. Montagem da Instância de Domínio<br/>InstanciaRoteirizacaoBase]
-    G --> H[8. Adaptador do Solver<br/>PyVRPAdapter]
-    H --> I[9. Execução da Otimização]
-    I --> J[10. Pós-processamento]
-    J --> K[11. Auditoria]
-    K --> L[12. KPIs e Relatórios]
-    L --> M[13. Orquestração Idempotente]
-```
+* `contexto.json`
+* `bases.json`
+* `pontos.json`
+* `viaturas.json`
+* `ordens.json`
 
----
+Arquivos auxiliares opcionais por dataset:
 
-# 3. Princípios de projeto que orientam o desenvolvimento
+* `logistics_sources/<data_operacao>.json`
+* `logistics_snapshots/<data_operacao>.json`
 
-## 3.1 Domínio primeiro
+### 20.2 CLI
 
-O centro da aplicação não é o solver. O centro da aplicação é o **processo de planejamento operacional**.
+Os comandos públicos atuais são:
 
-## 3.2 Dependências apontam para dentro
+* `materialize-snapshot`
+* `run-planning`
 
-Módulos de domínio não conhecem:
+### 20.3 API HTTP
 
-* PyVRP;
-* formato CSV;
-* banco específico;
-* API externa de malha.
+A API expõe:
 
-Eles conhecem apenas **interfaces e contratos internos**.
+* `GET /health`
+* `POST /api/v1/snapshots/materialize`
+* `POST /api/v1/planning/run-dataset`
+* `POST /api/v1/planning/run`
 
-## 3.3 Cada etapa tem resultado verificável
+O endpoint `run` materializa internamente um dataset em `data/api_runs/` e reutiliza o mesmo orquestrador da CLI.
 
-Toda etapa precisa produzir uma saída concreta que possa ser validada por teste.
+### 20.4 UI Streamlit
 
-## 3.4 Reexecução segura
+A UI não executa o solver diretamente. Ela funciona como cliente da API e deriva a visualização a partir do contrato de resposta do backend.
 
-O pipeline deve poder ser executado novamente para o mesmo cenário usando um identificador estável, como:
+### 20.5 Notebooks públicos
 
-* `id_execucao`; ou
-* `hash_cenario`.
+O repositório expõe dois artefatos interativos com objetivos distintos:
 
----
+* `modelo_solver_workbench.ipynb`: demonstração top-down do solver, com leitura de rede-base, gargalo dominante, solução, KPIs e takeaway;
+* `benchmark_solver_comparison.ipynb`: experimento analítico com benchmarking por amostragem, dispersão, erro relativo da função objetivo e rodada exaustiva de `100%`.
 
-# 4. Etapa 1 — Definição dos contratos de dados
+Os cadernos trabalham com os nomes públicos de cenário:
 
-## Objetivo
+* `operacao_controlada`: cenário de demonstração, materializado internamente em `data/fake_solution`;
+* `operacao_sob_pressao`: cenário de estresse e benchmark, materializado internamente em `data/fake_smoke`.
 
-Definir os contratos formais que estabilizam a comunicação entre os módulos.
+### 20.6 Benchmark experimental
 
-## Descrição
+O benchmark atual opera em dois regimes:
 
-Esta etapa cria os modelos internos do sistema, distinguindo claramente:
+* benchmark amostral sobre `operacao_sob_pressao`, com `20%`, `40%`, `60%` e `80%` das ordens e `5` repetições por escala;
+* rodada exaustiva separada com `100%` das ordens.
 
-* entrada bruta;
-* entrada validada;
-* entrada enriquecida;
-* instância de roteirização;
-* saída operacional;
-* saída gerencial;
-* saída de auditoria.
+As saídas experimentais principais são:
 
-## Entradas
+* `results.csv`;
+* `summary.json`;
+* plots em português;
+* painel visual da rodada exaustiva organizado por `solver x classe operacional`.
 
-* regras de negócio do projeto;
-* tipos de entidades operacionais;
-* requisitos do planejamento diário.
+## 21. Persistência, cache e idempotência
 
-## Saídas
+Para cada `hash_cenario`, o backend mantém em disco:
 
-Modelos internos como:
+* `cenario.json`
+* `estado.json`
+* `resultado-planejamento.json`
+* `resultado-planejamento.pkl`
 
-* `Base`
-* `Ponto`
-* `Ordem`
-* `Viatura`
-* `MatrizLogistica`
-* `InstanciaRoteirizacaoBase`
-* `RotaPlanejada`
-* `EventoAuditoria`
-* `ResultadoPlanejamento`
+Além disso:
 
-## Critérios de aceite
-
-* contratos completos e sem ambiguidade;
-* campos obrigatórios definidos;
-* separação entre objetos de domínio e objetos de infraestrutura;
-* contratos preparados para testes de schema.
-
-## Testes principais
-
-* criação válida dos modelos;
-* rejeição de tipos incorretos;
-* rejeição de campos obrigatórios ausentes;
-* consistência de serialização.
-
----
-
-# 5. Etapa 2 — Módulo de ingestão
-
-## Objetivo
-
-Receber os dados de origem e convertê-los para estruturas brutas internas.
-
-## Descrição
-
-Esse módulo lê as fontes externas e transforma tudo em objetos internos ainda não validados.
-Ele não aplica regra de negócio complexa. Sua responsabilidade é apenas **traduzir a entrada externa**.
-
-## Entradas
-
-* arquivos CSV/planilhas/API;
-* dados de bases;
-* dados de pontos;
-* dados de viaturas;
-* dados de ordens;
-* parâmetros do dia operacional.
-
-## Saídas
-
-* `bases_brutas`
-* `pontos_brutos`
-* `viaturas_brutas`
-* `ordens_brutas`
-* `metadados_ingestao`
-
-## Critérios de aceite
-
-* leitura consistente dos formatos suportados;
-* mapeamento correto de colunas/campos;
-* rastreabilidade da origem dos dados.
-
-## Testes principais
-
-* leitura de fonte válida;
-* falha para colunas obrigatórias ausentes;
-* tratamento de registro duplicado;
-* preservação de identificadores de origem.
-
----
-
-# 6. Etapa 3 — Validação e normalização
-
-## Objetivo
-
-Converter dados brutos em dados operacionais confiáveis.
-
-## Descrição
-
-Aplica regras de consistência estrutural e padronização:
-
-* coordenadas válidas;
-* janelas coerentes;
-* tipos reconhecidos;
-* capacidades válidas;
-* valores e volumes não negativos.
-
-## Entradas
-
-* `bases_brutas`
-* `pontos_brutos`
-* `viaturas_brutas`
-* `ordens_brutas`
-
-## Saídas
-
-* `bases_validas`
-* `pontos_validos`
-* `viaturas_validas`
-* `ordens_validas`
-* `erros_validacao`
-
-## Critérios de aceite
-
-* nenhum dado inconsistente segue adiante sem registro;
-* normalização previsível;
-* erros explicáveis e auditáveis.
-
-## Testes principais
-
-* coordenada inválida é rejeitada;
-* ordem com janela invertida é rejeitada;
-* viatura sem limite segurado é rejeitada;
-* erro produzido contém entidade, campo e motivo.
-
----
-
-# 7. Etapa 4 — Classificação operacional e enriquecimento
-
-## Objetivo
-
-Preparar as ordens para o planejamento do dia.
-
-## Descrição
-
-Esse módulo decide como cada ordem será tratada no cenário:
-
-* padrão ou especial;
-* suprimento ou recolhimento;
-* elegível ou não para o cut-off;
-* cancelada ou ativa;
-* criticidade efetiva;
-* penalidade aplicável.
-
-## Entradas
-
-* `ordens_validas`
-* `pontos_validos`
-* `regras_operacionais`
-* data/hora de referência
-
-## Saídas
-
-* `ordens_classificadas`
-* `ordens_planejaveis`
-* `ordens_fora_cutoff`
-* `ordens_canceladas`
-* `metadados_classificacao`
-
-## Critérios de aceite
-
-* classificação determinística;
-* separação clara entre ordem ativa, cancelada e fora do planejamento;
-* regras de antecedência corretamente aplicadas.
-
-## Testes principais
-
-* ordem D-1 é classificada como especial;
-* ordem D-2+ é classificada como padrão;
-* cancelamento antes do cut-off exclui ordem da malha;
-* cancelamento tardio gera impacto operacional registrável.
-
----
-
-# 8. Etapa 5 — Geração da malha logística
-
-## Objetivo
-
-Produzir a matriz de tempo e distância do cenário diário.
-
-## Descrição
-
-Esse módulo usa uma interface abstrata de provedor de malha.
-O domínio não conhece OSRM nem outro motor; conhece apenas um contrato como `ProvedorMalha`.
-
-## Entradas
-
-* `bases_validas`
-* `ordens_planejaveis`
-* `pontos_validos`
-* `provedor_malha`
-
-## Saídas
-
-* `matriz_tempo`
-* `matriz_distancia`
-* `mapa_nos`
-* `falhas_malha`
-
-## Critérios de aceite
-
-* matrizes dimensionadas corretamente;
-* relação consistente entre nó e índice;
-* tratamento de trechos indisponíveis.
-
-## Testes principais
-
-* matriz N×N correta;
-* base presente como nó obrigatório;
-* rota impossível recebe penalidade configurada;
-* índice do nó é estável entre execuções idênticas.
-
----
-
-# 9. Etapa 6 — Separação por classe operacional
-
-## Objetivo
-
-Garantir o isolamento de estado físico antes da otimização.
-
-## Descrição
-
-As ordens planejáveis são divididas em subconjuntos independentes:
-
-* cenário de suprimento;
-* cenário de recolhimento.
-
-Isso preserva a regra de não mistura operacional no MVP.
-
-## Entradas
-
-* `ordens_classificadas`
-* `ordens_planejaveis`
-* `viaturas_validas`
-* `bases_validas`
-
-## Saídas
-
-* `cenario_suprimento`
-* `cenario_recolhimento`
-
-## Critérios de aceite
-
-* nenhuma ordem é enviada ao cenário errado;
-* cenário fica pronto para montagem da instância de domínio.
-
-## Testes principais
-
-* ordem de recolhimento não entra em suprimento;
-* serviço especial compatível vai para o cenário correto;
-* tipo ambíguo gera erro controlado.
-
----
-
-# 10. Etapa 7 — Montagem da instância de domínio
-
-## Objetivo
-
-Construir uma representação **genérica e independente de framework** do problema de roteirização.
-
-## Descrição
-
-Esta é a principal correção arquitetural do plano.
-Em vez de produzir um `problema_pyvrp`, esta etapa produz uma **instância interna de domínio**, por exemplo:
-
-* `InstanciaRoteirizacaoBase`
-
-Essa instância contém tudo que o domínio precisa expressar:
-
-* nós;
-* depósitos;
-* veículos;
-* capacidades;
-* demandas;
-* janelas;
-* custos;
-* penalidades;
-* restrições de elegibilidade.
-
-Ela ainda não conhece PyVRP.
-
-## Entradas
-
-* `cenario_suprimento` ou `cenario_recolhimento`
-* `matriz_tempo`
-* `matriz_distancia`
-* `viaturas_validas`
-* `parametros_planejamento`
-
-## Saídas
-
-* `InstanciaRoteirizacaoBase`
-* `restricoes_aplicadas`
-* `mapa_ids_dominio`
-
-## Critérios de aceite
-
-* instância expressa completamente o cenário;
-* nenhuma dependência de solver externo;
-* capacidades financeira e volumétrica representadas;
-* penalidades e janelas corretamente materializadas.
-
-## Testes principais
-
-* instância contém todos os nós esperados;
-* veículo recebe capacidades corretas;
-* penalidade de ordem especial é superior à padrão;
-* recolhimento respeita o acúmulo de valor;
-* nenhuma referência a classes do PyVRP existe aqui.
-
----
-
-# 11. Etapa 8 — Adaptador do solver
-
-## Objetivo
-
-Traduzir a instância de domínio para o formato exigido pelo solver selecionado.
-
-## Descrição
-
-Aqui entra o princípio de inversão de dependência.
-O módulo implementa uma interface como:
-
-* `SolverAdapter`
-
-E a implementação concreta do MVP será:
-
-* `PyVRPAdapter`
-
-Se amanhã o solver mudar, esta etapa muda; o domínio permanece.
-
-## Entradas
-
-* `InstanciaRoteirizacaoBase`
-* `config_solver`
-
-## Saídas
-
-* `instancia_solver`
-* `mapa_ids_solver`
-* `metadados_adaptacao`
-
-## Critérios de aceite
-
-* tradução correta e completa da instância interna;
-* nenhuma regra de negócio essencial “vaza” para fora do domínio;
-* adaptação testável com mocks e cenários pequenos.
-
-## Testes principais
-
-* nó do domínio vira nó do solver com atributos corretos;
-* veículo do domínio vira veículo do solver com capacidades corretas;
-* falhas de adaptação geram erro controlado;
-* troca de adaptador não exige mudança nas etapas anteriores.
-
----
-
-# 12. Etapa 9 — Execução da otimização
-
-## Objetivo
-
-Executar o solver e obter a solução bruta do problema.
-
-## Descrição
-
-Este módulo apenas executa a otimização via adaptador/configuração definida.
-Ele não interpreta regra de negócio; apenas administra a execução do solver.
-
-## Entradas
-
-* `instancia_solver`
-* `config_execucao_solver`
-
-## Saídas
-
-* `resultado_solver_bruto`
-* `status_solver`
-* `metadados_execucao_solver`
-
-## Critérios de aceite
-
-* sucesso, inviabilidade e falha técnica devem ser diferenciados;
-* tempo, memória e status precisam ficar rastreáveis.
-
-## Testes principais
-
-* solver mockado retorna solução válida;
-* falha técnica retorna status controlado;
-* solução vazia não quebra o fluxo;
-* timeout ou erro de execução é capturado.
-
----
-
-# 13. Etapa 10 — Pós-processamento das rotas
-
-## Objetivo
-
-Traduzir a solução do solver para a linguagem do negócio.
-
-## Descrição
-
-Reconstrói:
-
-* rotas por viatura;
-* sequência de paradas;
-* horários previstos;
-* carga acumulada;
-* custo estimado;
-* ordens não atendidas.
-
-## Entradas
-
-* `resultado_solver_bruto`
-* `mapa_ids_solver`
-* `mapa_ids_dominio`
-* `InstanciaRoteirizacaoBase`
-* `matriz_tempo`
-* `matriz_distancia`
-
-## Saídas
-
-* `rotas_planejadas`
-* `ordens_nao_atendidas`
-* `resumo_operacional`
-
-## Critérios de aceite
-
-* saída compreensível para operação;
-* fechamento coerente de horários, cargas e custos;
-* rastreabilidade da ordem do domínio até a rota final.
-
-## Testes principais
-
-* rota reconstruída corretamente;
-* carga acumulada respeita limite segurado;
-* ordem não atendida aparece fora das rotas;
-* custo final bate com a soma esperada.
-
----
-
-# 14. Etapa 11 — Auditoria e explicabilidade
-
-## Objetivo
-
-Garantir que o processo seja explicável e auditável.
-
-## Descrição
-
-Consolida eventos de:
-
-* validação;
-* exclusão por cut-off;
-* cancelamento;
-* não atendimento;
-* restrição dominante;
-* parâmetros de planejamento;
-* falhas técnicas.
-
-## Entradas
-
-* `erros_validacao`
-* `ordens_fora_cutoff`
-* `ordens_canceladas`
-* `ordens_nao_atendidas`
-* `restricoes_aplicadas`
-* `metadados_execucao_solver`
-
-## Saídas
-
-* `eventos_auditoria`
-* `log_planejamento`
-* `motivos_inviabilidade`
-
-## Critérios de aceite
-
-* toda exclusão deve possuir motivo explícito;
-* toda execução deve deixar rastro reproduzível.
-
-## Testes principais
-
-* ordem inválida gera evento de auditoria;
-* ordem fora do cut-off gera evento específico;
-* falha técnica do solver é registrada;
-* parâmetros e timestamps ficam gravados.
-
----
-
-# 15. Etapa 12 — KPIs e relatórios
-
-## Objetivo
-
-Produzir os resultados de negócio consumidos por operação e gestão.
-
-## Descrição
-
-Consolida as rotas e os eventos em indicadores operacionais e gerenciais.
-
-## Entradas
-
-* `rotas_planejadas`
-* `ordens_classificadas`
-* `ordens_nao_atendidas`
-* `eventos_auditoria`
-
-## Saídas
-
-* `kpis_operacionais`
-* `kpis_gerenciais`
-* `relatorio_planejamento`
-
-## KPIs esperados
-
-* total de ordens planejadas;
-* total de ordens atendidas;
-* taxa de atendimento;
-* ordens especiais atendidas;
-* viaturas acionadas;
-* custo total estimado;
-* tempo total em deslocamento;
-* tempo total em serviço;
-* impacto de cancelamentos;
-* paradas improdutivas;
-* ordens excluídas por restrição.
-
-## Testes principais
-
-* KPI de atendimento calculado corretamente;
-* custo total consolidado corretamente;
-* total de viaturas igual ao conjunto de rotas ativas;
-* cancelamentos entram no indicador apropriado.
-
----
-
-# 16. Etapa 13 — Orquestração idempotente do planejamento diário
-
-## Objetivo
-
-Encadear todos os módulos em uma execução única, segura e reprocessável.
-
-## Descrição
-
-O orquestrador é o caso de uso principal da aplicação.
-Ele deve receber um identificador estável de cenário, como:
-
-* `id_execucao`; ou
-* `hash_cenario`.
-
-Esse identificador garante que, se houver falha em qualquer etapa posterior, especialmente na otimização, a reexecução não:
-
-* duplique registros;
-* regenere estados inconsistentes;
-* perca rastreabilidade do cenário original.
-
-O orquestrador deve operar com a lógica:
-
-* mesma entrada relevante → mesmo identificador de cenário;
-* mesma execução reprocessada → mesmo contexto lógico.
-
-## Entradas
-
-* `id_execucao` ou `hash_cenario`
-* data de operação
-* fontes de dados
-* regras operacionais
-* parâmetros do solver
-* políticas de persistência
-
-## Saídas
-
-* `ResultadoPlanejamento`
-
-### Estrutura esperada da saída final
-
-* identificador da execução;
-* resumo executivo;
-* rotas de suprimento;
-* rotas de recolhimento;
-* ordens excluídas;
-* ordens não atendidas;
-* KPIs;
-* auditoria;
-* status final da execução.
-
-## Critérios de aceite
-
-* execução ponta a ponta;
-* reexecução segura do mesmo cenário;
-* resultados consistentes para mesma entrada, salvo quando configurado comportamento não determinístico;
-* falhas técnicas isoladas sem duplicação de efeitos.
-
-## Testes principais
-
-* mesma execução repetida não duplica artefatos;
-* falha na etapa do solver permite retry seguro;
-* mudança de cenário altera `hash_cenario`;
-* execução com mesmo cenário recupera contexto anterior corretamente.
-
----
-
-# 17. Ordem recomendada de implementação em TDD
-
-## Sprint 1 — Contratos e validação
-
-Implementar:
-
-1. contratos de dados;
-2. ingestão;
-3. validação e normalização.
-
-### Resultado esperado
-
-A aplicação já consegue dizer:
-
-* o que entrou;
-* o que é válido;
-* o que foi rejeitado;
-* por que foi rejeitado.
-
----
-
-## Sprint 2 — Classificação e recorte do cenário
-
-Implementar:
-4. classificação operacional;
-5. separação por classe operacional.
-
-### Resultado esperado
-
-A aplicação já consegue dizer:
-
-* o que entra no planejamento do dia;
-* o que é especial;
-* o que está fora do cut-off;
-* o que pertence a suprimento e recolhimento.
-
----
-
-## Sprint 3 — Malha e instância de domínio
-
-Implementar:
-6. geração da malha;
-7. montagem da `InstanciaRoteirizacaoBase`.
-
-### Resultado esperado
-
-A aplicação já consegue produzir:
-
-* matrizes válidas;
-* representação genérica do problema pronta para qualquer solver.
-
----
-
-## Sprint 4 — Adaptador e execução do solver
-
-Implementar:
-8. adaptador do solver;
-9. execução da otimização.
-
-### Resultado esperado
-
-A aplicação já consegue:
-
-* traduzir o problema interno para PyVRP;
-* executar a otimização sem contaminar o domínio com dependência externa.
-
----
-
-## Sprint 5 — Reconstrução, auditoria e KPIs
-
-Implementar:
-10. pós-processamento;
-11. auditoria;
-12. KPIs e relatórios.
-
-### Resultado esperado
-
-A aplicação já consegue:
-
-* entregar rotas;
-* explicar exclusões;
-* consolidar indicadores.
-
----
-
-## Sprint 6 — Orquestrador idempotente
-
-Implementar:
-13. orquestração idempotente.
-
-### Resultado esperado
-
-A aplicação já roda o caso principal completo com reprocessamento seguro.
-
----
-
-# 18. Estratégia de testes por camada
-
-## 18.1 Testes unitários
-
-Para funções puras e regras:
-
-* classificação;
-* penalidades;
-* validação;
-* cálculo de KPIs;
-* reconstrução de rotas.
-
-## 18.2 Testes de contrato
-
-Para entradas e saídas de cada módulo:
-
-* schemas;
-* obrigatoriedade de campos;
-* formatos de erro;
-* invariantes do domínio.
-
-## 18.3 Testes de integração
-
-Para fluxo entre módulos:
-
-* ingestão → validação;
-* classificação → malha;
-* instância de domínio → adaptador;
-* solver → pós-processamento.
-
-## 18.4 Testes de aceitação
-
-Para cenários de negócio:
-
-* dia normal;
-* excesso de valor em rota de recolhimento;
-* ordem especial D-1;
-* cancelamento tardio;
-* rota inviável por janela;
-* falha técnica do solver com retry.
-
----
-
-# 19. Contrato mínimo de entrada e saída por módulo
-
-| Módulo                | Entrada principal                         | Saída principal                     |
-| --------------------- | ----------------------------------------- | ----------------------------------- |
-| Contratos             | regras do domínio                         | modelos formais                     |
-| Ingestão              | arquivos/API                              | dados brutos                        |
-| Validação             | dados brutos                              | dados válidos + erros               |
-| Classificação         | ordens válidas                            | ordens planejáveis/classificadas    |
-| Malha                 | nós do dia                                | matriz tempo/distância              |
-| Separação operacional | ordens classificadas                      | cenários de suprimento/recolhimento |
-| Instância de domínio  | cenários + matrizes + frota               | `InstanciaRoteirizacaoBase`         |
-| Adaptador do solver   | instância de domínio                      | instância específica do solver      |
-| Execução do solver    | instância específica                      | solução bruta                       |
-| Pós-processamento     | solução bruta                             | rotas planejadas                    |
-| Auditoria             | erros + exclusões + parâmetros            | log e eventos                       |
-| KPIs                  | rotas + eventos                           | indicadores e relatório             |
-| Orquestrador          | configuração + `id_execucao/hash_cenario` | resultado final                     |
-
----
-
-# 20. Resultado final esperado da aplicação
-
-Ao final do desenvolvimento, a aplicação deverá receber os dados do dia e devolver, de forma rastreável e reprocessável:
+* `manifest.json` consolida as execuções conhecidas;
+* `output_path` mantém um alias legível do resultado final;
+* `reused_cached_result` indica reaproveitamento de resultado concluído;
+* `recovered_previous_context` indica recuperação de contexto persistido;
+* `snapshot_materialization` registra a materialização realizada durante a execução, quando aplicável.
+
+Na camada experimental, a persistência é separada da operação principal e fica em diretórios de benchmark com artefatos tabulares e visuais reutilizáveis.
+
+## 22. Estratégia atual de testes
+
+O repositório já cobre o backend com testes por contrato e integração leve:
+
+* `tests/contract/test_preparation_pipeline.py`
+* `tests/contract/test_instance_builder.py`
+* `tests/contract/test_logistics_provider.py`
+* `tests/contract/test_snapshot_materializer.py`
+* `tests/contract/test_pyvrp_adapter.py`
+* `tests/contract/test_planning_executor.py`
+* `tests/contract/test_post_processing.py`
+* `tests/contract/test_audit_builder.py`
+* `tests/contract/test_reporting_builder.py`
+* `tests/contract/test_orchestration.py`
+* `tests/contract/test_api.py`
+* `tests/contract/test_cli.py`
+* `tests/contract/test_benchmark_catalog.py`
+* `tests/contract/test_benchmark_runner.py`
+* `tests/contract/test_benchmark_workbench_support.py`
+* `tests/ui/` para o contrato entre frontend e backend
+
+## 23. Resultado atual esperado da aplicação
+
+Hoje a aplicação já consegue receber os dados do dia e devolver, de forma rastreável e reprocessável:
 
 1. rotas de suprimento;
 2. rotas de recolhimento;
@@ -1328,16 +661,16 @@ Ao final do desenvolvimento, a aplicação deverá receber os dados do dia e dev
 4. custos estimados por rota e custo total;
 5. KPIs operacionais e gerenciais;
 6. log completo de auditoria;
-7. identificação única da execução e do cenário processado.
+7. identificação estável da execução e do cenário processado;
+8. estado persistido para reexecução segura.
 
----
+## 24. Conclusão prática
 
-# 21. Conclusão prática
+O ponto central deste projeto já não é apenas “preparar a base para um solver”.
 
-A melhor primeira entrega continua não sendo “rodar o PyVRP”.
+O núcleo executável existe, e a prioridade documental passa a ser:
 
-A melhor primeira entrega é um núcleo que já consiga executar com qualidade este fluxo:
-
-**ingestão → validação → classificação → instância de domínio → auditoria**
-
-Quando essa base estiver firme, o solver entra como componente substituível, e não como dependência estrutural do sistema.
+* manter o contexto de negócio alinhado ao backend real;
+* preservar o desacoplamento entre domínio e solver;
+* registrar com clareza o contrato entre CLI, API, UI, notebooks e persistência operacional;
+* sustentar a narrativa metodológica do benchmark, distinguindo claramente operação do produto e comparação científica controlada.

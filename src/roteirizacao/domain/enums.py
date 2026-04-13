@@ -12,6 +12,7 @@ class TipoServico(StrEnum):
 class ClassePlanejamento(StrEnum):
     PADRAO = "padrao"
     ESPECIAL = "especial"
+    EVENTUAL = "eventual"
 
 
 class ClasseOperacional(StrEnum):

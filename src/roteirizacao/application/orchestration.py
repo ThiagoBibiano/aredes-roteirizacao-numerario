@@ -535,6 +535,7 @@ class DailyPlanningOrchestrator:
                 "seed": request.seed,
                 "collect_stats": request.collect_stats,
                 "display": request.display,
+                "service_policy": PlanningExecutor.SERVICE_POLICY_NAME,
             },
             "politicas_persistencia": {
                 "materialize_snapshot": request.materialize_snapshot,

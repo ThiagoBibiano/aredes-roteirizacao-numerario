@@ -243,6 +243,23 @@ def _parse_classe_planejamento(raw_value: Any) -> ClassePlanejamento:
     return ALIASES_CLASSE_PLANEJAMENTO.get(token, ClassePlanejamento(token))
 
 
+
+def _normaliza_classe_planejamento_por_antecedencia(
+    classe_planejamento: ClassePlanejamento,
+    *,
+    data_operacao: date,
+    timestamp_criacao: datetime,
+    timezone_referencia,
+) -> tuple[ClassePlanejamento, int]:
+    timestamp_local = timestamp_criacao.astimezone(timezone_referencia)
+    antecedencia_dias = (data_operacao - timestamp_local.date()).days
+    if classe_planejamento == ClassePlanejamento.PADRAO:
+        return classe_planejamento, antecedencia_dias
+    if antecedencia_dias <= 0:
+        return ClassePlanejamento.ESPECIAL, antecedencia_dias
+    return ClassePlanejamento.EVENTUAL, antecedencia_dias
+
+
 def _parse_criticidade(raw_value: Any) -> Criticidade:
     token = normalize_token(ensure_string(str(raw_value), "criticidade"))
     return ALIASES_CRITICIDADE.get(token, Criticidade(token))
@@ -581,6 +598,15 @@ def validate_ordem(
     try:
         tipo_servico, used_alias = _parse_tipo_servico(payload["tipo_servico"])
         classe_operacional = _classe_operacional(payload, tipo_servico)
+        data_operacao = ensure_date(payload["data_operacao"], "data_operacao")
+        timestamp_criacao = ensure_datetime(payload.get("timestamp_criacao", contexto.timestamp_referencia), "timestamp_criacao")
+        classe_planejamento_informada = _parse_classe_planejamento(payload["classe_planejamento"])
+        classe_planejamento_normalizada, antecedencia_dias = _normaliza_classe_planejamento_por_antecedencia(
+            classe_planejamento_informada,
+            data_operacao=data_operacao,
+            timestamp_criacao=timestamp_criacao,
+            timezone_referencia=contexto.timestamp_referencia.tzinfo,
+        )
         instante_cancelamento = None
         janela_cancelamento = None
         if payload.get("instante_cancelamento"):
@@ -600,12 +626,12 @@ def validate_ordem(
         ordem = Ordem(
             id_ordem=ensure_string(payload["id_ordem"], "id_ordem"),
             origem_ordem=ensure_string(str(payload.get("origem_ordem", raw.metadado_ingestao.origem)), "origem_ordem"),
-            data_operacao=ensure_date(payload["data_operacao"], "data_operacao"),
+            data_operacao=data_operacao,
             versao_ordem=str(payload.get("versao_ordem", "1")),
-            timestamp_criacao=ensure_datetime(payload.get("timestamp_criacao", contexto.timestamp_referencia), "timestamp_criacao"),
+            timestamp_criacao=timestamp_criacao,
             id_ponto=ensure_string(payload["id_ponto"], "id_ponto"),
             tipo_servico=tipo_servico,
-            classe_planejamento=_parse_classe_planejamento(payload["classe_planejamento"]),
+            classe_planejamento=classe_planejamento_normalizada,
             classe_operacional=classe_operacional,
             criticidade=_parse_criticidade(payload["criticidade"]),
             valor_estimado=ensure_decimal(payload["valor_estimado"], "valor_estimado"),
@@ -673,6 +699,27 @@ def validate_ordem(
             )
         )
 
+
+    if ordem.classe_planejamento != classe_planejamento_informada:
+        events.append(
+            _FACTORY.evento(
+                contexto=contexto,
+                tipo_evento=TipoEventoAuditoria.VALIDACAO,
+                entidade_afetada="Ordem",
+                id_entidade=ordem.id_ordem,
+                regra_relacionada="classificacao.antecedencia_ordem",
+                motivo="classe_planejamento ajustada pela antecedencia da solicitacao",
+                severidade=SeveridadeEvento.AVISO,
+                campo_afetado="classe_planejamento",
+                valor_observado=classe_planejamento_informada.value,
+                valor_esperado=ordem.classe_planejamento.value,
+                contexto_adicional={
+                    "dias_antecedencia": antecedencia_dias,
+                    "timestamp_criacao": timestamp_criacao.isoformat(),
+                    "data_operacao": ordem.data_operacao.isoformat(),
+                },
+            )
+        )
     events.append(
         _FACTORY.evento(
             contexto=contexto,

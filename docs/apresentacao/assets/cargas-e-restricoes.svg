@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720" viewBox="0 0 1280 720">
+  <rect width="1280" height="720" fill="#fcfbf7"/>
+  <text x="70" y="90" fill="#143642" font-family="Verdana, sans-serif" font-size="40" font-weight="700">O que a operacao movimenta?</text>
+  <text x="70" y="132" fill="#52616b" font-family="Verdana, sans-serif" font-size="24">Nao e apenas dinheiro em especie. Cada item gera restricoes diferentes.</text>
+
+  <rect x="70" y="190" width="280" height="420" rx="28" fill="#fff3d6" stroke="#f4a261" stroke-width="4"/>
+  <text x="110" y="250" fill="#7c2d12" font-family="Verdana, sans-serif" font-size="32" font-weight="700">Cargas</text>
+  <text x="110" y="305" fill="#7c2d12" font-family="Verdana, sans-serif" font-size="24">numerario</text>
+  <text x="110" y="345" fill="#7c2d12" font-family="Verdana, sans-serif" font-size="24">malotes</text>
+  <text x="110" y="385" fill="#7c2d12" font-family="Verdana, sans-serif" font-size="24">envelopes lacrados</text>
+  <text x="110" y="425" fill="#7c2d12" font-family="Verdana, sans-serif" font-size="24">documentos</text>
+
+  <rect x="500" y="190" width="320" height="420" rx="28" fill="#e8f4f2" stroke="#2a9d8f" stroke-width="4"/>
+  <text x="540" y="250" fill="#0f3d3e" font-family="Verdana, sans-serif" font-size="32" font-weight="700">Restricoes fisicas</text>
+  <text x="540" y="305" fill="#0f3d3e" font-family="Verdana, sans-serif" font-size="24">volume</text>
+  <text x="540" y="345" fill="#0f3d3e" font-family="Verdana, sans-serif" font-size="24">tempo de servico</text>
+  <text x="540" y="385" fill="#0f3d3e" font-family="Verdana, sans-serif" font-size="24">janela de atendimento</text>
+  <text x="540" y="425" fill="#0f3d3e" font-family="Verdana, sans-serif" font-size="24">turno da viatura</text>
+
+  <rect x="930" y="190" width="280" height="420" rx="28" fill="#fde8e4" stroke="#bc3908" stroke-width="4"/>
+  <text x="970" y="250" fill="#7f1d1d" font-family="Verdana, sans-serif" font-size="32" font-weight="700">Restricoes de risco</text>
+  <text x="970" y="305" fill="#7f1d1d" font-family="Verdana, sans-serif" font-size="24">valor estimado</text>
+  <text x="970" y="345" fill="#7f1d1d" font-family="Verdana, sans-serif" font-size="24">teto segurado</text>
+  <text x="970" y="385" fill="#7f1d1d" font-family="Verdana, sans-serif" font-size="24">servico elegivel</text>
+  <text x="970" y="425" fill="#7f1d1d" font-family="Verdana, sans-serif" font-size="24">penalidade por nao atender</text>
+</svg>

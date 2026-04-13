@@ -194,7 +194,8 @@ class RoutePostProcessorContractTest(unittest.TestCase):
                 self.ordem_bruta(
                     id_ordem="ORD-LOW",
                     id_ponto="PONTO-LONGE",
-                    penalidade_nao_atendimento="1.00",
+                    penalidade_nao_atendimento="50000.00",
+                    valor_estimado="999999999.00",
                 )
             ],
         )

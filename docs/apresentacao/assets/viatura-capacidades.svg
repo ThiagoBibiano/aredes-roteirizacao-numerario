@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720" viewBox="0 0 1280 720">
+  <rect width="1280" height="720" fill="#f8fafc"/>
+  <text x="70" y="90" fill="#143642" font-family="Verdana, sans-serif" font-size="40" font-weight="700">Leitura da viatura na modelagem</text>
+  <text x="70" y="132" fill="#52616b" font-family="Verdana, sans-serif" font-size="24">O veiculo entra no modelo como recurso com custo, turno e capacidade dupla.</text>
+
+  <rect x="100" y="260" width="360" height="220" rx="36" fill="#143642"/>
+  <rect x="150" y="220" width="180" height="120" rx="26" fill="#1d4e63"/>
+  <circle cx="190" cy="510" r="34" fill="#2f4858"/>
+  <circle cx="380" cy="510" r="34" fill="#2f4858"/>
+
+  <rect x="560" y="180" width="590" height="430" rx="30" fill="#ffffff" stroke="#d9e2ec" stroke-width="4"/>
+  <text x="610" y="260" fill="#143642" font-family="Verdana, sans-serif" font-size="32" font-weight="700">Atributos que entram no solver</text>
+  <text x="610" y="325" fill="#2a9d8f" font-family="Verdana, sans-serif" font-size="26" font-weight="700">Capacidade volumetrica</text>
+  <text x="610" y="365" fill="#143642" font-family="Verdana, sans-serif" font-size="22">quanto a viatura suporta fisicamente</text>
+  <text x="610" y="425" fill="#bc3908" font-family="Verdana, sans-serif" font-size="26" font-weight="700">Capacidade financeira</text>
+  <text x="610" y="465" fill="#143642" font-family="Verdana, sans-serif" font-size="22">limite monetario e teto segurado</text>
+  <text x="610" y="525" fill="#386641" font-family="Verdana, sans-serif" font-size="26" font-weight="700">Custo e turno</text>
+  <text x="610" y="565" fill="#143642" font-family="Verdana, sans-serif" font-size="22">custo fixo, custo variavel e janela operacional</text>
+</svg>

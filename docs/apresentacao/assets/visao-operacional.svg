@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720" viewBox="0 0 1280 720">
+  <rect width="1280" height="720" fill="#f7efe5"/>
+  <rect x="40" y="40" width="1200" height="640" rx="32" fill="#fffaf3" stroke="#d9b08c" stroke-width="4"/>
+  <text x="80" y="110" fill="#143642" font-family="Verdana, sans-serif" font-size="42" font-weight="700">Cena inicial da operacao</text>
+  <text x="80" y="155" fill="#52616b" font-family="Verdana, sans-serif" font-size="24">Uma viatura sai da base e precisa equilibrar tempo, custo, capacidade e risco.</text>
+
+  <rect x="90" y="220" width="260" height="290" rx="24" fill="#143642"/>
+  <text x="130" y="280" fill="#ffffff" font-family="Verdana, sans-serif" font-size="34" font-weight="700">Base</text>
+  <text x="130" y="325" fill="#d7e3ea" font-family="Verdana, sans-serif" font-size="22">planejamento do dia</text>
+  <text x="130" y="360" fill="#d7e3ea" font-family="Verdana, sans-serif" font-size="22">frota disponivel</text>
+  <text x="130" y="395" fill="#d7e3ea" font-family="Verdana, sans-serif" font-size="22">janela operacional</text>
+
+  <rect x="510" y="250" width="280" height="230" rx="28" fill="#f4a261" stroke="#d97706" stroke-width="4"/>
+  <text x="570" y="320" fill="#143642" font-family="Verdana, sans-serif" font-size="34" font-weight="700">Viatura</text>
+  <text x="560" y="362" fill="#143642" font-family="Verdana, sans-serif" font-size="24">rota candidata</text>
+  <text x="560" y="396" fill="#143642" font-family="Verdana, sans-serif" font-size="24">recurso escasso</text>
+
+  <rect x="930" y="200" width="230" height="120" rx="24" fill="#2a9d8f"/>
+  <text x="970" y="255" fill="#ffffff" font-family="Verdana, sans-serif" font-size="28" font-weight="700">Tempo</text>
+  <text x="970" y="290" fill="#e7fffb" font-family="Verdana, sans-serif" font-size="20">janela</text>
+
+  <rect x="930" y="350" width="230" height="120" rx="24" fill="#bc3908"/>
+  <text x="970" y="405" fill="#ffffff" font-family="Verdana, sans-serif" font-size="28" font-weight="700">Risco</text>
+  <text x="970" y="440" fill="#fde6de" font-family="Verdana, sans-serif" font-size="20">valor embarcado</text>
+
+  <rect x="930" y="500" width="230" height="120" rx="24" fill="#386641"/>
+  <text x="970" y="555" fill="#ffffff" font-family="Verdana, sans-serif" font-size="28" font-weight="700">Custo</text>
+  <text x="970" y="590" fill="#edf7ec" font-family="Verdana, sans-serif" font-size="20">frota e deslocamento</text>
+
+  <path d="M350 360 C430 360, 450 360, 510 360" fill="none" stroke="#143642" stroke-width="10" stroke-linecap="round"/>
+  <polygon points="500,345 532,360 500,375" fill="#143642"/>
+
+  <path d="M790 360 C860 360, 880 260, 930 260" fill="none" stroke="#143642" stroke-width="8" stroke-linecap="round"/>
+  <polygon points="920,246 950,260 920,274" fill="#143642"/>
+  <path d="M790 360 C860 360, 880 410, 930 410" fill="none" stroke="#143642" stroke-width="8" stroke-linecap="round"/>
+  <polygon points="920,396 950,410 920,424" fill="#143642"/>
+  <path d="M790 360 C860 360, 880 560, 930 560" fill="none" stroke="#143642" stroke-width="8" stroke-linecap="round"/>
+  <polygon points="920,546 950,560 920,574" fill="#143642"/>
+</svg>

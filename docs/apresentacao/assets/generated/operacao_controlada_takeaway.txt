@@ -1,0 +1,1 @@
+No cenario Operacao Controlada, o gargalo dominante e dispersao geografica. O solver encerrou com status concluida, planejou 10 ordem(ns), deixou 0 nao atendida(s) e acionou 8 rota(s). A leitura principal para apresentacao e comparar cobertura e custo com esse gargalo em mente, sem tratar a sequencia exata de visitas como criterio cientifico principal.
