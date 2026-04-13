@@ -1,0 +1,13 @@
+{
+  "attempts": 1,
+  "cache_hits": 0,
+  "created_at": "2026-04-12T20:46:32.962892+00:00",
+  "hash_cenario": "68b45df125cb74315e3573e872dfe5ddb3f646f944619d8e8e11328af71e1f60",
+  "id_execucao": "exec-smoke-2026-03-21",
+  "last_error": null,
+  "output_path": "/home/thiagobibianodasilva/Documentos/aredes-roteirizacao-numerario/data/fake_smoke/outputs/resultado-planejamento.json",
+  "result_path": "/home/thiagobibianodasilva/Documentos/aredes-roteirizacao-numerario/tmp_orch_fresh/68b45df125cb74315e3573e872dfe5ddb3f646f944619d8e8e11328af71e1f60/resultado-planejamento.json",
+  "scenario_path": "/home/thiagobibianodasilva/Documentos/aredes-roteirizacao-numerario/tmp_orch_fresh/68b45df125cb74315e3573e872dfe5ddb3f646f944619d8e8e11328af71e1f60/cenario.json",
+  "status": "completed",
+  "updated_at": "2026-04-12T20:46:33.515306+00:00"
+}

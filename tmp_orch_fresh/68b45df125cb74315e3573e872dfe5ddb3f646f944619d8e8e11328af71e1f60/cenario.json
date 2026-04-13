@@ -1,0 +1,5398 @@
+{
+  "contexto": {
+    "cutoff": "2026-03-20T18:00:00+00:00",
+    "data_operacao": "2026-03-21",
+    "id_execucao": "exec-smoke-2026-03-21",
+    "timestamp_referencia": "2026-03-20T18:30:00+00:00",
+    "versao_schema": "1.0"
+  },
+  "dataset_dir": "/home/thiagobibianodasilva/Documentos/aredes-roteirizacao-numerario/data/fake_smoke",
+  "entradas_relevantes": {
+    "bases": [
+      {
+        "fim_operacao": "2026-03-21T22:00:00+00:00",
+        "id_base": "BASE-SP-CENTRO",
+        "inicio_operacao": "2026-03-21T06:00:00+00:00",
+        "latitude": -23.5263,
+        "longitude": -46.6669,
+        "nome": "Tesouraria Central - Barra Funda",
+        "status_ativo": true
+      },
+      {
+        "fim_operacao": "2026-03-21T21:00:00+00:00",
+        "id_base": "BASE-SP-LESTE",
+        "inicio_operacao": "2026-03-21T06:30:00+00:00",
+        "latitude": -23.5402,
+        "longitude": -46.5767,
+        "nome": "Tesouraria Regional - Tatuape",
+        "status_ativo": true
+      },
+      {
+        "fim_operacao": "2026-03-21T20:00:00+00:00",
+        "id_base": "BASE-SP-ABC",
+        "inicio_operacao": "2026-03-21T07:00:00+00:00",
+        "latitude": -23.6914,
+        "longitude": -46.5646,
+        "nome": "Tesouraria ABC - Sao Bernardo",
+        "status_ativo": true
+      },
+      {
+        "fim_operacao": "2026-03-21T21:30:00+00:00",
+        "id_base": "BASE-SP-SUL",
+        "inicio_operacao": "2026-03-21T06:00:00+00:00",
+        "latitude": -23.6491,
+        "longitude": -46.7058,
+        "nome": "Tesouraria Sul - Santo Amaro",
+        "status_ativo": true
+      },
+      {
+        "fim_operacao": "2026-03-21T23:00:00+00:00",
+        "id_base": "BASE-SP-NORTE",
+        "inicio_operacao": "2026-03-21T05:30:00+00:00",
+        "latitude": -23.4355,
+        "longitude": -46.4731,
+        "nome": "Tesouraria Guarulhos - Aeroporto",
+        "status_ativo": true
+      }
+    ],
+    "cutoff": "2026-03-20T18:00:00+00:00",
+    "data_operacao": "2026-03-21",
+    "id_execucao": "exec-smoke-2026-03-21",
+    "ordens": [
+      {
+        "classe_operacional": "suprimento",
+        "classe_planejamento": "especial",
+        "criticidade": "alta",
+        "data_operacao": "2026-03-21",
+        "fim_janela": "2026-03-21T11:00:00+00:00",
+        "id_ordem": "ORD-001-Paul-Sup",
+        "id_ponto": "P-CENTRO-01",
+        "inicio_janela": "2026-03-21T09:00:00+00:00",
+        "origem_ordem": "erp_fake",
+        "penalidade_atraso": "1000.00",
+        "penalidade_nao_atendimento": "50000.00",
+        "status_cancelamento": "nao_cancelada",
+        "taxa_improdutiva": "0",
+        "tempo_servico": 20,
+        "timestamp_criacao": "2026-03-21T07:10:00+00:00",
+        "tipo_servico": "suprimento",
+        "valor_estimado": "1200000.00",
+        "volume_estimado": "40"
+      },
+      {
+        "classe_operacional": "recolhimento",
+        "classe_planejamento": "eventual",
+        "criticidade": "media",
+        "data_operacao": "2026-03-21",
+        "fim_janela": "2026-03-21T18:00:00+00:00",
+        "id_ordem": "ORD-002-Frei-Rec",
+        "id_ponto": "P-CENTRO-02",
+        "inicio_janela": "2026-03-21T14:00:00+00:00",
+        "origem_ordem": "erp_fake",
+        "penalidade_atraso": "200.00",
+        "penalidade_nao_atendimento": "20000.00",
+        "status_cancelamento": "nao_cancelada",
+        "taxa_improdutiva": "0",
+        "tempo_servico": 45,
+        "timestamp_criacao": "2026-03-20T15:00:00+00:00",
+        "tipo_servico": "recolhimento",
+        "valor_estimado": "450000.00",
+        "volume_estimado": "15"
+      },
+      {
+        "classe_operacional": "recolhimento",
+        "classe_planejamento": "especial",
+        "criticidade": "alta",
+        "data_operacao": "2026-03-21",
+        "fim_janela": "2026-03-21T12:00:00+00:00",
+        "id_ordem": "ORD-003-Faria-Rec",
+        "id_ponto": "P-OESTE-01",
+        "inicio_janela": "2026-03-21T10:00:00+00:00",
+        "origem_ordem": "erp_fake",
+        "penalidade_atraso": "5000.00",
+        "penalidade_nao_atendimento": "100000.00",
+        "status_cancelamento": "nao_cancelada",
+        "taxa_improdutiva": "0",
+        "tempo_servico": 25,
+        "timestamp_criacao": "2026-03-21T08:10:00+00:00",
+        "tipo_servico": "recolhimento",
+        "valor_estimado": "3500000.00",
+        "volume_estimado": "80"
+      },
+      {
+        "classe_operacional": "suprimento",
+        "classe_planejamento": "eventual",
+        "criticidade": "baixa",
+        "data_operacao": "2026-03-21",
+        "fim_janela": "2026-03-21T20:00:00+00:00",
+        "id_ordem": "ORD-004-Eldo-Sup",
+        "id_ponto": "P-OESTE-02",
+        "inicio_janela": "2026-03-21T08:00:00+00:00",
+        "origem_ordem": "erp_fake",
+        "penalidade_atraso": "100.00",
+        "penalidade_nao_atendimento": "15000.00",
+        "status_cancelamento": "nao_cancelada",
+        "taxa_improdutiva": "0",
+        "tempo_servico": 60,
+        "timestamp_criacao": "2026-03-20T14:40:00+00:00",
+        "tipo_servico": "suprimento",
+        "valor_estimado": "800000.00",
+        "volume_estimado": "30"
+      },
+      {
+        "classe_operacional": "suprimento",
+        "classe_planejamento": "eventual",
+        "criticidade": "media",
+        "data_operacao": "2026-03-21",
+        "fim_janela": "2026-03-21T12:00:00+00:00",
+        "id_ordem": "ORD-005-Tatu-Sup",
+        "id_ponto": "P-LESTE-01",
+        "inicio_janela": "2026-03-21T09:00:00+00:00",
+        "origem_ordem": "erp_fake",
+        "penalidade_atraso": "150.00",
+        "penalidade_nao_atendimento": "10000.00",
+        "status_cancelamento": "nao_cancelada",
+        "taxa_improdutiva": "0",
+        "tempo_servico": 20,
+        "timestamp_criacao": "2026-03-20T13:15:00+00:00",
+        "tipo_servico": "suprimento",
+        "valor_estimado": "150000.00",
+        "volume_estimado": "5"
+      },
+      {
+        "classe_operacional": "recolhimento",
+        "classe_planejamento": "especial",
+        "criticidade": "alta",
+        "data_operacao": "2026-03-21",
+        "fim_janela": "2026-03-21T17:00:00+00:00",
+        "id_ordem": "ORD-006-Alpha-Rec",
+        "id_ponto": "P-OESTE-04",
+        "inicio_janela": "2026-03-21T15:00:00+00:00",
+        "origem_ordem": "erp_fake",
+        "penalidade_atraso": "7500.00",
+        "penalidade_nao_atendimento": "150000.00",
+        "status_cancelamento": "nao_cancelada",
+        "taxa_improdutiva": "0",
+        "tempo_servico": 20,
+        "timestamp_criacao": "2026-03-21T12:30:00+00:00",
+        "tipo_servico": "recolhimento",
+        "valor_estimado": "5500000.00",
+        "volume_estimado": "120"
+      },
+      {
+        "classe_operacional": "recolhimento",
+        "classe_planejamento": "eventual",
+        "criticidade": "media",
+        "data_operacao": "2026-03-21",
+        "fim_janela": "2026-03-21T21:00:00+00:00",
+        "id_ordem": "ORD-007-G Plaza-Rec",
+        "id_ponto": "P-ABC-02",
+        "inicio_janela": "2026-03-21T18:00:00+00:00",
+        "origem_ordem": "erp_fake",
+        "penalidade_atraso": "300.00",
+        "penalidade_nao_atendimento": "25000.00",
+        "status_cancelamento": "nao_cancelada",
+        "taxa_improdutiva": "0",
+        "tempo_servico": 55,
+        "timestamp_criacao": "2026-03-20T17:00:00+00:00",
+        "tipo_servico": "recolhimento",
+        "valor_estimado": "950000.00",
+        "volume_estimado": "35"
+      },
+      {
+        "classe_operacional": "suprimento",
+        "classe_planejamento": "especial",
+        "criticidade": "alta",
+        "data_operacao": "2026-03-21",
+        "fim_janela": "2026-03-21T09:00:00+00:00",
+        "id_ordem": "ORD-008-Guaru-Sup",
+        "id_ponto": "P-NORTE-01",
+        "inicio_janela": "2026-03-21T06:00:00+00:00",
+        "origem_ordem": "erp_fake",
+        "penalidade_atraso": "2000.00",
+        "penalidade_nao_atendimento": "80000.00",
+        "status_cancelamento": "nao_cancelada",
+        "taxa_improdutiva": "0",
+        "tempo_servico": 45,
+        "timestamp_criacao": "2026-03-21T05:20:00+00:00",
+        "tipo_servico": "suprimento",
+        "valor_estimado": "2000000.00",
+        "volume_estimado": "60"
+      },
+      {
+        "classe_operacional": "recolhimento",
+        "classe_planejamento": "eventual",
+        "criticidade": "media",
+        "data_operacao": "2026-03-21",
+        "fim_janela": "2026-03-21T15:00:00+00:00",
+        "id_ordem": "ORD-009-S Miguel-Rec",
+        "id_ponto": "P-LESTE-03",
+        "inicio_janela": "2026-03-21T11:00:00+00:00",
+        "origem_ordem": "erp_fake",
+        "penalidade_atraso": "200.00",
+        "penalidade_nao_atendimento": "12000.00",
+        "status_cancelamento": "nao_cancelada",
+        "taxa_improdutiva": "0",
+        "tempo_servico": 25,
+        "timestamp_criacao": "2026-03-20T11:00:00+00:00",
+        "tipo_servico": "recolhimento",
+        "valor_estimado": "600000.00",
+        "volume_estimado": "20"
+      },
+      {
+        "classe_operacional": "suprimento",
+        "classe_planejamento": "especial",
+        "criticidade": "alta",
+        "data_operacao": "2026-03-21",
+        "fim_janela": "2026-03-21T13:00:00+00:00",
+        "id_ordem": "ORD-010-Morumb-Sup",
+        "id_ponto": "P-SUL-02",
+        "inicio_janela": "2026-03-21T10:00:00+00:00",
+        "origem_ordem": "erp_fake",
+        "penalidade_atraso": "4000.00",
+        "penalidade_nao_atendimento": "120000.00",
+        "status_cancelamento": "nao_cancelada",
+        "taxa_improdutiva": "0",
+        "tempo_servico": 55,
+        "timestamp_criacao": "2026-03-21T08:50:00+00:00",
+        "tipo_servico": "suprimento",
+        "valor_estimado": "3000000.00",
+        "volume_estimado": "90"
+      },
+      {
+        "classe_operacional": "recolhimento",
+        "classe_planejamento": "eventual",
+        "criticidade": "media",
+        "data_operacao": "2026-03-21",
+        "fim_janela": "2026-03-21T10:30:00+00:00",
+        "id_ordem": "ORD-011-Merc-Rec",
+        "id_ponto": "P-CENTRO-03",
+        "inicio_janela": "2026-03-21T07:30:00+00:00",
+        "origem_ordem": "erp_fake",
+        "penalidade_atraso": "180.00",
+        "penalidade_nao_atendimento": "18000.00",
+        "status_cancelamento": "nao_cancelada",
+        "taxa_improdutiva": "0",
+        "tempo_servico": 40,
+        "timestamp_criacao": "2026-03-20T10:20:00+00:00",
+        "tipo_servico": "recolhimento",
+        "valor_estimado": "380000.00",
+        "volume_estimado": "12"
+      },
+      {
+        "classe_operacional": "suprimento",
+        "classe_planejamento": "eventual",
+        "criticidade": "media",
+        "data_operacao": "2026-03-21",
+        "fim_janela": "2026-03-21T16:00:00+00:00",
+        "id_ordem": "ORD-012-Analia-Sup",
+        "id_ponto": "P-LESTE-02",
+        "inicio_janela": "2026-03-21T12:00:00+00:00",
+        "origem_ordem": "erp_fake",
+        "penalidade_atraso": "220.00",
+        "penalidade_nao_atendimento": "22000.00",
+        "status_cancelamento": "nao_cancelada",
+        "taxa_improdutiva": "0",
+        "tempo_servico": 50,
+        "timestamp_criacao": "2026-03-20T09:10:00+00:00",
+        "tipo_servico": "suprimento",
+        "valor_estimado": "420000.00",
+        "volume_estimado": "18"
+      },
+      {
+        "classe_operacional": "recolhimento",
+        "classe_planejamento": "eventual",
+        "criticidade": "media",
+        "data_operacao": "2026-03-21",
+        "fim_janela": "2026-03-21T16:30:00+00:00",
+        "id_ordem": "ORD-013-Chaca-Rec",
+        "id_ponto": "P-SUL-01",
+        "inicio_janela": "2026-03-21T13:00:00+00:00",
+        "origem_ordem": "erp_fake",
+        "penalidade_atraso": "200.00",
+        "penalidade_nao_atendimento": "18000.00",
+        "status_cancelamento": "nao_cancelada",
+        "taxa_improdutiva": "0",
+        "tempo_servico": 30,
+        "timestamp_criacao": "2026-03-20T14:05:00+00:00",
+        "tipo_servico": "recolhimento",
+        "valor_estimado": "540000.00",
+        "volume_estimado": "16"
+      },
+      {
+        "classe_operacional": "suprimento",
+        "classe_planejamento": "eventual",
+        "criticidade": "baixa",
+        "data_operacao": "2026-03-21",
+        "fim_janela": "2026-03-21T12:30:00+00:00",
+        "id_ordem": "ORD-014-SBC-Sup",
+        "id_ponto": "P-ABC-01",
+        "inicio_janela": "2026-03-21T08:30:00+00:00",
+        "origem_ordem": "erp_fake",
+        "penalidade_atraso": "120.00",
+        "penalidade_nao_atendimento": "16000.00",
+        "status_cancelamento": "nao_cancelada",
+        "taxa_improdutiva": "0",
+        "tempo_servico": 20,
+        "timestamp_criacao": "2026-03-20T08:45:00+00:00",
+        "tipo_servico": "suprimento",
+        "valor_estimado": "260000.00",
+        "volume_estimado": "10"
+      },
+      {
+        "classe_operacional": "recolhimento",
+        "classe_planejamento": "especial",
+        "criticidade": "alta",
+        "data_operacao": "2026-03-21",
+        "fim_janela": "2026-03-21T12:00:00+00:00",
+        "id_ordem": "ORD-015-Guaru-CEF-Rec",
+        "id_ponto": "P-NORTE-02",
+        "inicio_janela": "2026-03-21T09:00:00+00:00",
+        "origem_ordem": "erp_fake",
+        "penalidade_atraso": "2500.00",
+        "penalidade_nao_atendimento": "70000.00",
+        "status_cancelamento": "nao_cancelada",
+        "taxa_improdutiva": "0",
+        "tempo_servico": 20,
+        "timestamp_criacao": "2026-03-21T07:35:00+00:00",
+        "tipo_servico": "recolhimento",
+        "valor_estimado": "1800000.00",
+        "volume_estimado": "55"
+      },
+      {
+        "classe_operacional": "suprimento",
+        "classe_planejamento": "especial",
+        "criticidade": "alta",
+        "data_operacao": "2026-03-21",
+        "fim_janela": "2026-03-21T18:30:00+00:00",
+        "id_ordem": "ORD-016-RDireita-Sup",
+        "id_ponto": "P-CENTRO-04",
+        "inicio_janela": "2026-03-21T16:00:00+00:00",
+        "origem_ordem": "erp_fake",
+        "penalidade_atraso": "3000.00",
+        "penalidade_nao_atendimento": "90000.00",
+        "status_cancelamento": "nao_cancelada",
+        "taxa_improdutiva": "0",
+        "tempo_servico": 25,
+        "timestamp_criacao": "2026-03-21T13:40:00+00:00",
+        "tipo_servico": "suprimento",
+        "valor_estimado": "900000.00",
+        "volume_estimado": "24"
+      },
+      {
+        "classe_operacional": "recolhimento",
+        "classe_planejamento": "especial",
+        "criticidade": "alta",
+        "data_operacao": "2026-03-21",
+        "fim_janela": "2026-03-21T20:00:00+00:00",
+        "id_ordem": "ORD-017-Interlag-Rec",
+        "id_ponto": "P-SUL-03",
+        "inicio_janela": "2026-03-21T17:00:00+00:00",
+        "origem_ordem": "erp_fake",
+        "penalidade_atraso": "2200.00",
+        "penalidade_nao_atendimento": "65000.00",
+        "status_cancelamento": "nao_cancelada",
+        "taxa_improdutiva": "0",
+        "tempo_servico": 20,
+        "timestamp_criacao": "2026-03-21T14:30:00+00:00",
+        "tipo_servico": "recolhimento",
+        "valor_estimado": "1600000.00",
+        "volume_estimado": "48"
+      },
+      {
+        "classe_operacional": "suprimento",
+        "classe_planejamento": "eventual",
+        "criticidade": "media",
+        "data_operacao": "2026-03-21",
+        "fim_janela": "2026-03-21T14:00:00+00:00",
+        "id_ordem": "ORD-018-Osasco-Sup",
+        "id_ponto": "P-OESTE-06",
+        "inicio_janela": "2026-03-21T09:30:00+00:00",
+        "origem_ordem": "erp_fake",
+        "penalidade_atraso": "150.00",
+        "penalidade_nao_atendimento": "20000.00",
+        "status_cancelamento": "nao_cancelada",
+        "taxa_improdutiva": "0",
+        "tempo_servico": 20,
+        "timestamp_criacao": "2026-03-20T12:10:00+00:00",
+        "tipo_servico": "suprimento",
+        "valor_estimado": "300000.00",
+        "volume_estimado": "12"
+      },
+      {
+        "classe_operacional": "recolhimento",
+        "classe_planejamento": "eventual",
+        "criticidade": "media",
+        "data_operacao": "2026-03-21",
+        "fim_janela": "2026-03-21T17:00:00+00:00",
+        "id_ordem": "ORD-019-Maua-Rec",
+        "id_ponto": "P-ABC-05",
+        "inicio_janela": "2026-03-21T11:30:00+00:00",
+        "origem_ordem": "erp_fake",
+        "penalidade_atraso": "260.00",
+        "penalidade_nao_atendimento": "26000.00",
+        "status_cancelamento": "nao_cancelada",
+        "taxa_improdutiva": "0",
+        "tempo_servico": 50,
+        "timestamp_criacao": "2026-03-20T16:25:00+00:00",
+        "tipo_servico": "recolhimento",
+        "valor_estimado": "980000.00",
+        "volume_estimado": "34"
+      },
+      {
+        "classe_operacional": "suprimento",
+        "classe_planejamento": "eventual",
+        "criticidade": "baixa",
+        "data_operacao": "2026-03-21",
+        "fim_janela": "2026-03-21T17:30:00+00:00",
+        "id_ordem": "ORD-020-Mairi-Sup",
+        "id_ponto": "P-NORTE-04",
+        "inicio_janela": "2026-03-21T13:00:00+00:00",
+        "origem_ordem": "erp_fake",
+        "penalidade_atraso": "120.00",
+        "penalidade_nao_atendimento": "18000.00",
+        "status_cancelamento": "nao_cancelada",
+        "taxa_improdutiva": "0",
+        "tempo_servico": 25,
+        "timestamp_criacao": "2026-03-20T11:50:00+00:00",
+        "tipo_servico": "suprimento",
+        "valor_estimado": "240000.00",
+        "volume_estimado": "8"
+      }
+    ],
+    "politicas_persistencia": {
+      "fallback_strategy": "haversine_v1",
+      "materialize_snapshot": true,
+      "snapshot_persisted_payload": null,
+      "snapshot_source_payload": {
+        "arcs": [
+          {
+            "custo": "0.00",
+            "distancia_metros": 0,
+            "id_destino": "dep-BASE-SP-CENTRO",
+            "id_origem": "dep-BASE-SP-CENTRO",
+            "tempo_segundos": 0
+          },
+          {
+            "custo": "34.97",
+            "distancia_metros": 11656,
+            "id_destino": "dep-BASE-SP-LESTE",
+            "id_origem": "dep-BASE-SP-CENTRO",
+            "tempo_segundos": 1371
+          },
+          {
+            "custo": "79.17",
+            "distancia_metros": 26389,
+            "id_destino": "dep-BASE-SP-ABC",
+            "id_origem": "dep-BASE-SP-CENTRO",
+            "tempo_segundos": 3105
+          },
+          {
+            "custo": "53.32",
+            "distancia_metros": 17773,
+            "id_destino": "dep-BASE-SP-SUL",
+            "id_origem": "dep-BASE-SP-CENTRO",
+            "tempo_segundos": 2091
+          },
+          {
+            "custo": "83.23",
+            "distancia_metros": 27743,
+            "id_destino": "dep-BASE-SP-NORTE",
+            "id_origem": "dep-BASE-SP-CENTRO",
+            "tempo_segundos": 3264
+          },
+          {
+            "custo": "15.24",
+            "distancia_metros": 5079,
+            "id_destino": "no-ORD-001-Paul-Sup",
+            "id_origem": "dep-BASE-SP-CENTRO",
+            "tempo_segundos": 598
+          },
+          {
+            "custo": "12.55",
+            "distancia_metros": 4184,
+            "id_destino": "no-ORD-002-Frei-Rec",
+            "id_origem": "dep-BASE-SP-CENTRO",
+            "tempo_segundos": 492
+          },
+          {
+            "custo": "25.74",
+            "distancia_metros": 8581,
+            "id_destino": "no-ORD-003-Faria-Rec",
+            "id_origem": "dep-BASE-SP-CENTRO",
+            "tempo_segundos": 1010
+          },
+          {
+            "custo": "22.25",
+            "distancia_metros": 7418,
+            "id_destino": "no-ORD-004-Eldo-Sup",
+            "id_origem": "dep-BASE-SP-CENTRO",
+            "tempo_segundos": 873
+          },
+          {
+            "custo": "35.60",
+            "distancia_metros": 11866,
+            "id_destino": "no-ORD-005-Tatu-Sup",
+            "id_origem": "dep-BASE-SP-CENTRO",
+            "tempo_segundos": 1396
+          },
+          {
+            "custo": "70.57",
+            "distancia_metros": 23524,
+            "id_destino": "no-ORD-006-Alpha-Rec",
+            "id_origem": "dep-BASE-SP-CENTRO",
+            "tempo_segundos": 2768
+          },
+          {
+            "custo": "72.48",
+            "distancia_metros": 24161,
+            "id_destino": "no-ORD-007-G Plaza-Rec",
+            "id_origem": "dep-BASE-SP-CENTRO",
+            "tempo_segundos": 2842
+          },
+          {
+            "custo": "60.08",
+            "distancia_metros": 20025,
+            "id_destino": "no-ORD-008-Guaru-Sup",
+            "id_origem": "dep-BASE-SP-CENTRO",
+            "tempo_segundos": 2356
+          },
+          {
+            "custo": "85.99",
+            "distancia_metros": 28662,
+            "id_destino": "no-ORD-009-S Miguel-Rec",
+            "id_origem": "dep-BASE-SP-CENTRO",
+            "tempo_segundos": 3372
+          },
+          {
+            "custo": "41.90",
+            "distancia_metros": 13967,
+            "id_destino": "no-ORD-010-Morumb-Sup",
+            "id_origem": "dep-BASE-SP-CENTRO",
+            "tempo_segundos": 1643
+          },
+          {
+            "custo": "16.02",
+            "distancia_metros": 5340,
+            "id_destino": "no-ORD-011-Merc-Rec",
+            "id_origem": "dep-BASE-SP-CENTRO",
+            "tempo_segundos": 628
+          },
+          {
+            "custo": "45.77",
+            "distancia_metros": 15256,
+            "id_destino": "no-ORD-012-Analia-Sup",
+            "id_origem": "dep-BASE-SP-CENTRO",
+            "tempo_segundos": 1795
+          },
+          {
+            "custo": "43.89",
+            "distancia_metros": 14631,
+            "id_destino": "no-ORD-013-Chaca-Rec",
+            "id_origem": "dep-BASE-SP-CENTRO",
+            "tempo_segundos": 1721
+          },
+          {
+            "custo": "89.64",
+            "distancia_metros": 29880,
+            "id_destino": "no-ORD-014-SBC-Sup",
+            "id_origem": "dep-BASE-SP-CENTRO",
+            "tempo_segundos": 3515
+          },
+          {
+            "custo": "57.28",
+            "distancia_metros": 19092,
+            "id_destino": "no-ORD-015-Guaru-CEF-Rec",
+            "id_origem": "dep-BASE-SP-CENTRO",
+            "tempo_segundos": 2246
+          },
+          {
+            "custo": "15.91",
+            "distancia_metros": 5302,
+            "id_destino": "no-ORD-016-RDireita-Sup",
+            "id_origem": "dep-BASE-SP-CENTRO",
+            "tempo_segundos": 624
+          },
+          {
+            "custo": "62.64",
+            "distancia_metros": 20880,
+            "id_destino": "no-ORD-017-Interlag-Rec",
+            "id_origem": "dep-BASE-SP-CENTRO",
+            "tempo_segundos": 2456
+          },
+          {
+            "custo": "41.60",
+            "distancia_metros": 13866,
+            "id_destino": "no-ORD-018-Osasco-Sup",
+            "id_origem": "dep-BASE-SP-CENTRO",
+            "tempo_segundos": 1631
+          },
+          {
+            "custo": "98.56",
+            "distancia_metros": 32853,
+            "id_destino": "no-ORD-019-Maua-Rec",
+            "id_origem": "dep-BASE-SP-CENTRO",
+            "tempo_segundos": 3865
+          },
+          {
+            "custo": "87.89",
+            "distancia_metros": 29297,
+            "id_destino": "no-ORD-020-Mairi-Sup",
+            "id_origem": "dep-BASE-SP-CENTRO",
+            "tempo_segundos": 3447
+          },
+          {
+            "custo": "34.97",
+            "distancia_metros": 11656,
+            "id_destino": "dep-BASE-SP-CENTRO",
+            "id_origem": "dep-BASE-SP-LESTE",
+            "tempo_segundos": 1371
+          },
+          {
+            "custo": "0.00",
+            "distancia_metros": 0,
+            "id_destino": "dep-BASE-SP-LESTE",
+            "id_origem": "dep-BASE-SP-LESTE",
+            "tempo_segundos": 0
+          },
+          {
+            "custo": "63.22",
+            "distancia_metros": 21072,
+            "id_destino": "dep-BASE-SP-ABC",
+            "id_origem": "dep-BASE-SP-LESTE",
+            "tempo_segundos": 2479
+          },
+          {
+            "custo": "67.05",
+            "distancia_metros": 22350,
+            "id_destino": "dep-BASE-SP-SUL",
+            "id_origem": "dep-BASE-SP-LESTE",
+            "tempo_segundos": 2629
+          },
+          {
+            "custo": "58.96",
+            "distancia_metros": 19652,
+            "id_destino": "dep-BASE-SP-NORTE",
+            "id_origem": "dep-BASE-SP-LESTE",
+            "tempo_segundos": 2312
+          },
+          {
+            "custo": "31.53",
+            "distancia_metros": 10511,
+            "id_destino": "no-ORD-001-Paul-Sup",
+            "id_origem": "dep-BASE-SP-LESTE",
+            "tempo_segundos": 1237
+          },
+          {
+            "custo": "29.68",
+            "distancia_metros": 9892,
+            "id_destino": "no-ORD-002-Frei-Rec",
+            "id_origem": "dep-BASE-SP-LESTE",
+            "tempo_segundos": 1164
+          },
+          {
+            "custo": "44.66",
+            "distancia_metros": 14885,
+            "id_destino": "no-ORD-003-Faria-Rec",
+            "id_origem": "dep-BASE-SP-LESTE",
+            "tempo_segundos": 1751
+          },
+          {
+            "custo": "47.56",
+            "distancia_metros": 15852,
+            "id_destino": "no-ORD-004-Eldo-Sup",
+            "id_origem": "dep-BASE-SP-LESTE",
+            "tempo_segundos": 1865
+          },
+          {
+            "custo": "0.74",
+            "distancia_metros": 245,
+            "id_destino": "no-ORD-005-Tatu-Sup",
+            "id_origem": "dep-BASE-SP-LESTE",
+            "tempo_segundos": 180
+          },
+          {
+            "custo": "105.54",
+            "distancia_metros": 35180,
+            "id_destino": "no-ORD-006-Alpha-Rec",
+            "id_origem": "dep-BASE-SP-LESTE",
+            "tempo_segundos": 4139
+          },
+          {
+            "custo": "48.71",
+            "distancia_metros": 16236,
+            "id_destino": "no-ORD-007-G Plaza-Rec",
+            "id_origem": "dep-BASE-SP-LESTE",
+            "tempo_segundos": 1910
+          },
+          {
+            "custo": "33.83",
+            "distancia_metros": 11277,
+            "id_destino": "no-ORD-008-Guaru-Sup",
+            "id_origem": "dep-BASE-SP-LESTE",
+            "tempo_segundos": 1327
+          },
+          {
+            "custo": "53.68",
+            "distancia_metros": 17895,
+            "id_destino": "no-ORD-009-S Miguel-Rec",
+            "id_origem": "dep-BASE-SP-LESTE",
+            "tempo_segundos": 2105
+          },
+          {
+            "custo": "57.90",
+            "distancia_metros": 19301,
+            "id_destino": "no-ORD-010-Morumb-Sup",
+            "id_origem": "dep-BASE-SP-LESTE",
+            "tempo_segundos": 2271
+          },
+          {
+            "custo": "19.83",
+            "distancia_metros": 6611,
+            "id_destino": "no-ORD-011-Merc-Rec",
+            "id_origem": "dep-BASE-SP-LESTE",
+            "tempo_segundos": 778
+          },
+          {
+            "custo": "12.29",
+            "distancia_metros": 4096,
+            "id_destino": "no-ORD-012-Analia-Sup",
+            "id_origem": "dep-BASE-SP-LESTE",
+            "tempo_segundos": 482
+          },
+          {
+            "custo": "60.22",
+            "distancia_metros": 20072,
+            "id_destino": "no-ORD-013-Chaca-Rec",
+            "id_origem": "dep-BASE-SP-LESTE",
+            "tempo_segundos": 2361
+          },
+          {
+            "custo": "72.46",
+            "distancia_metros": 24154,
+            "id_destino": "no-ORD-014-SBC-Sup",
+            "id_origem": "dep-BASE-SP-LESTE",
+            "tempo_segundos": 2842
+          },
+          {
+            "custo": "34.73",
+            "distancia_metros": 11576,
+            "id_destino": "no-ORD-015-Guaru-CEF-Rec",
+            "id_origem": "dep-BASE-SP-LESTE",
+            "tempo_segundos": 1362
+          },
+          {
+            "custo": "21.94",
+            "distancia_metros": 7312,
+            "id_destino": "no-ORD-016-RDireita-Sup",
+            "id_origem": "dep-BASE-SP-LESTE",
+            "tempo_segundos": 860
+          },
+          {
+            "custo": "68.84",
+            "distancia_metros": 22948,
+            "id_destino": "no-ORD-017-Interlag-Rec",
+            "id_origem": "dep-BASE-SP-LESTE",
+            "tempo_segundos": 2700
+          },
+          {
+            "custo": "76.08",
+            "distancia_metros": 25359,
+            "id_destino": "no-ORD-018-Osasco-Sup",
+            "id_origem": "dep-BASE-SP-LESTE",
+            "tempo_segundos": 2983
+          },
+          {
+            "custo": "69.47",
+            "distancia_metros": 23157,
+            "id_destino": "no-ORD-019-Maua-Rec",
+            "id_origem": "dep-BASE-SP-LESTE",
+            "tempo_segundos": 2724
+          },
+          {
+            "custo": "88.23",
+            "distancia_metros": 29409,
+            "id_destino": "no-ORD-020-Mairi-Sup",
+            "id_origem": "dep-BASE-SP-LESTE",
+            "tempo_segundos": 3460
+          },
+          {
+            "custo": "79.17",
+            "distancia_metros": 26389,
+            "id_destino": "dep-BASE-SP-CENTRO",
+            "id_origem": "dep-BASE-SP-ABC",
+            "tempo_segundos": 3105
+          },
+          {
+            "custo": "63.22",
+            "distancia_metros": 21072,
+            "id_destino": "dep-BASE-SP-LESTE",
+            "id_origem": "dep-BASE-SP-ABC",
+            "tempo_segundos": 2479
+          },
+          {
+            "custo": "0.00",
+            "distancia_metros": 0,
+            "id_destino": "dep-BASE-SP-ABC",
+            "id_origem": "dep-BASE-SP-ABC",
+            "tempo_segundos": 0
+          },
+          {
+            "custo": "56.74",
+            "distancia_metros": 18912,
+            "id_destino": "dep-BASE-SP-SUL",
+            "id_origem": "dep-BASE-SP-ABC",
+            "tempo_segundos": 2225
+          },
+          {
+            "custo": "112.29",
+            "distancia_metros": 37430,
+            "id_destino": "dep-BASE-SP-NORTE",
+            "id_origem": "dep-BASE-SP-ABC",
+            "tempo_segundos": 4404
+          },
+          {
+            "custo": "64.45",
+            "distancia_metros": 21484,
+            "id_destino": "no-ORD-001-Paul-Sup",
+            "id_origem": "dep-BASE-SP-ABC",
+            "tempo_segundos": 2528
+          },
+          {
+            "custo": "66.66",
+            "distancia_metros": 22219,
+            "id_destino": "no-ORD-002-Frei-Rec",
+            "id_origem": "dep-BASE-SP-ABC",
+            "tempo_segundos": 2614
+          },
+          {
+            "custo": "62.68",
+            "distancia_metros": 20894,
+            "id_destino": "no-ORD-003-Faria-Rec",
+            "id_origem": "dep-BASE-SP-ABC",
+            "tempo_segundos": 2458
+          },
+          {
+            "custo": "70.55",
+            "distancia_metros": 23517,
+            "id_destino": "no-ORD-004-Eldo-Sup",
+            "id_origem": "dep-BASE-SP-ABC",
+            "tempo_segundos": 2767
+          },
+          {
+            "custo": "63.44",
+            "distancia_metros": 21147,
+            "id_destino": "no-ORD-005-Tatu-Sup",
+            "id_origem": "dep-BASE-SP-ABC",
+            "tempo_segundos": 2488
+          },
+          {
+            "custo": "135.26",
+            "distancia_metros": 45088,
+            "id_destino": "no-ORD-006-Alpha-Rec",
+            "id_origem": "dep-BASE-SP-ABC",
+            "tempo_segundos": 5304
+          },
+          {
+            "custo": "20.80",
+            "distancia_metros": 6932,
+            "id_destino": "no-ORD-007-G Plaza-Rec",
+            "id_origem": "dep-BASE-SP-ABC",
+            "tempo_segundos": 816
+          },
+          {
+            "custo": "90.26",
+            "distancia_metros": 30085,
+            "id_destino": "no-ORD-008-Guaru-Sup",
+            "id_origem": "dep-BASE-SP-ABC",
+            "tempo_segundos": 3539
+          },
+          {
+            "custo": "93.00",
+            "distancia_metros": 31000,
+            "id_destino": "no-ORD-009-S Miguel-Rec",
+            "id_origem": "dep-BASE-SP-ABC",
+            "tempo_segundos": 3647
+          },
+          {
+            "custo": "58.76",
+            "distancia_metros": 19588,
+            "id_destino": "no-ORD-010-Morumb-Sup",
+            "id_origem": "dep-BASE-SP-ABC",
+            "tempo_segundos": 2304
+          },
+          {
+            "custo": "67.00",
+            "distancia_metros": 22334,
+            "id_destino": "no-ORD-011-Merc-Rec",
+            "id_origem": "dep-BASE-SP-ABC",
+            "tempo_segundos": 2628
+          },
+          {
+            "custo": "54.92",
+            "distancia_metros": 18308,
+            "id_destino": "no-ORD-012-Analia-Sup",
+            "id_origem": "dep-BASE-SP-ABC",
+            "tempo_segundos": 2154
+          },
+          {
+            "custo": "59.57",
+            "distancia_metros": 19858,
+            "id_destino": "no-ORD-013-Chaca-Rec",
+            "id_origem": "dep-BASE-SP-ABC",
+            "tempo_segundos": 2336
+          },
+          {
+            "custo": "10.51",
+            "distancia_metros": 3504,
+            "id_destino": "no-ORD-014-SBC-Sup",
+            "id_origem": "dep-BASE-SP-ABC",
+            "tempo_segundos": 412
+          },
+          {
+            "custo": "93.98",
+            "distancia_metros": 31326,
+            "id_destino": "no-ORD-015-Guaru-CEF-Rec",
+            "id_origem": "dep-BASE-SP-ABC",
+            "tempo_segundos": 3685
+          },
+          {
+            "custo": "65.00",
+            "distancia_metros": 21665,
+            "id_destino": "no-ORD-016-RDireita-Sup",
+            "id_origem": "dep-BASE-SP-ABC",
+            "tempo_segundos": 2549
+          },
+          {
+            "custo": "44.14",
+            "distancia_metros": 14715,
+            "id_destino": "no-ORD-017-Interlag-Rec",
+            "id_origem": "dep-BASE-SP-ABC",
+            "tempo_segundos": 1731
+          },
+          {
+            "custo": "104.40",
+            "distancia_metros": 34801,
+            "id_destino": "no-ORD-018-Osasco-Sup",
+            "id_origem": "dep-BASE-SP-ABC",
+            "tempo_segundos": 4094
+          },
+          {
+            "custo": "40.62",
+            "distancia_metros": 13541,
+            "id_destino": "no-ORD-019-Maua-Rec",
+            "id_origem": "dep-BASE-SP-ABC",
+            "tempo_segundos": 1593
+          },
+          {
+            "custo": "151.42",
+            "distancia_metros": 50475,
+            "id_destino": "no-ORD-020-Mairi-Sup",
+            "id_origem": "dep-BASE-SP-ABC",
+            "tempo_segundos": 5938
+          },
+          {
+            "custo": "53.32",
+            "distancia_metros": 17773,
+            "id_destino": "dep-BASE-SP-CENTRO",
+            "id_origem": "dep-BASE-SP-SUL",
+            "tempo_segundos": 2091
+          },
+          {
+            "custo": "67.05",
+            "distancia_metros": 22350,
+            "id_destino": "dep-BASE-SP-LESTE",
+            "id_origem": "dep-BASE-SP-SUL",
+            "tempo_segundos": 2629
+          },
+          {
+            "custo": "56.74",
+            "distancia_metros": 18912,
+            "id_destino": "dep-BASE-SP-ABC",
+            "id_origem": "dep-BASE-SP-SUL",
+            "tempo_segundos": 2225
+          },
+          {
+            "custo": "0.00",
+            "distancia_metros": 0,
+            "id_destino": "dep-BASE-SP-SUL",
+            "id_origem": "dep-BASE-SP-SUL",
+            "tempo_segundos": 0
+          },
+          {
+            "custo": "125.88",
+            "distancia_metros": 41960,
+            "id_destino": "dep-BASE-SP-NORTE",
+            "id_origem": "dep-BASE-SP-SUL",
+            "tempo_segundos": 4936
+          },
+          {
+            "custo": "41.24",
+            "distancia_metros": 13746,
+            "id_destino": "no-ORD-001-Paul-Sup",
+            "id_origem": "dep-BASE-SP-SUL",
+            "tempo_segundos": 1617
+          },
+          {
+            "custo": "44.66",
+            "distancia_metros": 14888,
+            "id_destino": "no-ORD-002-Frei-Rec",
+            "id_origem": "dep-BASE-SP-SUL",
+            "tempo_segundos": 1752
+          },
+          {
+            "custo": "27.65",
+            "distancia_metros": 9218,
+            "id_destino": "no-ORD-003-Faria-Rec",
+            "id_origem": "dep-BASE-SP-SUL",
+            "tempo_segundos": 1084
+          },
+          {
+            "custo": "32.15",
+            "distancia_metros": 10717,
+            "id_destino": "no-ORD-004-Eldo-Sup",
+            "id_origem": "dep-BASE-SP-SUL",
+            "tempo_segundos": 1261
+          },
+          {
+            "custo": "67.74",
+            "distancia_metros": 22579,
+            "id_destino": "no-ORD-005-Tatu-Sup",
+            "id_origem": "dep-BASE-SP-SUL",
+            "tempo_segundos": 2656
+          },
+          {
+            "custo": "83.39",
+            "distancia_metros": 27797,
+            "id_destino": "no-ORD-006-Alpha-Rec",
+            "id_origem": "dep-BASE-SP-SUL",
+            "tempo_segundos": 3270
+          },
+          {
+            "custo": "65.67",
+            "distancia_metros": 21889,
+            "id_destino": "no-ORD-007-G Plaza-Rec",
+            "id_origem": "dep-BASE-SP-SUL",
+            "tempo_segundos": 2575
+          },
+          {
+            "custo": "100.75",
+            "distancia_metros": 33584,
+            "id_destino": "no-ORD-008-Guaru-Sup",
+            "id_origem": "dep-BASE-SP-SUL",
+            "tempo_segundos": 3951
+          },
+          {
+            "custo": "118.27",
+            "distancia_metros": 39423,
+            "id_destino": "no-ORD-009-S Miguel-Rec",
+            "id_origem": "dep-BASE-SP-SUL",
+            "tempo_segundos": 4638
+          },
+          {
+            "custo": "11.43",
+            "distancia_metros": 3811,
+            "id_destino": "no-ORD-010-Morumb-Sup",
+            "id_origem": "dep-BASE-SP-SUL",
+            "tempo_segundos": 448
+          },
+          {
+            "custo": "53.61",
+            "distancia_metros": 17869,
+            "id_destino": "no-ORD-011-Merc-Rec",
+            "id_origem": "dep-BASE-SP-SUL",
+            "tempo_segundos": 2102
+          },
+          {
+            "custo": "69.18",
+            "distancia_metros": 23059,
+            "id_destino": "no-ORD-012-Analia-Sup",
+            "id_origem": "dep-BASE-SP-SUL",
+            "tempo_segundos": 2713
+          },
+          {
+            "custo": "9.63",
+            "distancia_metros": 3209,
+            "id_destino": "no-ORD-013-Chaca-Rec",
+            "id_origem": "dep-BASE-SP-SUL",
+            "tempo_segundos": 378
+          },
+          {
+            "custo": "65.42",
+            "distancia_metros": 21808,
+            "id_destino": "no-ORD-014-SBC-Sup",
+            "id_origem": "dep-BASE-SP-SUL",
+            "tempo_segundos": 2566
+          },
+          {
+            "custo": "100.74",
+            "distancia_metros": 33579,
+            "id_destino": "no-ORD-015-Guaru-CEF-Rec",
+            "id_origem": "dep-BASE-SP-SUL",
+            "tempo_segundos": 3950
+          },
+          {
+            "custo": "50.16",
+            "distancia_metros": 16720,
+            "id_destino": "no-ORD-016-RDireita-Sup",
+            "id_origem": "dep-BASE-SP-SUL",
+            "tempo_segundos": 1967
+          },
+          {
+            "custo": "15.22",
+            "distancia_metros": 5074,
+            "id_destino": "no-ORD-017-Interlag-Rec",
+            "id_origem": "dep-BASE-SP-SUL",
+            "tempo_segundos": 597
+          },
+          {
+            "custo": "55.54",
+            "distancia_metros": 18515,
+            "id_destino": "no-ORD-018-Osasco-Sup",
+            "id_origem": "dep-BASE-SP-SUL",
+            "tempo_segundos": 2178
+          },
+          {
+            "custo": "93.81",
+            "distancia_metros": 31270,
+            "id_destino": "no-ORD-019-Maua-Rec",
+            "id_origem": "dep-BASE-SP-SUL",
+            "tempo_segundos": 3679
+          },
+          {
+            "custo": "141.12",
+            "distancia_metros": 47039,
+            "id_destino": "no-ORD-020-Mairi-Sup",
+            "id_origem": "dep-BASE-SP-SUL",
+            "tempo_segundos": 5534
+          },
+          {
+            "custo": "83.23",
+            "distancia_metros": 27743,
+            "id_destino": "dep-BASE-SP-CENTRO",
+            "id_origem": "dep-BASE-SP-NORTE",
+            "tempo_segundos": 3264
+          },
+          {
+            "custo": "58.96",
+            "distancia_metros": 19652,
+            "id_destino": "dep-BASE-SP-LESTE",
+            "id_origem": "dep-BASE-SP-NORTE",
+            "tempo_segundos": 2312
+          },
+          {
+            "custo": "112.29",
+            "distancia_metros": 37430,
+            "id_destino": "dep-BASE-SP-ABC",
+            "id_origem": "dep-BASE-SP-NORTE",
+            "tempo_segundos": 4404
+          },
+          {
+            "custo": "125.88",
+            "distancia_metros": 41960,
+            "id_destino": "dep-BASE-SP-SUL",
+            "id_origem": "dep-BASE-SP-NORTE",
+            "tempo_segundos": 4936
+          },
+          {
+            "custo": "0.00",
+            "distancia_metros": 0,
+            "id_destino": "dep-BASE-SP-NORTE",
+            "id_origem": "dep-BASE-SP-NORTE",
+            "tempo_segundos": 0
+          },
+          {
+            "custo": "87.42",
+            "distancia_metros": 29140,
+            "id_destino": "no-ORD-001-Paul-Sup",
+            "id_origem": "dep-BASE-SP-NORTE",
+            "tempo_segundos": 3428
+          },
+          {
+            "custo": "84.58",
+            "distancia_metros": 28193,
+            "id_destino": "no-ORD-002-Frei-Rec",
+            "id_origem": "dep-BASE-SP-NORTE",
+            "tempo_segundos": 3317
+          },
+          {
+            "custo": "101.72",
+            "distancia_metros": 33906,
+            "id_destino": "no-ORD-003-Faria-Rec",
+            "id_origem": "dep-BASE-SP-NORTE",
+            "tempo_segundos": 3989
+          },
+          {
+            "custo": "102.62",
+            "distancia_metros": 34205,
+            "id_destino": "no-ORD-004-Eldo-Sup",
+            "id_origem": "dep-BASE-SP-NORTE",
+            "tempo_segundos": 4024
+          },
+          {
+            "custo": "58.30",
+            "distancia_metros": 19432,
+            "id_destino": "no-ORD-005-Tatu-Sup",
+            "id_origem": "dep-BASE-SP-NORTE",
+            "tempo_segundos": 2286
+          },
+          {
+            "custo": "146.09",
+            "distancia_metros": 48697,
+            "id_destino": "no-ORD-006-Alpha-Rec",
+            "id_origem": "dep-BASE-SP-NORTE",
+            "tempo_segundos": 5729
+          },
+          {
+            "custo": "92.50",
+            "distancia_metros": 30833,
+            "id_destino": "no-ORD-007-G Plaza-Rec",
+            "id_origem": "dep-BASE-SP-NORTE",
+            "tempo_segundos": 3627
+          },
+          {
+            "custo": "25.14",
+            "distancia_metros": 8379,
+            "id_destino": "no-ORD-008-Guaru-Sup",
+            "id_origem": "dep-BASE-SP-NORTE",
+            "tempo_segundos": 986
+          },
+          {
+            "custo": "28.14",
+            "distancia_metros": 9379,
+            "id_destino": "no-ORD-009-S Miguel-Rec",
+            "id_origem": "dep-BASE-SP-NORTE",
+            "tempo_segundos": 1103
+          },
+          {
+            "custo": "116.28",
+            "distancia_metros": 38760,
+            "id_destino": "no-ORD-010-Morumb-Sup",
+            "id_origem": "dep-BASE-SP-NORTE",
+            "tempo_segundos": 4560
+          },
+          {
+            "custo": "74.15",
+            "distancia_metros": 24717,
+            "id_destino": "no-ORD-011-Merc-Rec",
+            "id_origem": "dep-BASE-SP-NORTE",
+            "tempo_segundos": 2908
+          },
+          {
+            "custo": "60.28",
+            "distancia_metros": 20093,
+            "id_destino": "no-ORD-012-Analia-Sup",
+            "id_origem": "dep-BASE-SP-NORTE",
+            "tempo_segundos": 2364
+          },
+          {
+            "custo": "118.60",
+            "distancia_metros": 39534,
+            "id_destino": "no-ORD-013-Chaca-Rec",
+            "id_origem": "dep-BASE-SP-NORTE",
+            "tempo_segundos": 4651
+          },
+          {
+            "custo": "118.92",
+            "distancia_metros": 39640,
+            "id_destino": "no-ORD-014-SBC-Sup",
+            "id_origem": "dep-BASE-SP-NORTE",
+            "tempo_segundos": 4664
+          },
+          {
+            "custo": "26.06",
+            "distancia_metros": 8687,
+            "id_destino": "no-ORD-015-Guaru-CEF-Rec",
+            "id_origem": "dep-BASE-SP-NORTE",
+            "tempo_segundos": 1022
+          },
+          {
+            "custo": "77.37",
+            "distancia_metros": 25790,
+            "id_destino": "no-ORD-016-RDireita-Sup",
+            "id_origem": "dep-BASE-SP-NORTE",
+            "tempo_segundos": 3034
+          },
+          {
+            "custo": "127.51",
+            "distancia_metros": 42504,
+            "id_destino": "no-ORD-017-Interlag-Rec",
+            "id_origem": "dep-BASE-SP-NORTE",
+            "tempo_segundos": 5000
+          },
+          {
+            "custo": "122.48",
+            "distancia_metros": 40828,
+            "id_destino": "no-ORD-018-Osasco-Sup",
+            "id_origem": "dep-BASE-SP-NORTE",
+            "tempo_segundos": 4803
+          },
+          {
+            "custo": "97.40",
+            "distancia_metros": 32465,
+            "id_destino": "no-ORD-019-Maua-Rec",
+            "id_origem": "dep-BASE-SP-NORTE",
+            "tempo_segundos": 3819
+          },
+          {
+            "custo": "62.18",
+            "distancia_metros": 20727,
+            "id_destino": "no-ORD-020-Mairi-Sup",
+            "id_origem": "dep-BASE-SP-NORTE",
+            "tempo_segundos": 2438
+          },
+          {
+            "custo": "15.24",
+            "distancia_metros": 5079,
+            "id_destino": "dep-BASE-SP-CENTRO",
+            "id_origem": "no-ORD-001-Paul-Sup",
+            "tempo_segundos": 598
+          },
+          {
+            "custo": "31.53",
+            "distancia_metros": 10511,
+            "id_destino": "dep-BASE-SP-LESTE",
+            "id_origem": "no-ORD-001-Paul-Sup",
+            "tempo_segundos": 1237
+          },
+          {
+            "custo": "64.45",
+            "distancia_metros": 21484,
+            "id_destino": "dep-BASE-SP-ABC",
+            "id_origem": "no-ORD-001-Paul-Sup",
+            "tempo_segundos": 2528
+          },
+          {
+            "custo": "41.24",
+            "distancia_metros": 13746,
+            "id_destino": "dep-BASE-SP-SUL",
+            "id_origem": "no-ORD-001-Paul-Sup",
+            "tempo_segundos": 1617
+          },
+          {
+            "custo": "87.42",
+            "distancia_metros": 29140,
+            "id_destino": "dep-BASE-SP-NORTE",
+            "id_origem": "no-ORD-001-Paul-Sup",
+            "tempo_segundos": 3428
+          },
+          {
+            "custo": "0.00",
+            "distancia_metros": 0,
+            "id_destino": "no-ORD-001-Paul-Sup",
+            "id_origem": "no-ORD-001-Paul-Sup",
+            "tempo_segundos": 0
+          },
+          {
+            "custo": "3.46",
+            "distancia_metros": 1154,
+            "id_destino": "no-ORD-002-Frei-Rec",
+            "id_origem": "no-ORD-001-Paul-Sup",
+            "tempo_segundos": 180
+          },
+          {
+            "custo": "14.46",
+            "distancia_metros": 4821,
+            "id_destino": "no-ORD-003-Faria-Rec",
+            "id_origem": "no-ORD-001-Paul-Sup",
+            "tempo_segundos": 567
+          },
+          {
+            "custo": "16.02",
+            "distancia_metros": 5341,
+            "id_destino": "no-ORD-004-Eldo-Sup",
+            "id_origem": "no-ORD-001-Paul-Sup",
+            "tempo_segundos": 628
+          },
+          {
+            "custo": "32.26",
+            "distancia_metros": 10755,
+            "id_destino": "no-ORD-005-Tatu-Sup",
+            "id_origem": "no-ORD-001-Paul-Sup",
+            "tempo_segundos": 1265
+          },
+          {
+            "custo": "78.37",
+            "distancia_metros": 26122,
+            "id_destino": "no-ORD-006-Alpha-Rec",
+            "id_origem": "no-ORD-001-Paul-Sup",
+            "tempo_segundos": 3073
+          },
+          {
+            "custo": "59.53",
+            "distancia_metros": 19844,
+            "id_destino": "no-ORD-007-G Plaza-Rec",
+            "id_origem": "no-ORD-001-Paul-Sup",
+            "tempo_segundos": 2335
+          },
+          {
+            "custo": "62.75",
+            "distancia_metros": 20918,
+            "id_destino": "no-ORD-008-Guaru-Sup",
+            "id_origem": "no-ORD-001-Paul-Sup",
+            "tempo_segundos": 2461
+          },
+          {
+            "custo": "85.19",
+            "distancia_metros": 28397,
+            "id_destino": "no-ORD-009-S Miguel-Rec",
+            "id_origem": "no-ORD-001-Paul-Sup",
+            "tempo_segundos": 3341
+          },
+          {
+            "custo": "30.27",
+            "distancia_metros": 10090,
+            "id_destino": "no-ORD-010-Morumb-Sup",
+            "id_origem": "no-ORD-001-Paul-Sup",
+            "tempo_segundos": 1187
+          },
+          {
+            "custo": "13.27",
+            "distancia_metros": 4424,
+            "id_destino": "no-ORD-011-Merc-Rec",
+            "id_origem": "no-ORD-001-Paul-Sup",
+            "tempo_segundos": 520
+          },
+          {
+            "custo": "39.33",
+            "distancia_metros": 13109,
+            "id_destino": "no-ORD-012-Analia-Sup",
+            "id_origem": "no-ORD-001-Paul-Sup",
+            "tempo_segundos": 1542
+          },
+          {
+            "custo": "32.51",
+            "distancia_metros": 10837,
+            "id_destino": "no-ORD-013-Chaca-Rec",
+            "id_origem": "no-ORD-001-Paul-Sup",
+            "tempo_segundos": 1275
+          },
+          {
+            "custo": "74.96",
+            "distancia_metros": 24985,
+            "id_destino": "no-ORD-014-SBC-Sup",
+            "id_origem": "no-ORD-001-Paul-Sup",
+            "tempo_segundos": 2939
+          },
+          {
+            "custo": "61.53",
+            "distancia_metros": 20509,
+            "id_destino": "no-ORD-015-Guaru-CEF-Rec",
+            "id_origem": "no-ORD-001-Paul-Sup",
+            "tempo_segundos": 2413
+          },
+          {
+            "custo": "10.10",
+            "distancia_metros": 3367,
+            "id_destino": "no-ORD-016-RDireita-Sup",
+            "id_origem": "no-ORD-001-Paul-Sup",
+            "tempo_segundos": 396
+          },
+          {
+            "custo": "48.64",
+            "distancia_metros": 16212,
+            "id_destino": "no-ORD-017-Interlag-Rec",
+            "id_origem": "no-ORD-001-Paul-Sup",
+            "tempo_segundos": 1907
+          },
+          {
+            "custo": "47.32",
+            "distancia_metros": 15774,
+            "id_destino": "no-ORD-018-Osasco-Sup",
+            "id_origem": "no-ORD-001-Paul-Sup",
+            "tempo_segundos": 1856
+          },
+          {
+            "custo": "86.85",
+            "distancia_metros": 28949,
+            "id_destino": "no-ORD-019-Maua-Rec",
+            "id_origem": "no-ORD-001-Paul-Sup",
+            "tempo_segundos": 3406
+          },
+          {
+            "custo": "100.54",
+            "distancia_metros": 33515,
+            "id_destino": "no-ORD-020-Mairi-Sup",
+            "id_origem": "no-ORD-001-Paul-Sup",
+            "tempo_segundos": 3943
+          },
+          {
+            "custo": "12.55",
+            "distancia_metros": 4184,
+            "id_destino": "dep-BASE-SP-CENTRO",
+            "id_origem": "no-ORD-002-Frei-Rec",
+            "tempo_segundos": 492
+          },
+          {
+            "custo": "29.68",
+            "distancia_metros": 9892,
+            "id_destino": "dep-BASE-SP-LESTE",
+            "id_origem": "no-ORD-002-Frei-Rec",
+            "tempo_segundos": 1164
+          },
+          {
+            "custo": "66.66",
+            "distancia_metros": 22219,
+            "id_destino": "dep-BASE-SP-ABC",
+            "id_origem": "no-ORD-002-Frei-Rec",
+            "tempo_segundos": 2614
+          },
+          {
+            "custo": "44.66",
+            "distancia_metros": 14888,
+            "id_destino": "dep-BASE-SP-SUL",
+            "id_origem": "no-ORD-002-Frei-Rec",
+            "tempo_segundos": 1752
+          },
+          {
+            "custo": "84.58",
+            "distancia_metros": 28193,
+            "id_destino": "dep-BASE-SP-NORTE",
+            "id_origem": "no-ORD-002-Frei-Rec",
+            "tempo_segundos": 3317
+          },
+          {
+            "custo": "3.46",
+            "distancia_metros": 1154,
+            "id_destino": "no-ORD-001-Paul-Sup",
+            "id_origem": "no-ORD-002-Frei-Rec",
+            "tempo_segundos": 180
+          },
+          {
+            "custo": "0.00",
+            "distancia_metros": 0,
+            "id_destino": "no-ORD-002-Frei-Rec",
+            "id_origem": "no-ORD-002-Frei-Rec",
+            "tempo_segundos": 0
+          },
+          {
+            "custo": "17.66",
+            "distancia_metros": 5888,
+            "id_destino": "no-ORD-003-Faria-Rec",
+            "id_origem": "no-ORD-002-Frei-Rec",
+            "tempo_segundos": 693
+          },
+          {
+            "custo": "18.26",
+            "distancia_metros": 6086,
+            "id_destino": "no-ORD-004-Eldo-Sup",
+            "id_origem": "no-ORD-002-Frei-Rec",
+            "tempo_segundos": 716
+          },
+          {
+            "custo": "30.40",
+            "distancia_metros": 10133,
+            "id_destino": "no-ORD-005-Tatu-Sup",
+            "id_origem": "no-ORD-002-Frei-Rec",
+            "tempo_segundos": 1192
+          },
+          {
+            "custo": "78.40",
+            "distancia_metros": 26132,
+            "id_destino": "no-ORD-006-Alpha-Rec",
+            "id_origem": "no-ORD-002-Frei-Rec",
+            "tempo_segundos": 3074
+          },
+          {
+            "custo": "60.79",
+            "distancia_metros": 20262,
+            "id_destino": "no-ORD-007-G Plaza-Rec",
+            "id_origem": "no-ORD-002-Frei-Rec",
+            "tempo_segundos": 2384
+          },
+          {
+            "custo": "60.07",
+            "distancia_metros": 20022,
+            "id_destino": "no-ORD-008-Guaru-Sup",
+            "id_origem": "no-ORD-002-Frei-Rec",
+            "tempo_segundos": 2356
+          },
+          {
+            "custo": "83.15",
+            "distancia_metros": 27717,
+            "id_destino": "no-ORD-009-S Miguel-Rec",
+            "id_origem": "no-ORD-002-Frei-Rec",
+            "tempo_segundos": 3261
+          },
+          {
+            "custo": "33.64",
+            "distancia_metros": 11214,
+            "id_destino": "no-ORD-010-Morumb-Sup",
+            "id_origem": "no-ORD-002-Frei-Rec",
+            "tempo_segundos": 1319
+          },
+          {
+            "custo": "10.54",
+            "distancia_metros": 3514,
+            "id_destino": "no-ORD-011-Merc-Rec",
+            "id_origem": "no-ORD-002-Frei-Rec",
+            "tempo_segundos": 413
+          },
+          {
+            "custo": "38.30",
+            "distancia_metros": 12768,
+            "id_destino": "no-ORD-012-Analia-Sup",
+            "id_origem": "no-ORD-002-Frei-Rec",
+            "tempo_segundos": 1502
+          },
+          {
+            "custo": "35.87",
+            "distancia_metros": 11956,
+            "id_destino": "no-ORD-013-Chaca-Rec",
+            "id_origem": "no-ORD-002-Frei-Rec",
+            "tempo_segundos": 1407
+          },
+          {
+            "custo": "77.14",
+            "distancia_metros": 25714,
+            "id_destino": "no-ORD-014-SBC-Sup",
+            "id_origem": "no-ORD-002-Frei-Rec",
+            "tempo_segundos": 3025
+          },
+          {
+            "custo": "58.62",
+            "distancia_metros": 19539,
+            "id_destino": "no-ORD-015-Guaru-CEF-Rec",
+            "id_origem": "no-ORD-002-Frei-Rec",
+            "tempo_segundos": 2299
+          },
+          {
+            "custo": "7.76",
+            "distancia_metros": 2588,
+            "id_destino": "no-ORD-016-RDireita-Sup",
+            "id_origem": "no-ORD-002-Frei-Rec",
+            "tempo_segundos": 304
+          },
+          {
+            "custo": "52.06",
+            "distancia_metros": 17354,
+            "id_destino": "no-ORD-017-Interlag-Rec",
+            "id_origem": "no-ORD-002-Frei-Rec",
+            "tempo_segundos": 2042
+          },
+          {
+            "custo": "47.69",
+            "distancia_metros": 15896,
+            "id_destino": "no-ORD-018-Osasco-Sup",
+            "id_origem": "no-ORD-002-Frei-Rec",
+            "tempo_segundos": 1870
+          },
+          {
+            "custo": "87.64",
+            "distancia_metros": 29215,
+            "id_destino": "no-ORD-019-Maua-Rec",
+            "id_origem": "no-ORD-002-Frei-Rec",
+            "tempo_segundos": 3437
+          },
+          {
+            "custo": "97.09",
+            "distancia_metros": 32363,
+            "id_destino": "no-ORD-020-Mairi-Sup",
+            "id_origem": "no-ORD-002-Frei-Rec",
+            "tempo_segundos": 3807
+          },
+          {
+            "custo": "25.74",
+            "distancia_metros": 8581,
+            "id_destino": "dep-BASE-SP-CENTRO",
+            "id_origem": "no-ORD-003-Faria-Rec",
+            "tempo_segundos": 1010
+          },
+          {
+            "custo": "44.66",
+            "distancia_metros": 14885,
+            "id_destino": "dep-BASE-SP-LESTE",
+            "id_origem": "no-ORD-003-Faria-Rec",
+            "tempo_segundos": 1751
+          },
+          {
+            "custo": "62.68",
+            "distancia_metros": 20894,
+            "id_destino": "dep-BASE-SP-ABC",
+            "id_origem": "no-ORD-003-Faria-Rec",
+            "tempo_segundos": 2458
+          },
+          {
+            "custo": "27.65",
+            "distancia_metros": 9218,
+            "id_destino": "dep-BASE-SP-SUL",
+            "id_origem": "no-ORD-003-Faria-Rec",
+            "tempo_segundos": 1084
+          },
+          {
+            "custo": "101.72",
+            "distancia_metros": 33906,
+            "id_destino": "dep-BASE-SP-NORTE",
+            "id_origem": "no-ORD-003-Faria-Rec",
+            "tempo_segundos": 3989
+          },
+          {
+            "custo": "14.46",
+            "distancia_metros": 4821,
+            "id_destino": "no-ORD-001-Paul-Sup",
+            "id_origem": "no-ORD-003-Faria-Rec",
+            "tempo_segundos": 567
+          },
+          {
+            "custo": "17.66",
+            "distancia_metros": 5888,
+            "id_destino": "no-ORD-002-Frei-Rec",
+            "id_origem": "no-ORD-003-Faria-Rec",
+            "tempo_segundos": 693
+          },
+          {
+            "custo": "0.00",
+            "distancia_metros": 0,
+            "id_destino": "no-ORD-003-Faria-Rec",
+            "id_origem": "no-ORD-003-Faria-Rec",
+            "tempo_segundos": 0
+          },
+          {
+            "custo": "7.88",
+            "distancia_metros": 2626,
+            "id_destino": "no-ORD-004-Eldo-Sup",
+            "id_origem": "no-ORD-003-Faria-Rec",
+            "tempo_segundos": 309
+          },
+          {
+            "custo": "45.39",
+            "distancia_metros": 15130,
+            "id_destino": "no-ORD-005-Tatu-Sup",
+            "id_origem": "no-ORD-003-Faria-Rec",
+            "tempo_segundos": 1780
+          },
+          {
+            "custo": "73.64",
+            "distancia_metros": 24546,
+            "id_destino": "no-ORD-006-Alpha-Rec",
+            "id_origem": "no-ORD-003-Faria-Rec",
+            "tempo_segundos": 2888
+          },
+          {
+            "custo": "62.55",
+            "distancia_metros": 20851,
+            "id_destino": "no-ORD-007-G Plaza-Rec",
+            "id_origem": "no-ORD-003-Faria-Rec",
+            "tempo_segundos": 2453
+          },
+          {
+            "custo": "76.91",
+            "distancia_metros": 25638,
+            "id_destino": "no-ORD-008-Guaru-Sup",
+            "id_origem": "no-ORD-003-Faria-Rec",
+            "tempo_segundos": 3016
+          },
+          {
+            "custo": "98.19",
+            "distancia_metros": 32731,
+            "id_destino": "no-ORD-009-S Miguel-Rec",
+            "id_origem": "no-ORD-003-Faria-Rec",
+            "tempo_segundos": 3851
+          },
+          {
+            "custo": "16.31",
+            "distancia_metros": 5437,
+            "id_destino": "no-ORD-010-Morumb-Sup",
+            "id_origem": "no-ORD-003-Faria-Rec",
+            "tempo_segundos": 640
+          },
+          {
+            "custo": "27.67",
+            "distancia_metros": 9222,
+            "id_destino": "no-ORD-011-Merc-Rec",
+            "id_origem": "no-ORD-003-Faria-Rec",
+            "tempo_segundos": 1085
+          },
+          {
+            "custo": "50.54",
+            "distancia_metros": 16846,
+            "id_destino": "no-ORD-012-Analia-Sup",
+            "id_origem": "no-ORD-003-Faria-Rec",
+            "tempo_segundos": 1982
+          },
+          {
+            "custo": "18.43",
+            "distancia_metros": 6144,
+            "id_destino": "no-ORD-013-Chaca-Rec",
+            "id_origem": "no-ORD-003-Faria-Rec",
+            "tempo_segundos": 723
+          },
+          {
+            "custo": "73.03",
+            "distancia_metros": 24343,
+            "id_destino": "no-ORD-014-SBC-Sup",
+            "id_origem": "no-ORD-003-Faria-Rec",
+            "tempo_segundos": 2864
+          },
+          {
+            "custo": "75.90",
+            "distancia_metros": 25301,
+            "id_destino": "no-ORD-015-Guaru-CEF-Rec",
+            "id_origem": "no-ORD-003-Faria-Rec",
+            "tempo_segundos": 2977
+          },
+          {
+            "custo": "24.37",
+            "distancia_metros": 8122,
+            "id_destino": "no-ORD-016-RDireita-Sup",
+            "id_origem": "no-ORD-003-Faria-Rec",
+            "tempo_segundos": 956
+          },
+          {
+            "custo": "37.41",
+            "distancia_metros": 12469,
+            "id_destino": "no-ORD-017-Interlag-Rec",
+            "id_origem": "no-ORD-003-Faria-Rec",
+            "tempo_segundos": 1467
+          },
+          {
+            "custo": "42.27",
+            "distancia_metros": 14090,
+            "id_destino": "no-ORD-018-Osasco-Sup",
+            "id_origem": "no-ORD-003-Faria-Rec",
+            "tempo_segundos": 1658
+          },
+          {
+            "custo": "91.13",
+            "distancia_metros": 30377,
+            "id_destino": "no-ORD-019-Maua-Rec",
+            "id_origem": "no-ORD-003-Faria-Rec",
+            "tempo_segundos": 3574
+          },
+          {
+            "custo": "113.47",
+            "distancia_metros": 37822,
+            "id_destino": "no-ORD-020-Mairi-Sup",
+            "id_origem": "no-ORD-003-Faria-Rec",
+            "tempo_segundos": 4450
+          },
+          {
+            "custo": "22.25",
+            "distancia_metros": 7418,
+            "id_destino": "dep-BASE-SP-CENTRO",
+            "id_origem": "no-ORD-004-Eldo-Sup",
+            "tempo_segundos": 873
+          },
+          {
+            "custo": "47.56",
+            "distancia_metros": 15852,
+            "id_destino": "dep-BASE-SP-LESTE",
+            "id_origem": "no-ORD-004-Eldo-Sup",
+            "tempo_segundos": 1865
+          },
+          {
+            "custo": "70.55",
+            "distancia_metros": 23517,
+            "id_destino": "dep-BASE-SP-ABC",
+            "id_origem": "no-ORD-004-Eldo-Sup",
+            "tempo_segundos": 2767
+          },
+          {
+            "custo": "32.15",
+            "distancia_metros": 10717,
+            "id_destino": "dep-BASE-SP-SUL",
+            "id_origem": "no-ORD-004-Eldo-Sup",
+            "tempo_segundos": 1261
+          },
+          {
+            "custo": "102.62",
+            "distancia_metros": 34205,
+            "id_destino": "dep-BASE-SP-NORTE",
+            "id_origem": "no-ORD-004-Eldo-Sup",
+            "tempo_segundos": 4024
+          },
+          {
+            "custo": "16.02",
+            "distancia_metros": 5341,
+            "id_destino": "no-ORD-001-Paul-Sup",
+            "id_origem": "no-ORD-004-Eldo-Sup",
+            "tempo_segundos": 628
+          },
+          {
+            "custo": "18.26",
+            "distancia_metros": 6086,
+            "id_destino": "no-ORD-002-Frei-Rec",
+            "id_origem": "no-ORD-004-Eldo-Sup",
+            "tempo_segundos": 716
+          },
+          {
+            "custo": "7.88",
+            "distancia_metros": 2626,
+            "id_destino": "no-ORD-003-Faria-Rec",
+            "id_origem": "no-ORD-004-Eldo-Sup",
+            "tempo_segundos": 309
+          },
+          {
+            "custo": "0.00",
+            "distancia_metros": 0,
+            "id_destino": "no-ORD-004-Eldo-Sup",
+            "id_origem": "no-ORD-004-Eldo-Sup",
+            "tempo_segundos": 0
+          },
+          {
+            "custo": "48.29",
+            "distancia_metros": 16096,
+            "id_destino": "no-ORD-005-Tatu-Sup",
+            "id_origem": "no-ORD-004-Eldo-Sup",
+            "tempo_segundos": 1894
+          },
+          {
+            "custo": "66.17",
+            "distancia_metros": 22056,
+            "id_destino": "no-ORD-006-Alpha-Rec",
+            "id_origem": "no-ORD-004-Eldo-Sup",
+            "tempo_segundos": 2595
+          },
+          {
+            "custo": "69.91",
+            "distancia_metros": 23302,
+            "id_destino": "no-ORD-007-G Plaza-Rec",
+            "id_origem": "no-ORD-004-Eldo-Sup",
+            "tempo_segundos": 2741
+          },
+          {
+            "custo": "78.26",
+            "distancia_metros": 26087,
+            "id_destino": "no-ORD-008-Guaru-Sup",
+            "id_origem": "no-ORD-004-Eldo-Sup",
+            "tempo_segundos": 3069
+          },
+          {
+            "custo": "101.21",
+            "distancia_metros": 33736,
+            "id_destino": "no-ORD-009-S Miguel-Rec",
+            "id_origem": "no-ORD-004-Eldo-Sup",
+            "tempo_segundos": 3969
+          },
+          {
+            "custo": "20.84",
+            "distancia_metros": 6948,
+            "id_destino": "no-ORD-010-Morumb-Sup",
+            "id_origem": "no-ORD-004-Eldo-Sup",
+            "tempo_segundos": 817
+          },
+          {
+            "custo": "28.79",
+            "distancia_metros": 9598,
+            "id_destino": "no-ORD-011-Merc-Rec",
+            "id_origem": "no-ORD-004-Eldo-Sup",
+            "tempo_segundos": 1129
+          },
+          {
+            "custo": "54.91",
+            "distancia_metros": 18302,
+            "id_destino": "no-ORD-012-Analia-Sup",
+            "id_origem": "no-ORD-004-Eldo-Sup",
+            "tempo_segundos": 2153
+          },
+          {
+            "custo": "22.53",
+            "distancia_metros": 7509,
+            "id_destino": "no-ORD-013-Chaca-Rec",
+            "id_origem": "no-ORD-004-Eldo-Sup",
+            "tempo_segundos": 883
+          },
+          {
+            "custo": "80.91",
+            "distancia_metros": 26969,
+            "id_destino": "no-ORD-014-SBC-Sup",
+            "id_origem": "no-ORD-004-Eldo-Sup",
+            "tempo_segundos": 3173
+          },
+          {
+            "custo": "76.58",
+            "distancia_metros": 25528,
+            "id_destino": "no-ORD-015-Guaru-CEF-Rec",
+            "id_origem": "no-ORD-004-Eldo-Sup",
+            "tempo_segundos": 3003
+          },
+          {
+            "custo": "25.92",
+            "distancia_metros": 8641,
+            "id_destino": "no-ORD-016-RDireita-Sup",
+            "id_origem": "no-ORD-004-Eldo-Sup",
+            "tempo_segundos": 1017
+          },
+          {
+            "custo": "43.68",
+            "distancia_metros": 14561,
+            "id_destino": "no-ORD-017-Interlag-Rec",
+            "id_origem": "no-ORD-004-Eldo-Sup",
+            "tempo_segundos": 1713
+          },
+          {
+            "custo": "34.73",
+            "distancia_metros": 11576,
+            "id_destino": "no-ORD-018-Osasco-Sup",
+            "id_origem": "no-ORD-004-Eldo-Sup",
+            "tempo_segundos": 1362
+          },
+          {
+            "custo": "98.31",
+            "distancia_metros": 32771,
+            "id_destino": "no-ORD-019-Maua-Rec",
+            "id_origem": "no-ORD-004-Eldo-Sup",
+            "tempo_segundos": 3855
+          },
+          {
+            "custo": "109.90",
+            "distancia_metros": 36634,
+            "id_destino": "no-ORD-020-Mairi-Sup",
+            "id_origem": "no-ORD-004-Eldo-Sup",
+            "tempo_segundos": 4310
+          },
+          {
+            "custo": "35.60",
+            "distancia_metros": 11866,
+            "id_destino": "dep-BASE-SP-CENTRO",
+            "id_origem": "no-ORD-005-Tatu-Sup",
+            "tempo_segundos": 1396
+          },
+          {
+            "custo": "0.74",
+            "distancia_metros": 245,
+            "id_destino": "dep-BASE-SP-LESTE",
+            "id_origem": "no-ORD-005-Tatu-Sup",
+            "tempo_segundos": 180
+          },
+          {
+            "custo": "63.44",
+            "distancia_metros": 21147,
+            "id_destino": "dep-BASE-SP-ABC",
+            "id_origem": "no-ORD-005-Tatu-Sup",
+            "tempo_segundos": 2488
+          },
+          {
+            "custo": "67.74",
+            "distancia_metros": 22579,
+            "id_destino": "dep-BASE-SP-SUL",
+            "id_origem": "no-ORD-005-Tatu-Sup",
+            "tempo_segundos": 2656
+          },
+          {
+            "custo": "58.30",
+            "distancia_metros": 19432,
+            "id_destino": "dep-BASE-SP-NORTE",
+            "id_origem": "no-ORD-005-Tatu-Sup",
+            "tempo_segundos": 2286
+          },
+          {
+            "custo": "32.26",
+            "distancia_metros": 10755,
+            "id_destino": "no-ORD-001-Paul-Sup",
+            "id_origem": "no-ORD-005-Tatu-Sup",
+            "tempo_segundos": 1265
+          },
+          {
+            "custo": "30.40",
+            "distancia_metros": 10133,
+            "id_destino": "no-ORD-002-Frei-Rec",
+            "id_origem": "no-ORD-005-Tatu-Sup",
+            "tempo_segundos": 1192
+          },
+          {
+            "custo": "45.39",
+            "distancia_metros": 15130,
+            "id_destino": "no-ORD-003-Faria-Rec",
+            "id_origem": "no-ORD-005-Tatu-Sup",
+            "tempo_segundos": 1780
+          },
+          {
+            "custo": "48.29",
+            "distancia_metros": 16096,
+            "id_destino": "no-ORD-004-Eldo-Sup",
+            "id_origem": "no-ORD-005-Tatu-Sup",
+            "tempo_segundos": 1894
+          },
+          {
+            "custo": "0.00",
+            "distancia_metros": 0,
+            "id_destino": "no-ORD-005-Tatu-Sup",
+            "id_origem": "no-ORD-005-Tatu-Sup",
+            "tempo_segundos": 0
+          },
+          {
+            "custo": "106.17",
+            "distancia_metros": 35390,
+            "id_destino": "no-ORD-006-Alpha-Rec",
+            "id_origem": "no-ORD-005-Tatu-Sup",
+            "tempo_segundos": 4164
+          },
+          {
+            "custo": "48.74",
+            "distancia_metros": 16246,
+            "id_destino": "no-ORD-007-G Plaza-Rec",
+            "id_origem": "no-ORD-005-Tatu-Sup",
+            "tempo_segundos": 1911
+          },
+          {
+            "custo": "33.18",
+            "distancia_metros": 11060,
+            "id_destino": "no-ORD-008-Guaru-Sup",
+            "id_origem": "no-ORD-005-Tatu-Sup",
+            "tempo_segundos": 1301
+          },
+          {
+            "custo": "52.95",
+            "distancia_metros": 17650,
+            "id_destino": "no-ORD-009-S Miguel-Rec",
+            "id_origem": "no-ORD-005-Tatu-Sup",
+            "tempo_segundos": 2076
+          },
+          {
+            "custo": "58.61",
+            "distancia_metros": 19538,
+            "id_destino": "no-ORD-010-Morumb-Sup",
+            "id_origem": "no-ORD-005-Tatu-Sup",
+            "tempo_segundos": 2299
+          },
+          {
+            "custo": "20.53",
+            "distancia_metros": 6842,
+            "id_destino": "no-ORD-011-Merc-Rec",
+            "id_origem": "no-ORD-005-Tatu-Sup",
+            "tempo_segundos": 805
+          },
+          {
+            "custo": "11.98",
+            "distancia_metros": 3995,
+            "id_destino": "no-ORD-012-Analia-Sup",
+            "id_origem": "no-ORD-005-Tatu-Sup",
+            "tempo_segundos": 470
+          },
+          {
+            "custo": "60.93",
+            "distancia_metros": 20309,
+            "id_destino": "no-ORD-013-Chaca-Rec",
+            "id_origem": "no-ORD-005-Tatu-Sup",
+            "tempo_segundos": 2389
+          },
+          {
+            "custo": "72.63",
+            "distancia_metros": 24211,
+            "id_destino": "no-ORD-014-SBC-Sup",
+            "id_origem": "no-ORD-005-Tatu-Sup",
+            "tempo_segundos": 2848
+          },
+          {
+            "custo": "34.16",
+            "distancia_metros": 11385,
+            "id_destino": "no-ORD-015-Guaru-CEF-Rec",
+            "id_origem": "no-ORD-005-Tatu-Sup",
+            "tempo_segundos": 1339
+          },
+          {
+            "custo": "22.66",
+            "distancia_metros": 7552,
+            "id_destino": "no-ORD-016-RDireita-Sup",
+            "id_origem": "no-ORD-005-Tatu-Sup",
+            "tempo_segundos": 888
+          },
+          {
+            "custo": "69.46",
+            "distancia_metros": 23152,
+            "id_destino": "no-ORD-017-Interlag-Rec",
+            "id_origem": "no-ORD-005-Tatu-Sup",
+            "tempo_segundos": 2724
+          },
+          {
+            "custo": "76.75",
+            "distancia_metros": 25583,
+            "id_destino": "no-ORD-018-Osasco-Sup",
+            "id_origem": "no-ORD-005-Tatu-Sup",
+            "tempo_segundos": 3010
+          },
+          {
+            "custo": "69.25",
+            "distancia_metros": 23083,
+            "id_destino": "no-ORD-019-Maua-Rec",
+            "id_origem": "no-ORD-005-Tatu-Sup",
+            "tempo_segundos": 2716
+          },
+          {
+            "custo": "87.99",
+            "distancia_metros": 29329,
+            "id_destino": "no-ORD-020-Mairi-Sup",
+            "id_origem": "no-ORD-005-Tatu-Sup",
+            "tempo_segundos": 3450
+          },
+          {
+            "custo": "70.57",
+            "distancia_metros": 23524,
+            "id_destino": "dep-BASE-SP-CENTRO",
+            "id_origem": "no-ORD-006-Alpha-Rec",
+            "tempo_segundos": 2768
+          },
+          {
+            "custo": "105.54",
+            "distancia_metros": 35180,
+            "id_destino": "dep-BASE-SP-LESTE",
+            "id_origem": "no-ORD-006-Alpha-Rec",
+            "tempo_segundos": 4139
+          },
+          {
+            "custo": "135.26",
+            "distancia_metros": 45088,
+            "id_destino": "dep-BASE-SP-ABC",
+            "id_origem": "no-ORD-006-Alpha-Rec",
+            "tempo_segundos": 5304
+          },
+          {
+            "custo": "83.39",
+            "distancia_metros": 27797,
+            "id_destino": "dep-BASE-SP-SUL",
+            "id_origem": "no-ORD-006-Alpha-Rec",
+            "tempo_segundos": 3270
+          },
+          {
+            "custo": "146.09",
+            "distancia_metros": 48697,
+            "id_destino": "dep-BASE-SP-NORTE",
+            "id_origem": "no-ORD-006-Alpha-Rec",
+            "tempo_segundos": 5729
+          },
+          {
+            "custo": "78.37",
+            "distancia_metros": 26122,
+            "id_destino": "no-ORD-001-Paul-Sup",
+            "id_origem": "no-ORD-006-Alpha-Rec",
+            "tempo_segundos": 3073
+          },
+          {
+            "custo": "78.40",
+            "distancia_metros": 26132,
+            "id_destino": "no-ORD-002-Frei-Rec",
+            "id_origem": "no-ORD-006-Alpha-Rec",
+            "tempo_segundos": 3074
+          },
+          {
+            "custo": "73.64",
+            "distancia_metros": 24546,
+            "id_destino": "no-ORD-003-Faria-Rec",
+            "id_origem": "no-ORD-006-Alpha-Rec",
+            "tempo_segundos": 2888
+          },
+          {
+            "custo": "66.17",
+            "distancia_metros": 22056,
+            "id_destino": "no-ORD-004-Eldo-Sup",
+            "id_origem": "no-ORD-006-Alpha-Rec",
+            "tempo_segundos": 2595
+          },
+          {
+            "custo": "106.17",
+            "distancia_metros": 35390,
+            "id_destino": "no-ORD-005-Tatu-Sup",
+            "id_origem": "no-ORD-006-Alpha-Rec",
+            "tempo_segundos": 4164
+          },
+          {
+            "custo": "0.00",
+            "distancia_metros": 0,
+            "id_destino": "no-ORD-006-Alpha-Rec",
+            "id_origem": "no-ORD-006-Alpha-Rec",
+            "tempo_segundos": 0
+          },
+          {
+            "custo": "136.07",
+            "distancia_metros": 45358,
+            "id_destino": "no-ORD-007-G Plaza-Rec",
+            "id_origem": "no-ORD-006-Alpha-Rec",
+            "tempo_segundos": 5336
+          },
+          {
+            "custo": "126.62",
+            "distancia_metros": 42205,
+            "id_destino": "no-ORD-008-Guaru-Sup",
+            "id_origem": "no-ORD-006-Alpha-Rec",
+            "tempo_segundos": 4965
+          },
+          {
+            "custo": "154.75",
+            "distancia_metros": 51583,
+            "id_destino": "no-ORD-009-S Miguel-Rec",
+            "id_origem": "no-ORD-006-Alpha-Rec",
+            "tempo_segundos": 6069
+          },
+          {
+            "custo": "77.32",
+            "distancia_metros": 25775,
+            "id_destino": "no-ORD-010-Morumb-Sup",
+            "id_origem": "no-ORD-006-Alpha-Rec",
+            "tempo_segundos": 3032
+          },
+          {
+            "custo": "86.19",
+            "distancia_metros": 28730,
+            "id_destino": "no-ORD-011-Merc-Rec",
+            "id_origem": "no-ORD-006-Alpha-Rec",
+            "tempo_segundos": 3380
+          },
+          {
+            "custo": "116.04",
+            "distancia_metros": 38680,
+            "id_destino": "no-ORD-012-Analia-Sup",
+            "id_origem": "no-ORD-006-Alpha-Rec",
+            "tempo_segundos": 4551
+          },
+          {
+            "custo": "77.09",
+            "distancia_metros": 25698,
+            "id_destino": "no-ORD-013-Chaca-Rec",
+            "id_origem": "no-ORD-006-Alpha-Rec",
+            "tempo_segundos": 3023
+          },
+          {
+            "custo": "145.26",
+            "distancia_metros": 48420,
+            "id_destino": "no-ORD-014-SBC-Sup",
+            "id_origem": "no-ORD-006-Alpha-Rec",
+            "tempo_segundos": 5696
+          },
+          {
+            "custo": "122.14",
+            "distancia_metros": 40712,
+            "id_destino": "no-ORD-015-Guaru-CEF-Rec",
+            "id_origem": "no-ORD-006-Alpha-Rec",
+            "tempo_segundos": 4790
+          },
+          {
+            "custo": "85.09",
+            "distancia_metros": 28363,
+            "id_destino": "no-ORD-016-RDireita-Sup",
+            "id_origem": "no-ORD-006-Alpha-Rec",
+            "tempo_segundos": 3337
+          },
+          {
+            "custo": "98.61",
+            "distancia_metros": 32870,
+            "id_destino": "no-ORD-017-Interlag-Rec",
+            "id_origem": "no-ORD-006-Alpha-Rec",
+            "tempo_segundos": 3867
+          },
+          {
+            "custo": "31.45",
+            "distancia_metros": 10484,
+            "id_destino": "no-ORD-018-Osasco-Sup",
+            "id_origem": "no-ORD-006-Alpha-Rec",
+            "tempo_segundos": 1233
+          },
+          {
+            "custo": "164.39",
+            "distancia_metros": 54798,
+            "id_destino": "no-ORD-019-Maua-Rec",
+            "id_origem": "no-ORD-006-Alpha-Rec",
+            "tempo_segundos": 6447
+          },
+          {
+            "custo": "122.71",
+            "distancia_metros": 40902,
+            "id_destino": "no-ORD-020-Mairi-Sup",
+            "id_origem": "no-ORD-006-Alpha-Rec",
+            "tempo_segundos": 4812
+          },
+          {
+            "custo": "72.48",
+            "distancia_metros": 24161,
+            "id_destino": "dep-BASE-SP-CENTRO",
+            "id_origem": "no-ORD-007-G Plaza-Rec",
+            "tempo_segundos": 2842
+          },
+          {
+            "custo": "48.71",
+            "distancia_metros": 16236,
+            "id_destino": "dep-BASE-SP-LESTE",
+            "id_origem": "no-ORD-007-G Plaza-Rec",
+            "tempo_segundos": 1910
+          },
+          {
+            "custo": "20.80",
+            "distancia_metros": 6932,
+            "id_destino": "dep-BASE-SP-ABC",
+            "id_origem": "no-ORD-007-G Plaza-Rec",
+            "tempo_segundos": 816
+          },
+          {
+            "custo": "65.67",
+            "distancia_metros": 21889,
+            "id_destino": "dep-BASE-SP-SUL",
+            "id_origem": "no-ORD-007-G Plaza-Rec",
+            "tempo_segundos": 2575
+          },
+          {
+            "custo": "92.50",
+            "distancia_metros": 30833,
+            "id_destino": "dep-BASE-SP-NORTE",
+            "id_origem": "no-ORD-007-G Plaza-Rec",
+            "tempo_segundos": 3627
+          },
+          {
+            "custo": "59.53",
+            "distancia_metros": 19844,
+            "id_destino": "no-ORD-001-Paul-Sup",
+            "id_origem": "no-ORD-007-G Plaza-Rec",
+            "tempo_segundos": 2335
+          },
+          {
+            "custo": "60.79",
+            "distancia_metros": 20262,
+            "id_destino": "no-ORD-002-Frei-Rec",
+            "id_origem": "no-ORD-007-G Plaza-Rec",
+            "tempo_segundos": 2384
+          },
+          {
+            "custo": "62.55",
+            "distancia_metros": 20851,
+            "id_destino": "no-ORD-003-Faria-Rec",
+            "id_origem": "no-ORD-007-G Plaza-Rec",
+            "tempo_segundos": 2453
+          },
+          {
+            "custo": "69.91",
+            "distancia_metros": 23302,
+            "id_destino": "no-ORD-004-Eldo-Sup",
+            "id_origem": "no-ORD-007-G Plaza-Rec",
+            "tempo_segundos": 2741
+          },
+          {
+            "custo": "48.74",
+            "distancia_metros": 16246,
+            "id_destino": "no-ORD-005-Tatu-Sup",
+            "id_origem": "no-ORD-007-G Plaza-Rec",
+            "tempo_segundos": 1911
+          },
+          {
+            "custo": "136.07",
+            "distancia_metros": 45358,
+            "id_destino": "no-ORD-006-Alpha-Rec",
+            "id_origem": "no-ORD-007-G Plaza-Rec",
+            "tempo_segundos": 5336
+          },
+          {
+            "custo": "0.00",
+            "distancia_metros": 0,
+            "id_destino": "no-ORD-007-G Plaza-Rec",
+            "id_origem": "no-ORD-007-G Plaza-Rec",
+            "tempo_segundos": 0
+          },
+          {
+            "custo": "71.59",
+            "distancia_metros": 23863,
+            "id_destino": "no-ORD-008-Guaru-Sup",
+            "id_origem": "no-ORD-007-G Plaza-Rec",
+            "tempo_segundos": 2807
+          },
+          {
+            "custo": "72.29",
+            "distancia_metros": 24098,
+            "id_destino": "no-ORD-009-S Miguel-Rec",
+            "id_origem": "no-ORD-007-G Plaza-Rec",
+            "tempo_segundos": 2835
+          },
+          {
+            "custo": "64.05",
+            "distancia_metros": 21349,
+            "id_destino": "no-ORD-010-Morumb-Sup",
+            "id_origem": "no-ORD-007-G Plaza-Rec",
+            "tempo_segundos": 2512
+          },
+          {
+            "custo": "57.91",
+            "distancia_metros": 19302,
+            "id_destino": "no-ORD-011-Merc-Rec",
+            "id_origem": "no-ORD-007-G Plaza-Rec",
+            "tempo_segundos": 2271
+          },
+          {
+            "custo": "38.28",
+            "distancia_metros": 12759,
+            "id_destino": "no-ORD-012-Analia-Sup",
+            "id_origem": "no-ORD-007-G Plaza-Rec",
+            "tempo_segundos": 1501
+          },
+          {
+            "custo": "65.51",
+            "distancia_metros": 21836,
+            "id_destino": "no-ORD-013-Chaca-Rec",
+            "id_origem": "no-ORD-007-G Plaza-Rec",
+            "tempo_segundos": 2569
+          },
+          {
+            "custo": "26.43",
+            "distancia_metros": 8810,
+            "id_destino": "no-ORD-014-SBC-Sup",
+            "id_origem": "no-ORD-007-G Plaza-Rec",
+            "tempo_segundos": 1036
+          },
+          {
+            "custo": "75.94",
+            "distancia_metros": 25314,
+            "id_destino": "no-ORD-015-Guaru-CEF-Rec",
+            "id_origem": "no-ORD-007-G Plaza-Rec",
+            "tempo_segundos": 2978
+          },
+          {
+            "custo": "56.85",
+            "distancia_metros": 18949,
+            "id_destino": "no-ORD-016-RDireita-Sup",
+            "id_origem": "no-ORD-007-G Plaza-Rec",
+            "tempo_segundos": 2229
+          },
+          {
+            "custo": "56.46",
+            "distancia_metros": 18821,
+            "id_destino": "no-ORD-017-Interlag-Rec",
+            "id_origem": "no-ORD-007-G Plaza-Rec",
+            "tempo_segundos": 2214
+          },
+          {
+            "custo": "104.63",
+            "distancia_metros": 34876,
+            "id_destino": "no-ORD-018-Osasco-Sup",
+            "id_origem": "no-ORD-007-G Plaza-Rec",
+            "tempo_segundos": 4103
+          },
+          {
+            "custo": "28.85",
+            "distancia_metros": 9617,
+            "id_destino": "no-ORD-019-Maua-Rec",
+            "id_origem": "no-ORD-007-G Plaza-Rec",
+            "tempo_segundos": 1131
+          },
+          {
+            "custo": "135.53",
+            "distancia_metros": 45177,
+            "id_destino": "no-ORD-020-Mairi-Sup",
+            "id_origem": "no-ORD-007-G Plaza-Rec",
+            "tempo_segundos": 5315
+          },
+          {
+            "custo": "60.08",
+            "distancia_metros": 20025,
+            "id_destino": "dep-BASE-SP-CENTRO",
+            "id_origem": "no-ORD-008-Guaru-Sup",
+            "tempo_segundos": 2356
+          },
+          {
+            "custo": "33.83",
+            "distancia_metros": 11277,
+            "id_destino": "dep-BASE-SP-LESTE",
+            "id_origem": "no-ORD-008-Guaru-Sup",
+            "tempo_segundos": 1327
+          },
+          {
+            "custo": "90.26",
+            "distancia_metros": 30085,
+            "id_destino": "dep-BASE-SP-ABC",
+            "id_origem": "no-ORD-008-Guaru-Sup",
+            "tempo_segundos": 3539
+          },
+          {
+            "custo": "100.75",
+            "distancia_metros": 33584,
+            "id_destino": "dep-BASE-SP-SUL",
+            "id_origem": "no-ORD-008-Guaru-Sup",
+            "tempo_segundos": 3951
+          },
+          {
+            "custo": "25.14",
+            "distancia_metros": 8379,
+            "id_destino": "dep-BASE-SP-NORTE",
+            "id_origem": "no-ORD-008-Guaru-Sup",
+            "tempo_segundos": 986
+          },
+          {
+            "custo": "62.75",
+            "distancia_metros": 20918,
+            "id_destino": "no-ORD-001-Paul-Sup",
+            "id_origem": "no-ORD-008-Guaru-Sup",
+            "tempo_segundos": 2461
+          },
+          {
+            "custo": "60.07",
+            "distancia_metros": 20022,
+            "id_destino": "no-ORD-002-Frei-Rec",
+            "id_origem": "no-ORD-008-Guaru-Sup",
+            "tempo_segundos": 2356
+          },
+          {
+            "custo": "76.91",
+            "distancia_metros": 25638,
+            "id_destino": "no-ORD-003-Faria-Rec",
+            "id_origem": "no-ORD-008-Guaru-Sup",
+            "tempo_segundos": 3016
+          },
+          {
+            "custo": "78.26",
+            "distancia_metros": 26087,
+            "id_destino": "no-ORD-004-Eldo-Sup",
+            "id_origem": "no-ORD-008-Guaru-Sup",
+            "tempo_segundos": 3069
+          },
+          {
+            "custo": "33.18",
+            "distancia_metros": 11060,
+            "id_destino": "no-ORD-005-Tatu-Sup",
+            "id_origem": "no-ORD-008-Guaru-Sup",
+            "tempo_segundos": 1301
+          },
+          {
+            "custo": "126.62",
+            "distancia_metros": 42205,
+            "id_destino": "no-ORD-006-Alpha-Rec",
+            "id_origem": "no-ORD-008-Guaru-Sup",
+            "tempo_segundos": 4965
+          },
+          {
+            "custo": "71.59",
+            "distancia_metros": 23863,
+            "id_destino": "no-ORD-007-G Plaza-Rec",
+            "id_origem": "no-ORD-008-Guaru-Sup",
+            "tempo_segundos": 2807
+          },
+          {
+            "custo": "0.00",
+            "distancia_metros": 0,
+            "id_destino": "no-ORD-008-Guaru-Sup",
+            "id_origem": "no-ORD-008-Guaru-Sup",
+            "tempo_segundos": 0
+          },
+          {
+            "custo": "29.42",
+            "distancia_metros": 9805,
+            "id_destino": "no-ORD-009-S Miguel-Rec",
+            "id_origem": "no-ORD-008-Guaru-Sup",
+            "tempo_segundos": 1154
+          },
+          {
+            "custo": "91.23",
+            "distancia_metros": 30409,
+            "id_destino": "no-ORD-010-Morumb-Sup",
+            "id_origem": "no-ORD-008-Guaru-Sup",
+            "tempo_segundos": 3578
+          },
+          {
+            "custo": "49.55",
+            "distancia_metros": 16516,
+            "id_destino": "no-ORD-011-Merc-Rec",
+            "id_origem": "no-ORD-008-Guaru-Sup",
+            "tempo_segundos": 1943
+          },
+          {
+            "custo": "36.26",
+            "distancia_metros": 12087,
+            "id_destino": "no-ORD-012-Analia-Sup",
+            "id_origem": "no-ORD-008-Guaru-Sup",
+            "tempo_segundos": 1422
+          },
+          {
+            "custo": "93.55",
+            "distancia_metros": 31184,
+            "id_destino": "no-ORD-013-Chaca-Rec",
+            "id_origem": "no-ORD-008-Guaru-Sup",
+            "tempo_segundos": 3669
+          },
+          {
+            "custo": "97.84",
+            "distancia_metros": 32614,
+            "id_destino": "no-ORD-014-SBC-Sup",
+            "id_origem": "no-ORD-008-Guaru-Sup",
+            "tempo_segundos": 3837
+          },
+          {
+            "custo": "6.70",
+            "distancia_metros": 2234,
+            "id_destino": "no-ORD-015-Guaru-CEF-Rec",
+            "id_origem": "no-ORD-008-Guaru-Sup",
+            "tempo_segundos": 263
+          },
+          {
+            "custo": "52.66",
+            "distancia_metros": 17553,
+            "id_destino": "no-ORD-016-RDireita-Sup",
+            "id_origem": "no-ORD-008-Guaru-Sup",
+            "tempo_segundos": 2065
+          },
+          {
+            "custo": "102.52",
+            "distancia_metros": 34175,
+            "id_destino": "no-ORD-017-Interlag-Rec",
+            "id_origem": "no-ORD-008-Guaru-Sup",
+            "tempo_segundos": 4021
+          },
+          {
+            "custo": "100.76",
+            "distancia_metros": 33585,
+            "id_destino": "no-ORD-018-Osasco-Sup",
+            "id_origem": "no-ORD-008-Guaru-Sup",
+            "tempo_segundos": 3951
+          },
+          {
+            "custo": "82.08",
+            "distancia_metros": 27359,
+            "id_destino": "no-ORD-019-Maua-Rec",
+            "id_origem": "no-ORD-008-Guaru-Sup",
+            "tempo_segundos": 3219
+          },
+          {
+            "custo": "67.89",
+            "distancia_metros": 22629,
+            "id_destino": "no-ORD-020-Mairi-Sup",
+            "id_origem": "no-ORD-008-Guaru-Sup",
+            "tempo_segundos": 2662
+          },
+          {
+            "custo": "85.99",
+            "distancia_metros": 28662,
+            "id_destino": "dep-BASE-SP-CENTRO",
+            "id_origem": "no-ORD-009-S Miguel-Rec",
+            "tempo_segundos": 3372
+          },
+          {
+            "custo": "53.68",
+            "distancia_metros": 17895,
+            "id_destino": "dep-BASE-SP-LESTE",
+            "id_origem": "no-ORD-009-S Miguel-Rec",
+            "tempo_segundos": 2105
+          },
+          {
+            "custo": "93.00",
+            "distancia_metros": 31000,
+            "id_destino": "dep-BASE-SP-ABC",
+            "id_origem": "no-ORD-009-S Miguel-Rec",
+            "tempo_segundos": 3647
+          },
+          {
+            "custo": "118.27",
+            "distancia_metros": 39423,
+            "id_destino": "dep-BASE-SP-SUL",
+            "id_origem": "no-ORD-009-S Miguel-Rec",
+            "tempo_segundos": 4638
+          },
+          {
+            "custo": "28.14",
+            "distancia_metros": 9379,
+            "id_destino": "dep-BASE-SP-NORTE",
+            "id_origem": "no-ORD-009-S Miguel-Rec",
+            "tempo_segundos": 1103
+          },
+          {
+            "custo": "85.19",
+            "distancia_metros": 28397,
+            "id_destino": "no-ORD-001-Paul-Sup",
+            "id_origem": "no-ORD-009-S Miguel-Rec",
+            "tempo_segundos": 3341
+          },
+          {
+            "custo": "83.15",
+            "distancia_metros": 27717,
+            "id_destino": "no-ORD-002-Frei-Rec",
+            "id_origem": "no-ORD-009-S Miguel-Rec",
+            "tempo_segundos": 3261
+          },
+          {
+            "custo": "98.19",
+            "distancia_metros": 32731,
+            "id_destino": "no-ORD-003-Faria-Rec",
+            "id_origem": "no-ORD-009-S Miguel-Rec",
+            "tempo_segundos": 3851
+          },
+          {
+            "custo": "101.21",
+            "distancia_metros": 33736,
+            "id_destino": "no-ORD-004-Eldo-Sup",
+            "id_origem": "no-ORD-009-S Miguel-Rec",
+            "tempo_segundos": 3969
+          },
+          {
+            "custo": "52.95",
+            "distancia_metros": 17650,
+            "id_destino": "no-ORD-005-Tatu-Sup",
+            "id_origem": "no-ORD-009-S Miguel-Rec",
+            "tempo_segundos": 2076
+          },
+          {
+            "custo": "154.75",
+            "distancia_metros": 51583,
+            "id_destino": "no-ORD-006-Alpha-Rec",
+            "id_origem": "no-ORD-009-S Miguel-Rec",
+            "tempo_segundos": 6069
+          },
+          {
+            "custo": "72.29",
+            "distancia_metros": 24098,
+            "id_destino": "no-ORD-007-G Plaza-Rec",
+            "id_origem": "no-ORD-009-S Miguel-Rec",
+            "tempo_segundos": 2835
+          },
+          {
+            "custo": "29.42",
+            "distancia_metros": 9805,
+            "id_destino": "no-ORD-008-Guaru-Sup",
+            "id_origem": "no-ORD-009-S Miguel-Rec",
+            "tempo_segundos": 1154
+          },
+          {
+            "custo": "0.00",
+            "distancia_metros": 0,
+            "id_destino": "no-ORD-009-S Miguel-Rec",
+            "id_origem": "no-ORD-009-S Miguel-Rec",
+            "tempo_segundos": 0
+          },
+          {
+            "custo": "110.36",
+            "distancia_metros": 36786,
+            "id_destino": "no-ORD-010-Morumb-Sup",
+            "id_origem": "no-ORD-009-S Miguel-Rec",
+            "tempo_segundos": 4328
+          },
+          {
+            "custo": "72.85",
+            "distancia_metros": 24284,
+            "id_destino": "no-ORD-011-Merc-Rec",
+            "id_origem": "no-ORD-009-S Miguel-Rec",
+            "tempo_segundos": 2857
+          },
+          {
+            "custo": "49.09",
+            "distancia_metros": 16364,
+            "id_destino": "no-ORD-012-Analia-Sup",
+            "id_origem": "no-ORD-009-S Miguel-Rec",
+            "tempo_segundos": 1925
+          },
+          {
+            "custo": "112.62",
+            "distancia_metros": 37541,
+            "id_destino": "no-ORD-013-Chaca-Rec",
+            "id_origem": "no-ORD-009-S Miguel-Rec",
+            "tempo_segundos": 4417
+          },
+          {
+            "custo": "97.99",
+            "distancia_metros": 32664,
+            "id_destino": "no-ORD-014-SBC-Sup",
+            "id_origem": "no-ORD-009-S Miguel-Rec",
+            "tempo_segundos": 3843
+          },
+          {
+            "custo": "35.47",
+            "distancia_metros": 11823,
+            "id_destino": "no-ORD-015-Guaru-CEF-Rec",
+            "id_origem": "no-ORD-009-S Miguel-Rec",
+            "tempo_segundos": 1391
+          },
+          {
+            "custo": "75.39",
+            "distancia_metros": 25130,
+            "id_destino": "no-ORD-016-RDireita-Sup",
+            "id_origem": "no-ORD-009-S Miguel-Rec",
+            "tempo_segundos": 2956
+          },
+          {
+            "custo": "116.59",
+            "distancia_metros": 38862,
+            "id_destino": "no-ORD-017-Interlag-Rec",
+            "id_origem": "no-ORD-009-S Miguel-Rec",
+            "tempo_segundos": 4572
+          },
+          {
+            "custo": "127.49",
+            "distancia_metros": 42498,
+            "id_destino": "no-ORD-018-Osasco-Sup",
+            "id_origem": "no-ORD-009-S Miguel-Rec",
+            "tempo_segundos": 5000
+          },
+          {
+            "custo": "71.70",
+            "distancia_metros": 23900,
+            "id_destino": "no-ORD-019-Maua-Rec",
+            "id_origem": "no-ORD-009-S Miguel-Rec",
+            "tempo_segundos": 2812
+          },
+          {
+            "custo": "89.00",
+            "distancia_metros": 29665,
+            "id_destino": "no-ORD-020-Mairi-Sup",
+            "id_origem": "no-ORD-009-S Miguel-Rec",
+            "tempo_segundos": 3490
+          },
+          {
+            "custo": "41.90",
+            "distancia_metros": 13967,
+            "id_destino": "dep-BASE-SP-CENTRO",
+            "id_origem": "no-ORD-010-Morumb-Sup",
+            "tempo_segundos": 1643
+          },
+          {
+            "custo": "57.90",
+            "distancia_metros": 19301,
+            "id_destino": "dep-BASE-SP-LESTE",
+            "id_origem": "no-ORD-010-Morumb-Sup",
+            "tempo_segundos": 2271
+          },
+          {
+            "custo": "58.76",
+            "distancia_metros": 19588,
+            "id_destino": "dep-BASE-SP-ABC",
+            "id_origem": "no-ORD-010-Morumb-Sup",
+            "tempo_segundos": 2304
+          },
+          {
+            "custo": "11.43",
+            "distancia_metros": 3811,
+            "id_destino": "dep-BASE-SP-SUL",
+            "id_origem": "no-ORD-010-Morumb-Sup",
+            "tempo_segundos": 448
+          },
+          {
+            "custo": "116.28",
+            "distancia_metros": 38760,
+            "id_destino": "dep-BASE-SP-NORTE",
+            "id_origem": "no-ORD-010-Morumb-Sup",
+            "tempo_segundos": 4560
+          },
+          {
+            "custo": "30.27",
+            "distancia_metros": 10090,
+            "id_destino": "no-ORD-001-Paul-Sup",
+            "id_origem": "no-ORD-010-Morumb-Sup",
+            "tempo_segundos": 1187
+          },
+          {
+            "custo": "33.64",
+            "distancia_metros": 11214,
+            "id_destino": "no-ORD-002-Frei-Rec",
+            "id_origem": "no-ORD-010-Morumb-Sup",
+            "tempo_segundos": 1319
+          },
+          {
+            "custo": "16.31",
+            "distancia_metros": 5437,
+            "id_destino": "no-ORD-003-Faria-Rec",
+            "id_origem": "no-ORD-010-Morumb-Sup",
+            "tempo_segundos": 640
+          },
+          {
+            "custo": "20.84",
+            "distancia_metros": 6948,
+            "id_destino": "no-ORD-004-Eldo-Sup",
+            "id_origem": "no-ORD-010-Morumb-Sup",
+            "tempo_segundos": 817
+          },
+          {
+            "custo": "58.61",
+            "distancia_metros": 19538,
+            "id_destino": "no-ORD-005-Tatu-Sup",
+            "id_origem": "no-ORD-010-Morumb-Sup",
+            "tempo_segundos": 2299
+          },
+          {
+            "custo": "77.32",
+            "distancia_metros": 25775,
+            "id_destino": "no-ORD-006-Alpha-Rec",
+            "id_origem": "no-ORD-010-Morumb-Sup",
+            "tempo_segundos": 3032
+          },
+          {
+            "custo": "64.05",
+            "distancia_metros": 21349,
+            "id_destino": "no-ORD-007-G Plaza-Rec",
+            "id_origem": "no-ORD-010-Morumb-Sup",
+            "tempo_segundos": 2512
+          },
+          {
+            "custo": "91.23",
+            "distancia_metros": 30409,
+            "id_destino": "no-ORD-008-Guaru-Sup",
+            "id_origem": "no-ORD-010-Morumb-Sup",
+            "tempo_segundos": 3578
+          },
+          {
+            "custo": "110.36",
+            "distancia_metros": 36786,
+            "id_destino": "no-ORD-009-S Miguel-Rec",
+            "id_origem": "no-ORD-010-Morumb-Sup",
+            "tempo_segundos": 4328
+          },
+          {
+            "custo": "0.00",
+            "distancia_metros": 0,
+            "id_destino": "no-ORD-010-Morumb-Sup",
+            "id_origem": "no-ORD-010-Morumb-Sup",
+            "tempo_segundos": 0
+          },
+          {
+            "custo": "43.03",
+            "distancia_metros": 14343,
+            "id_destino": "no-ORD-011-Merc-Rec",
+            "id_origem": "no-ORD-010-Morumb-Sup",
+            "tempo_segundos": 1687
+          },
+          {
+            "custo": "61.47",
+            "distancia_metros": 20491,
+            "id_destino": "no-ORD-012-Analia-Sup",
+            "id_origem": "no-ORD-010-Morumb-Sup",
+            "tempo_segundos": 2411
+          },
+          {
+            "custo": "2.32",
+            "distancia_metros": 774,
+            "id_destino": "no-ORD-013-Chaca-Rec",
+            "id_origem": "no-ORD-010-Morumb-Sup",
+            "tempo_segundos": 180
+          },
+          {
+            "custo": "68.37",
+            "distancia_metros": 22790,
+            "id_destino": "no-ORD-014-SBC-Sup",
+            "id_origem": "no-ORD-010-Morumb-Sup",
+            "tempo_segundos": 2681
+          },
+          {
+            "custo": "90.80",
+            "distancia_metros": 30265,
+            "id_destino": "no-ORD-015-Guaru-CEF-Rec",
+            "id_origem": "no-ORD-010-Morumb-Sup",
+            "tempo_segundos": 3561
+          },
+          {
+            "custo": "39.61",
+            "distancia_metros": 13202,
+            "id_destino": "no-ORD-016-RDireita-Sup",
+            "id_origem": "no-ORD-010-Morumb-Sup",
+            "tempo_segundos": 1553
+          },
+          {
+            "custo": "23.62",
+            "distancia_metros": 7873,
+            "id_destino": "no-ORD-017-Interlag-Rec",
+            "id_origem": "no-ORD-010-Morumb-Sup",
+            "tempo_segundos": 926
+          },
+          {
+            "custo": "47.70",
+            "distancia_metros": 15901,
+            "id_destino": "no-ORD-018-Osasco-Sup",
+            "id_origem": "no-ORD-010-Morumb-Sup",
+            "tempo_segundos": 1871
+          },
+          {
+            "custo": "92.81",
+            "distancia_metros": 30938,
+            "id_destino": "no-ORD-019-Maua-Rec",
+            "id_origem": "no-ORD-010-Morumb-Sup",
+            "tempo_segundos": 3640
+          },
+          {
+            "custo": "129.74",
+            "distancia_metros": 43246,
+            "id_destino": "no-ORD-020-Mairi-Sup",
+            "id_origem": "no-ORD-010-Morumb-Sup",
+            "tempo_segundos": 5088
+          },
+          {
+            "custo": "16.02",
+            "distancia_metros": 5340,
+            "id_destino": "dep-BASE-SP-CENTRO",
+            "id_origem": "no-ORD-011-Merc-Rec",
+            "tempo_segundos": 628
+          },
+          {
+            "custo": "19.83",
+            "distancia_metros": 6611,
+            "id_destino": "dep-BASE-SP-LESTE",
+            "id_origem": "no-ORD-011-Merc-Rec",
+            "tempo_segundos": 778
+          },
+          {
+            "custo": "67.00",
+            "distancia_metros": 22334,
+            "id_destino": "dep-BASE-SP-ABC",
+            "id_origem": "no-ORD-011-Merc-Rec",
+            "tempo_segundos": 2628
+          },
+          {
+            "custo": "53.61",
+            "distancia_metros": 17869,
+            "id_destino": "dep-BASE-SP-SUL",
+            "id_origem": "no-ORD-011-Merc-Rec",
+            "tempo_segundos": 2102
+          },
+          {
+            "custo": "74.15",
+            "distancia_metros": 24717,
+            "id_destino": "dep-BASE-SP-NORTE",
+            "id_origem": "no-ORD-011-Merc-Rec",
+            "tempo_segundos": 2908
+          },
+          {
+            "custo": "13.27",
+            "distancia_metros": 4424,
+            "id_destino": "no-ORD-001-Paul-Sup",
+            "id_origem": "no-ORD-011-Merc-Rec",
+            "tempo_segundos": 520
+          },
+          {
+            "custo": "10.54",
+            "distancia_metros": 3514,
+            "id_destino": "no-ORD-002-Frei-Rec",
+            "id_origem": "no-ORD-011-Merc-Rec",
+            "tempo_segundos": 413
+          },
+          {
+            "custo": "27.67",
+            "distancia_metros": 9222,
+            "id_destino": "no-ORD-003-Faria-Rec",
+            "id_origem": "no-ORD-011-Merc-Rec",
+            "tempo_segundos": 1085
+          },
+          {
+            "custo": "28.79",
+            "distancia_metros": 9598,
+            "id_destino": "no-ORD-004-Eldo-Sup",
+            "id_origem": "no-ORD-011-Merc-Rec",
+            "tempo_segundos": 1129
+          },
+          {
+            "custo": "20.53",
+            "distancia_metros": 6842,
+            "id_destino": "no-ORD-005-Tatu-Sup",
+            "id_origem": "no-ORD-011-Merc-Rec",
+            "tempo_segundos": 805
+          },
+          {
+            "custo": "86.19",
+            "distancia_metros": 28730,
+            "id_destino": "no-ORD-006-Alpha-Rec",
+            "id_origem": "no-ORD-011-Merc-Rec",
+            "tempo_segundos": 3380
+          },
+          {
+            "custo": "57.91",
+            "distancia_metros": 19302,
+            "id_destino": "no-ORD-007-G Plaza-Rec",
+            "id_origem": "no-ORD-011-Merc-Rec",
+            "tempo_segundos": 2271
+          },
+          {
+            "custo": "49.55",
+            "distancia_metros": 16516,
+            "id_destino": "no-ORD-008-Guaru-Sup",
+            "id_origem": "no-ORD-011-Merc-Rec",
+            "tempo_segundos": 1943
+          },
+          {
+            "custo": "72.85",
+            "distancia_metros": 24284,
+            "id_destino": "no-ORD-009-S Miguel-Rec",
+            "id_origem": "no-ORD-011-Merc-Rec",
+            "tempo_segundos": 2857
+          },
+          {
+            "custo": "43.03",
+            "distancia_metros": 14343,
+            "id_destino": "no-ORD-010-Morumb-Sup",
+            "id_origem": "no-ORD-011-Merc-Rec",
+            "tempo_segundos": 1687
+          },
+          {
+            "custo": "0.00",
+            "distancia_metros": 0,
+            "id_destino": "no-ORD-011-Merc-Rec",
+            "id_origem": "no-ORD-011-Merc-Rec",
+            "tempo_segundos": 0
+          },
+          {
+            "custo": "29.87",
+            "distancia_metros": 9958,
+            "id_destino": "no-ORD-012-Analia-Sup",
+            "id_origem": "no-ORD-011-Merc-Rec",
+            "tempo_segundos": 1172
+          },
+          {
+            "custo": "45.32",
+            "distancia_metros": 15106,
+            "id_destino": "no-ORD-013-Chaca-Rec",
+            "id_origem": "no-ORD-011-Merc-Rec",
+            "tempo_segundos": 1777
+          },
+          {
+            "custo": "77.26",
+            "distancia_metros": 25755,
+            "id_destino": "no-ORD-014-SBC-Sup",
+            "id_origem": "no-ORD-011-Merc-Rec",
+            "tempo_segundos": 3030
+          },
+          {
+            "custo": "48.26",
+            "distancia_metros": 16086,
+            "id_destino": "no-ORD-015-Guaru-CEF-Rec",
+            "id_origem": "no-ORD-011-Merc-Rec",
+            "tempo_segundos": 1892
+          },
+          {
+            "custo": "3.45",
+            "distancia_metros": 1150,
+            "id_destino": "no-ORD-016-RDireita-Sup",
+            "id_origem": "no-ORD-011-Merc-Rec",
+            "tempo_segundos": 180
+          },
+          {
+            "custo": "59.24",
+            "distancia_metros": 19745,
+            "id_destino": "no-ORD-017-Interlag-Rec",
+            "id_origem": "no-ORD-011-Merc-Rec",
+            "tempo_segundos": 2323
+          },
+          {
+            "custo": "56.32",
+            "distancia_metros": 18774,
+            "id_destino": "no-ORD-018-Osasco-Sup",
+            "id_origem": "no-ORD-011-Merc-Rec",
+            "tempo_segundos": 2209
+          },
+          {
+            "custo": "83.06",
+            "distancia_metros": 27685,
+            "id_destino": "no-ORD-019-Maua-Rec",
+            "id_origem": "no-ORD-011-Merc-Rec",
+            "tempo_segundos": 3257
+          },
+          {
+            "custo": "90.24",
+            "distancia_metros": 30081,
+            "id_destino": "no-ORD-020-Mairi-Sup",
+            "id_origem": "no-ORD-011-Merc-Rec",
+            "tempo_segundos": 3539
+          },
+          {
+            "custo": "45.77",
+            "distancia_metros": 15256,
+            "id_destino": "dep-BASE-SP-CENTRO",
+            "id_origem": "no-ORD-012-Analia-Sup",
+            "tempo_segundos": 1795
+          },
+          {
+            "custo": "12.29",
+            "distancia_metros": 4096,
+            "id_destino": "dep-BASE-SP-LESTE",
+            "id_origem": "no-ORD-012-Analia-Sup",
+            "tempo_segundos": 482
+          },
+          {
+            "custo": "54.92",
+            "distancia_metros": 18308,
+            "id_destino": "dep-BASE-SP-ABC",
+            "id_origem": "no-ORD-012-Analia-Sup",
+            "tempo_segundos": 2154
+          },
+          {
+            "custo": "69.18",
+            "distancia_metros": 23059,
+            "id_destino": "dep-BASE-SP-SUL",
+            "id_origem": "no-ORD-012-Analia-Sup",
+            "tempo_segundos": 2713
+          },
+          {
+            "custo": "60.28",
+            "distancia_metros": 20093,
+            "id_destino": "dep-BASE-SP-NORTE",
+            "id_origem": "no-ORD-012-Analia-Sup",
+            "tempo_segundos": 2364
+          },
+          {
+            "custo": "39.33",
+            "distancia_metros": 13109,
+            "id_destino": "no-ORD-001-Paul-Sup",
+            "id_origem": "no-ORD-012-Analia-Sup",
+            "tempo_segundos": 1542
+          },
+          {
+            "custo": "38.30",
+            "distancia_metros": 12768,
+            "id_destino": "no-ORD-002-Frei-Rec",
+            "id_origem": "no-ORD-012-Analia-Sup",
+            "tempo_segundos": 1502
+          },
+          {
+            "custo": "50.54",
+            "distancia_metros": 16846,
+            "id_destino": "no-ORD-003-Faria-Rec",
+            "id_origem": "no-ORD-012-Analia-Sup",
+            "tempo_segundos": 1982
+          },
+          {
+            "custo": "54.91",
+            "distancia_metros": 18302,
+            "id_destino": "no-ORD-004-Eldo-Sup",
+            "id_origem": "no-ORD-012-Analia-Sup",
+            "tempo_segundos": 2153
+          },
+          {
+            "custo": "11.98",
+            "distancia_metros": 3995,
+            "id_destino": "no-ORD-005-Tatu-Sup",
+            "id_origem": "no-ORD-012-Analia-Sup",
+            "tempo_segundos": 470
+          },
+          {
+            "custo": "116.04",
+            "distancia_metros": 38680,
+            "id_destino": "no-ORD-006-Alpha-Rec",
+            "id_origem": "no-ORD-012-Analia-Sup",
+            "tempo_segundos": 4551
+          },
+          {
+            "custo": "38.28",
+            "distancia_metros": 12759,
+            "id_destino": "no-ORD-007-G Plaza-Rec",
+            "id_origem": "no-ORD-012-Analia-Sup",
+            "tempo_segundos": 1501
+          },
+          {
+            "custo": "36.26",
+            "distancia_metros": 12087,
+            "id_destino": "no-ORD-008-Guaru-Sup",
+            "id_origem": "no-ORD-012-Analia-Sup",
+            "tempo_segundos": 1422
+          },
+          {
+            "custo": "49.09",
+            "distancia_metros": 16364,
+            "id_destino": "no-ORD-009-S Miguel-Rec",
+            "id_origem": "no-ORD-012-Analia-Sup",
+            "tempo_segundos": 1925
+          },
+          {
+            "custo": "61.47",
+            "distancia_metros": 20491,
+            "id_destino": "no-ORD-010-Morumb-Sup",
+            "id_origem": "no-ORD-012-Analia-Sup",
+            "tempo_segundos": 2411
+          },
+          {
+            "custo": "29.87",
+            "distancia_metros": 9958,
+            "id_destino": "no-ORD-011-Merc-Rec",
+            "id_origem": "no-ORD-012-Analia-Sup",
+            "tempo_segundos": 1172
+          },
+          {
+            "custo": "0.00",
+            "distancia_metros": 0,
+            "id_destino": "no-ORD-012-Analia-Sup",
+            "id_origem": "no-ORD-012-Analia-Sup",
+            "tempo_segundos": 0
+          },
+          {
+            "custo": "63.70",
+            "distancia_metros": 21235,
+            "id_destino": "no-ORD-013-Chaca-Rec",
+            "id_origem": "no-ORD-012-Analia-Sup",
+            "tempo_segundos": 2498
+          },
+          {
+            "custo": "63.40",
+            "distancia_metros": 21132,
+            "id_destino": "no-ORD-014-SBC-Sup",
+            "id_origem": "no-ORD-012-Analia-Sup",
+            "tempo_segundos": 2486
+          },
+          {
+            "custo": "39.26",
+            "distancia_metros": 13085,
+            "id_destino": "no-ORD-015-Guaru-CEF-Rec",
+            "id_origem": "no-ORD-012-Analia-Sup",
+            "tempo_segundos": 1539
+          },
+          {
+            "custo": "31.06",
+            "distancia_metros": 10353,
+            "id_destino": "no-ORD-016-RDireita-Sup",
+            "id_origem": "no-ORD-012-Analia-Sup",
+            "tempo_segundos": 1218
+          },
+          {
+            "custo": "68.24",
+            "distancia_metros": 22747,
+            "id_destino": "no-ORD-017-Interlag-Rec",
+            "id_origem": "no-ORD-012-Analia-Sup",
+            "tempo_segundos": 2676
+          },
+          {
+            "custo": "85.85",
+            "distancia_metros": 28617,
+            "id_destino": "no-ORD-018-Osasco-Sup",
+            "id_origem": "no-ORD-012-Analia-Sup",
+            "tempo_segundos": 3367
+          },
+          {
+            "custo": "57.33",
+            "distancia_metros": 19110,
+            "id_destino": "no-ORD-019-Maua-Rec",
+            "id_origem": "no-ORD-012-Analia-Sup",
+            "tempo_segundos": 2248
+          },
+          {
+            "custo": "97.30",
+            "distancia_metros": 32434,
+            "id_destino": "no-ORD-020-Mairi-Sup",
+            "id_origem": "no-ORD-012-Analia-Sup",
+            "tempo_segundos": 3816
+          },
+          {
+            "custo": "43.89",
+            "distancia_metros": 14631,
+            "id_destino": "dep-BASE-SP-CENTRO",
+            "id_origem": "no-ORD-013-Chaca-Rec",
+            "tempo_segundos": 1721
+          },
+          {
+            "custo": "60.22",
+            "distancia_metros": 20072,
+            "id_destino": "dep-BASE-SP-LESTE",
+            "id_origem": "no-ORD-013-Chaca-Rec",
+            "tempo_segundos": 2361
+          },
+          {
+            "custo": "59.57",
+            "distancia_metros": 19858,
+            "id_destino": "dep-BASE-SP-ABC",
+            "id_origem": "no-ORD-013-Chaca-Rec",
+            "tempo_segundos": 2336
+          },
+          {
+            "custo": "9.63",
+            "distancia_metros": 3209,
+            "id_destino": "dep-BASE-SP-SUL",
+            "id_origem": "no-ORD-013-Chaca-Rec",
+            "tempo_segundos": 378
+          },
+          {
+            "custo": "118.60",
+            "distancia_metros": 39534,
+            "id_destino": "dep-BASE-SP-NORTE",
+            "id_origem": "no-ORD-013-Chaca-Rec",
+            "tempo_segundos": 4651
+          },
+          {
+            "custo": "32.51",
+            "distancia_metros": 10837,
+            "id_destino": "no-ORD-001-Paul-Sup",
+            "id_origem": "no-ORD-013-Chaca-Rec",
+            "tempo_segundos": 1275
+          },
+          {
+            "custo": "35.87",
+            "distancia_metros": 11956,
+            "id_destino": "no-ORD-002-Frei-Rec",
+            "id_origem": "no-ORD-013-Chaca-Rec",
+            "tempo_segundos": 1407
+          },
+          {
+            "custo": "18.43",
+            "distancia_metros": 6144,
+            "id_destino": "no-ORD-003-Faria-Rec",
+            "id_origem": "no-ORD-013-Chaca-Rec",
+            "tempo_segundos": 723
+          },
+          {
+            "custo": "22.53",
+            "distancia_metros": 7509,
+            "id_destino": "no-ORD-004-Eldo-Sup",
+            "id_origem": "no-ORD-013-Chaca-Rec",
+            "tempo_segundos": 883
+          },
+          {
+            "custo": "60.93",
+            "distancia_metros": 20309,
+            "id_destino": "no-ORD-005-Tatu-Sup",
+            "id_origem": "no-ORD-013-Chaca-Rec",
+            "tempo_segundos": 2389
+          },
+          {
+            "custo": "77.09",
+            "distancia_metros": 25698,
+            "id_destino": "no-ORD-006-Alpha-Rec",
+            "id_origem": "no-ORD-013-Chaca-Rec",
+            "tempo_segundos": 3023
+          },
+          {
+            "custo": "65.51",
+            "distancia_metros": 21836,
+            "id_destino": "no-ORD-007-G Plaza-Rec",
+            "id_origem": "no-ORD-013-Chaca-Rec",
+            "tempo_segundos": 2569
+          },
+          {
+            "custo": "93.55",
+            "distancia_metros": 31184,
+            "id_destino": "no-ORD-008-Guaru-Sup",
+            "id_origem": "no-ORD-013-Chaca-Rec",
+            "tempo_segundos": 3669
+          },
+          {
+            "custo": "112.62",
+            "distancia_metros": 37541,
+            "id_destino": "no-ORD-009-S Miguel-Rec",
+            "id_origem": "no-ORD-013-Chaca-Rec",
+            "tempo_segundos": 4417
+          },
+          {
+            "custo": "2.32",
+            "distancia_metros": 774,
+            "id_destino": "no-ORD-010-Morumb-Sup",
+            "id_origem": "no-ORD-013-Chaca-Rec",
+            "tempo_segundos": 180
+          },
+          {
+            "custo": "45.32",
+            "distancia_metros": 15106,
+            "id_destino": "no-ORD-011-Merc-Rec",
+            "id_origem": "no-ORD-013-Chaca-Rec",
+            "tempo_segundos": 1777
+          },
+          {
+            "custo": "63.70",
+            "distancia_metros": 21235,
+            "id_destino": "no-ORD-012-Analia-Sup",
+            "id_origem": "no-ORD-013-Chaca-Rec",
+            "tempo_segundos": 2498
+          },
+          {
+            "custo": "0.00",
+            "distancia_metros": 0,
+            "id_destino": "no-ORD-013-Chaca-Rec",
+            "id_origem": "no-ORD-013-Chaca-Rec",
+            "tempo_segundos": 0
+          },
+          {
+            "custo": "69.03",
+            "distancia_metros": 23009,
+            "id_destino": "no-ORD-014-SBC-Sup",
+            "id_origem": "no-ORD-013-Chaca-Rec",
+            "tempo_segundos": 2707
+          },
+          {
+            "custo": "93.11",
+            "distancia_metros": 31038,
+            "id_destino": "no-ORD-015-Guaru-CEF-Rec",
+            "id_origem": "no-ORD-013-Chaca-Rec",
+            "tempo_segundos": 3652
+          },
+          {
+            "custo": "41.90",
+            "distancia_metros": 13966,
+            "id_destino": "no-ORD-016-RDireita-Sup",
+            "id_origem": "no-ORD-013-Chaca-Rec",
+            "tempo_segundos": 1643
+          },
+          {
+            "custo": "22.83",
+            "distancia_metros": 7609,
+            "id_destino": "no-ORD-017-Interlag-Rec",
+            "id_origem": "no-ORD-013-Chaca-Rec",
+            "tempo_segundos": 895
+          },
+          {
+            "custo": "47.90",
+            "distancia_metros": 15965,
+            "id_destino": "no-ORD-018-Osasco-Sup",
+            "id_origem": "no-ORD-013-Chaca-Rec",
+            "tempo_segundos": 1878
+          },
+          {
+            "custo": "94.22",
+            "distancia_metros": 31406,
+            "id_destino": "no-ORD-019-Maua-Rec",
+            "id_origem": "no-ORD-013-Chaca-Rec",
+            "tempo_segundos": 3695
+          },
+          {
+            "custo": "131.77",
+            "distancia_metros": 43922,
+            "id_destino": "no-ORD-020-Mairi-Sup",
+            "id_origem": "no-ORD-013-Chaca-Rec",
+            "tempo_segundos": 5167
+          },
+          {
+            "custo": "89.64",
+            "distancia_metros": 29880,
+            "id_destino": "dep-BASE-SP-CENTRO",
+            "id_origem": "no-ORD-014-SBC-Sup",
+            "tempo_segundos": 3515
+          },
+          {
+            "custo": "72.46",
+            "distancia_metros": 24154,
+            "id_destino": "dep-BASE-SP-LESTE",
+            "id_origem": "no-ORD-014-SBC-Sup",
+            "tempo_segundos": 2842
+          },
+          {
+            "custo": "10.51",
+            "distancia_metros": 3504,
+            "id_destino": "dep-BASE-SP-ABC",
+            "id_origem": "no-ORD-014-SBC-Sup",
+            "tempo_segundos": 412
+          },
+          {
+            "custo": "65.42",
+            "distancia_metros": 21808,
+            "id_destino": "dep-BASE-SP-SUL",
+            "id_origem": "no-ORD-014-SBC-Sup",
+            "tempo_segundos": 2566
+          },
+          {
+            "custo": "118.92",
+            "distancia_metros": 39640,
+            "id_destino": "dep-BASE-SP-NORTE",
+            "id_origem": "no-ORD-014-SBC-Sup",
+            "tempo_segundos": 4664
+          },
+          {
+            "custo": "74.96",
+            "distancia_metros": 24985,
+            "id_destino": "no-ORD-001-Paul-Sup",
+            "id_origem": "no-ORD-014-SBC-Sup",
+            "tempo_segundos": 2939
+          },
+          {
+            "custo": "77.14",
+            "distancia_metros": 25714,
+            "id_destino": "no-ORD-002-Frei-Rec",
+            "id_origem": "no-ORD-014-SBC-Sup",
+            "tempo_segundos": 3025
+          },
+          {
+            "custo": "73.03",
+            "distancia_metros": 24343,
+            "id_destino": "no-ORD-003-Faria-Rec",
+            "id_origem": "no-ORD-014-SBC-Sup",
+            "tempo_segundos": 2864
+          },
+          {
+            "custo": "80.91",
+            "distancia_metros": 26969,
+            "id_destino": "no-ORD-004-Eldo-Sup",
+            "id_origem": "no-ORD-014-SBC-Sup",
+            "tempo_segundos": 3173
+          },
+          {
+            "custo": "72.63",
+            "distancia_metros": 24211,
+            "id_destino": "no-ORD-005-Tatu-Sup",
+            "id_origem": "no-ORD-014-SBC-Sup",
+            "tempo_segundos": 2848
+          },
+          {
+            "custo": "145.26",
+            "distancia_metros": 48420,
+            "id_destino": "no-ORD-006-Alpha-Rec",
+            "id_origem": "no-ORD-014-SBC-Sup",
+            "tempo_segundos": 5696
+          },
+          {
+            "custo": "26.43",
+            "distancia_metros": 8810,
+            "id_destino": "no-ORD-007-G Plaza-Rec",
+            "id_origem": "no-ORD-014-SBC-Sup",
+            "tempo_segundos": 1036
+          },
+          {
+            "custo": "97.84",
+            "distancia_metros": 32614,
+            "id_destino": "no-ORD-008-Guaru-Sup",
+            "id_origem": "no-ORD-014-SBC-Sup",
+            "tempo_segundos": 3837
+          },
+          {
+            "custo": "97.99",
+            "distancia_metros": 32664,
+            "id_destino": "no-ORD-009-S Miguel-Rec",
+            "id_origem": "no-ORD-014-SBC-Sup",
+            "tempo_segundos": 3843
+          },
+          {
+            "custo": "68.37",
+            "distancia_metros": 22790,
+            "id_destino": "no-ORD-010-Morumb-Sup",
+            "id_origem": "no-ORD-014-SBC-Sup",
+            "tempo_segundos": 2681
+          },
+          {
+            "custo": "77.26",
+            "distancia_metros": 25755,
+            "id_destino": "no-ORD-011-Merc-Rec",
+            "id_origem": "no-ORD-014-SBC-Sup",
+            "tempo_segundos": 3030
+          },
+          {
+            "custo": "63.40",
+            "distancia_metros": 21132,
+            "id_destino": "no-ORD-012-Analia-Sup",
+            "id_origem": "no-ORD-014-SBC-Sup",
+            "tempo_segundos": 2486
+          },
+          {
+            "custo": "69.03",
+            "distancia_metros": 23009,
+            "id_destino": "no-ORD-013-Chaca-Rec",
+            "id_origem": "no-ORD-014-SBC-Sup",
+            "tempo_segundos": 2707
+          },
+          {
+            "custo": "0.00",
+            "distancia_metros": 0,
+            "id_destino": "no-ORD-014-SBC-Sup",
+            "id_origem": "no-ORD-014-SBC-Sup",
+            "tempo_segundos": 0
+          },
+          {
+            "custo": "101.96",
+            "distancia_metros": 33987,
+            "id_destino": "no-ORD-015-Guaru-CEF-Rec",
+            "id_origem": "no-ORD-014-SBC-Sup",
+            "tempo_segundos": 3998
+          },
+          {
+            "custo": "75.34",
+            "distancia_metros": 25113,
+            "id_destino": "no-ORD-016-RDireita-Sup",
+            "id_origem": "no-ORD-014-SBC-Sup",
+            "tempo_segundos": 2954
+          },
+          {
+            "custo": "51.89",
+            "distancia_metros": 17298,
+            "id_destino": "no-ORD-017-Interlag-Rec",
+            "id_origem": "no-ORD-014-SBC-Sup",
+            "tempo_segundos": 2035
+          },
+          {
+            "custo": "114.55",
+            "distancia_metros": 38184,
+            "id_destino": "no-ORD-018-Osasco-Sup",
+            "id_origem": "no-ORD-014-SBC-Sup",
+            "tempo_segundos": 4492
+          },
+          {
+            "custo": "38.06",
+            "distancia_metros": 12688,
+            "id_destino": "no-ORD-019-Maua-Rec",
+            "id_origem": "no-ORD-014-SBC-Sup",
+            "tempo_segundos": 1493
+          },
+          {
+            "custo": "160.47",
+            "distancia_metros": 53491,
+            "id_destino": "no-ORD-020-Mairi-Sup",
+            "id_origem": "no-ORD-014-SBC-Sup",
+            "tempo_segundos": 6293
+          },
+          {
+            "custo": "57.28",
+            "distancia_metros": 19092,
+            "id_destino": "dep-BASE-SP-CENTRO",
+            "id_origem": "no-ORD-015-Guaru-CEF-Rec",
+            "tempo_segundos": 2246
+          },
+          {
+            "custo": "34.73",
+            "distancia_metros": 11576,
+            "id_destino": "dep-BASE-SP-LESTE",
+            "id_origem": "no-ORD-015-Guaru-CEF-Rec",
+            "tempo_segundos": 1362
+          },
+          {
+            "custo": "93.98",
+            "distancia_metros": 31326,
+            "id_destino": "dep-BASE-SP-ABC",
+            "id_origem": "no-ORD-015-Guaru-CEF-Rec",
+            "tempo_segundos": 3685
+          },
+          {
+            "custo": "100.74",
+            "distancia_metros": 33579,
+            "id_destino": "dep-BASE-SP-SUL",
+            "id_origem": "no-ORD-015-Guaru-CEF-Rec",
+            "tempo_segundos": 3950
+          },
+          {
+            "custo": "26.06",
+            "distancia_metros": 8687,
+            "id_destino": "dep-BASE-SP-NORTE",
+            "id_origem": "no-ORD-015-Guaru-CEF-Rec",
+            "tempo_segundos": 1022
+          },
+          {
+            "custo": "61.53",
+            "distancia_metros": 20509,
+            "id_destino": "no-ORD-001-Paul-Sup",
+            "id_origem": "no-ORD-015-Guaru-CEF-Rec",
+            "tempo_segundos": 2413
+          },
+          {
+            "custo": "58.62",
+            "distancia_metros": 19539,
+            "id_destino": "no-ORD-002-Frei-Rec",
+            "id_origem": "no-ORD-015-Guaru-CEF-Rec",
+            "tempo_segundos": 2299
+          },
+          {
+            "custo": "75.90",
+            "distancia_metros": 25301,
+            "id_destino": "no-ORD-003-Faria-Rec",
+            "id_origem": "no-ORD-015-Guaru-CEF-Rec",
+            "tempo_segundos": 2977
+          },
+          {
+            "custo": "76.58",
+            "distancia_metros": 25528,
+            "id_destino": "no-ORD-004-Eldo-Sup",
+            "id_origem": "no-ORD-015-Guaru-CEF-Rec",
+            "tempo_segundos": 3003
+          },
+          {
+            "custo": "34.16",
+            "distancia_metros": 11385,
+            "id_destino": "no-ORD-005-Tatu-Sup",
+            "id_origem": "no-ORD-015-Guaru-CEF-Rec",
+            "tempo_segundos": 1339
+          },
+          {
+            "custo": "122.14",
+            "distancia_metros": 40712,
+            "id_destino": "no-ORD-006-Alpha-Rec",
+            "id_origem": "no-ORD-015-Guaru-CEF-Rec",
+            "tempo_segundos": 4790
+          },
+          {
+            "custo": "75.94",
+            "distancia_metros": 25314,
+            "id_destino": "no-ORD-007-G Plaza-Rec",
+            "id_origem": "no-ORD-015-Guaru-CEF-Rec",
+            "tempo_segundos": 2978
+          },
+          {
+            "custo": "6.70",
+            "distancia_metros": 2234,
+            "id_destino": "no-ORD-008-Guaru-Sup",
+            "id_origem": "no-ORD-015-Guaru-CEF-Rec",
+            "tempo_segundos": 263
+          },
+          {
+            "custo": "35.47",
+            "distancia_metros": 11823,
+            "id_destino": "no-ORD-009-S Miguel-Rec",
+            "id_origem": "no-ORD-015-Guaru-CEF-Rec",
+            "tempo_segundos": 1391
+          },
+          {
+            "custo": "90.80",
+            "distancia_metros": 30265,
+            "id_destino": "no-ORD-010-Morumb-Sup",
+            "id_origem": "no-ORD-015-Guaru-CEF-Rec",
+            "tempo_segundos": 3561
+          },
+          {
+            "custo": "48.26",
+            "distancia_metros": 16086,
+            "id_destino": "no-ORD-011-Merc-Rec",
+            "id_origem": "no-ORD-015-Guaru-CEF-Rec",
+            "tempo_segundos": 1892
+          },
+          {
+            "custo": "39.26",
+            "distancia_metros": 13085,
+            "id_destino": "no-ORD-012-Analia-Sup",
+            "id_origem": "no-ORD-015-Guaru-CEF-Rec",
+            "tempo_segundos": 1539
+          },
+          {
+            "custo": "93.11",
+            "distancia_metros": 31038,
+            "id_destino": "no-ORD-013-Chaca-Rec",
+            "id_origem": "no-ORD-015-Guaru-CEF-Rec",
+            "tempo_segundos": 3652
+          },
+          {
+            "custo": "101.96",
+            "distancia_metros": 33987,
+            "id_destino": "no-ORD-014-SBC-Sup",
+            "id_origem": "no-ORD-015-Guaru-CEF-Rec",
+            "tempo_segundos": 3998
+          },
+          {
+            "custo": "0.00",
+            "distancia_metros": 0,
+            "id_destino": "no-ORD-015-Guaru-CEF-Rec",
+            "id_origem": "no-ORD-015-Guaru-CEF-Rec",
+            "tempo_segundos": 0
+          },
+          {
+            "custo": "51.54",
+            "distancia_metros": 17179,
+            "id_destino": "no-ORD-016-RDireita-Sup",
+            "id_origem": "no-ORD-015-Guaru-CEF-Rec",
+            "tempo_segundos": 2021
+          },
+          {
+            "custo": "103.50",
+            "distancia_metros": 34499,
+            "id_destino": "no-ORD-017-Interlag-Rec",
+            "id_origem": "no-ORD-015-Guaru-CEF-Rec",
+            "tempo_segundos": 4059
+          },
+          {
+            "custo": "97.16",
+            "distancia_metros": 32388,
+            "id_destino": "no-ORD-018-Osasco-Sup",
+            "id_origem": "no-ORD-015-Guaru-CEF-Rec",
+            "tempo_segundos": 3810
+          },
+          {
+            "custo": "87.87",
+            "distancia_metros": 29291,
+            "id_destino": "no-ORD-019-Maua-Rec",
+            "id_origem": "no-ORD-015-Guaru-CEF-Rec",
+            "tempo_segundos": 3446
+          },
+          {
+            "custo": "61.83",
+            "distancia_metros": 20611,
+            "id_destino": "no-ORD-020-Mairi-Sup",
+            "id_origem": "no-ORD-015-Guaru-CEF-Rec",
+            "tempo_segundos": 2425
+          },
+          {
+            "custo": "15.91",
+            "distancia_metros": 5302,
+            "id_destino": "dep-BASE-SP-CENTRO",
+            "id_origem": "no-ORD-016-RDireita-Sup",
+            "tempo_segundos": 624
+          },
+          {
+            "custo": "21.94",
+            "distancia_metros": 7312,
+            "id_destino": "dep-BASE-SP-LESTE",
+            "id_origem": "no-ORD-016-RDireita-Sup",
+            "tempo_segundos": 860
+          },
+          {
+            "custo": "65.00",
+            "distancia_metros": 21665,
+            "id_destino": "dep-BASE-SP-ABC",
+            "id_origem": "no-ORD-016-RDireita-Sup",
+            "tempo_segundos": 2549
+          },
+          {
+            "custo": "50.16",
+            "distancia_metros": 16720,
+            "id_destino": "dep-BASE-SP-SUL",
+            "id_origem": "no-ORD-016-RDireita-Sup",
+            "tempo_segundos": 1967
+          },
+          {
+            "custo": "77.37",
+            "distancia_metros": 25790,
+            "id_destino": "dep-BASE-SP-NORTE",
+            "id_origem": "no-ORD-016-RDireita-Sup",
+            "tempo_segundos": 3034
+          },
+          {
+            "custo": "10.10",
+            "distancia_metros": 3367,
+            "id_destino": "no-ORD-001-Paul-Sup",
+            "id_origem": "no-ORD-016-RDireita-Sup",
+            "tempo_segundos": 396
+          },
+          {
+            "custo": "7.76",
+            "distancia_metros": 2588,
+            "id_destino": "no-ORD-002-Frei-Rec",
+            "id_origem": "no-ORD-016-RDireita-Sup",
+            "tempo_segundos": 304
+          },
+          {
+            "custo": "24.37",
+            "distancia_metros": 8122,
+            "id_destino": "no-ORD-003-Faria-Rec",
+            "id_origem": "no-ORD-016-RDireita-Sup",
+            "tempo_segundos": 956
+          },
+          {
+            "custo": "25.92",
+            "distancia_metros": 8641,
+            "id_destino": "no-ORD-004-Eldo-Sup",
+            "id_origem": "no-ORD-016-RDireita-Sup",
+            "tempo_segundos": 1017
+          },
+          {
+            "custo": "22.66",
+            "distancia_metros": 7552,
+            "id_destino": "no-ORD-005-Tatu-Sup",
+            "id_origem": "no-ORD-016-RDireita-Sup",
+            "tempo_segundos": 888
+          },
+          {
+            "custo": "85.09",
+            "distancia_metros": 28363,
+            "id_destino": "no-ORD-006-Alpha-Rec",
+            "id_origem": "no-ORD-016-RDireita-Sup",
+            "tempo_segundos": 3337
+          },
+          {
+            "custo": "56.85",
+            "distancia_metros": 18949,
+            "id_destino": "no-ORD-007-G Plaza-Rec",
+            "id_origem": "no-ORD-016-RDireita-Sup",
+            "tempo_segundos": 2229
+          },
+          {
+            "custo": "52.66",
+            "distancia_metros": 17553,
+            "id_destino": "no-ORD-008-Guaru-Sup",
+            "id_origem": "no-ORD-016-RDireita-Sup",
+            "tempo_segundos": 2065
+          },
+          {
+            "custo": "75.39",
+            "distancia_metros": 25130,
+            "id_destino": "no-ORD-009-S Miguel-Rec",
+            "id_origem": "no-ORD-016-RDireita-Sup",
+            "tempo_segundos": 2956
+          },
+          {
+            "custo": "39.61",
+            "distancia_metros": 13202,
+            "id_destino": "no-ORD-010-Morumb-Sup",
+            "id_origem": "no-ORD-016-RDireita-Sup",
+            "tempo_segundos": 1553
+          },
+          {
+            "custo": "3.45",
+            "distancia_metros": 1150,
+            "id_destino": "no-ORD-011-Merc-Rec",
+            "id_origem": "no-ORD-016-RDireita-Sup",
+            "tempo_segundos": 180
+          },
+          {
+            "custo": "31.06",
+            "distancia_metros": 10353,
+            "id_destino": "no-ORD-012-Analia-Sup",
+            "id_origem": "no-ORD-016-RDireita-Sup",
+            "tempo_segundos": 1218
+          },
+          {
+            "custo": "41.90",
+            "distancia_metros": 13966,
+            "id_destino": "no-ORD-013-Chaca-Rec",
+            "id_origem": "no-ORD-016-RDireita-Sup",
+            "tempo_segundos": 1643
+          },
+          {
+            "custo": "75.34",
+            "distancia_metros": 25113,
+            "id_destino": "no-ORD-014-SBC-Sup",
+            "id_origem": "no-ORD-016-RDireita-Sup",
+            "tempo_segundos": 2954
+          },
+          {
+            "custo": "51.54",
+            "distancia_metros": 17179,
+            "id_destino": "no-ORD-015-Guaru-CEF-Rec",
+            "id_origem": "no-ORD-016-RDireita-Sup",
+            "tempo_segundos": 2021
+          },
+          {
+            "custo": "0.00",
+            "distancia_metros": 0,
+            "id_destino": "no-ORD-016-RDireita-Sup",
+            "id_origem": "no-ORD-016-RDireita-Sup",
+            "tempo_segundos": 0
+          },
+          {
+            "custo": "55.88",
+            "distancia_metros": 18626,
+            "id_destino": "no-ORD-017-Interlag-Rec",
+            "id_origem": "no-ORD-016-RDireita-Sup",
+            "tempo_segundos": 2191
+          },
+          {
+            "custo": "54.80",
+            "distancia_metros": 18266,
+            "id_destino": "no-ORD-018-Osasco-Sup",
+            "id_origem": "no-ORD-016-RDireita-Sup",
+            "tempo_segundos": 2149
+          },
+          {
+            "custo": "82.66",
+            "distancia_metros": 27552,
+            "id_destino": "no-ORD-019-Maua-Rec",
+            "id_origem": "no-ORD-016-RDireita-Sup",
+            "tempo_segundos": 3241
+          },
+          {
+            "custo": "93.46",
+            "distancia_metros": 31153,
+            "id_destino": "no-ORD-020-Mairi-Sup",
+            "id_origem": "no-ORD-016-RDireita-Sup",
+            "tempo_segundos": 3665
+          },
+          {
+            "custo": "62.64",
+            "distancia_metros": 20880,
+            "id_destino": "dep-BASE-SP-CENTRO",
+            "id_origem": "no-ORD-017-Interlag-Rec",
+            "tempo_segundos": 2456
+          },
+          {
+            "custo": "68.84",
+            "distancia_metros": 22948,
+            "id_destino": "dep-BASE-SP-LESTE",
+            "id_origem": "no-ORD-017-Interlag-Rec",
+            "tempo_segundos": 2700
+          },
+          {
+            "custo": "44.14",
+            "distancia_metros": 14715,
+            "id_destino": "dep-BASE-SP-ABC",
+            "id_origem": "no-ORD-017-Interlag-Rec",
+            "tempo_segundos": 1731
+          },
+          {
+            "custo": "15.22",
+            "distancia_metros": 5074,
+            "id_destino": "dep-BASE-SP-SUL",
+            "id_origem": "no-ORD-017-Interlag-Rec",
+            "tempo_segundos": 597
+          },
+          {
+            "custo": "127.51",
+            "distancia_metros": 42504,
+            "id_destino": "dep-BASE-SP-NORTE",
+            "id_origem": "no-ORD-017-Interlag-Rec",
+            "tempo_segundos": 5000
+          },
+          {
+            "custo": "48.64",
+            "distancia_metros": 16212,
+            "id_destino": "no-ORD-001-Paul-Sup",
+            "id_origem": "no-ORD-017-Interlag-Rec",
+            "tempo_segundos": 1907
+          },
+          {
+            "custo": "52.06",
+            "distancia_metros": 17354,
+            "id_destino": "no-ORD-002-Frei-Rec",
+            "id_origem": "no-ORD-017-Interlag-Rec",
+            "tempo_segundos": 2042
+          },
+          {
+            "custo": "37.41",
+            "distancia_metros": 12469,
+            "id_destino": "no-ORD-003-Faria-Rec",
+            "id_origem": "no-ORD-017-Interlag-Rec",
+            "tempo_segundos": 1467
+          },
+          {
+            "custo": "43.68",
+            "distancia_metros": 14561,
+            "id_destino": "no-ORD-004-Eldo-Sup",
+            "id_origem": "no-ORD-017-Interlag-Rec",
+            "tempo_segundos": 1713
+          },
+          {
+            "custo": "69.46",
+            "distancia_metros": 23152,
+            "id_destino": "no-ORD-005-Tatu-Sup",
+            "id_origem": "no-ORD-017-Interlag-Rec",
+            "tempo_segundos": 2724
+          },
+          {
+            "custo": "98.61",
+            "distancia_metros": 32870,
+            "id_destino": "no-ORD-006-Alpha-Rec",
+            "id_origem": "no-ORD-017-Interlag-Rec",
+            "tempo_segundos": 3867
+          },
+          {
+            "custo": "56.46",
+            "distancia_metros": 18821,
+            "id_destino": "no-ORD-007-G Plaza-Rec",
+            "id_origem": "no-ORD-017-Interlag-Rec",
+            "tempo_segundos": 2214
+          },
+          {
+            "custo": "102.52",
+            "distancia_metros": 34175,
+            "id_destino": "no-ORD-008-Guaru-Sup",
+            "id_origem": "no-ORD-017-Interlag-Rec",
+            "tempo_segundos": 4021
+          },
+          {
+            "custo": "116.59",
+            "distancia_metros": 38862,
+            "id_destino": "no-ORD-009-S Miguel-Rec",
+            "id_origem": "no-ORD-017-Interlag-Rec",
+            "tempo_segundos": 4572
+          },
+          {
+            "custo": "23.62",
+            "distancia_metros": 7873,
+            "id_destino": "no-ORD-010-Morumb-Sup",
+            "id_origem": "no-ORD-017-Interlag-Rec",
+            "tempo_segundos": 926
+          },
+          {
+            "custo": "59.24",
+            "distancia_metros": 19745,
+            "id_destino": "no-ORD-011-Merc-Rec",
+            "id_origem": "no-ORD-017-Interlag-Rec",
+            "tempo_segundos": 2323
+          },
+          {
+            "custo": "68.24",
+            "distancia_metros": 22747,
+            "id_destino": "no-ORD-012-Analia-Sup",
+            "id_origem": "no-ORD-017-Interlag-Rec",
+            "tempo_segundos": 2676
+          },
+          {
+            "custo": "22.83",
+            "distancia_metros": 7609,
+            "id_destino": "no-ORD-013-Chaca-Rec",
+            "id_origem": "no-ORD-017-Interlag-Rec",
+            "tempo_segundos": 895
+          },
+          {
+            "custo": "51.89",
+            "distancia_metros": 17298,
+            "id_destino": "no-ORD-014-SBC-Sup",
+            "id_origem": "no-ORD-017-Interlag-Rec",
+            "tempo_segundos": 2035
+          },
+          {
+            "custo": "103.50",
+            "distancia_metros": 34499,
+            "id_destino": "no-ORD-015-Guaru-CEF-Rec",
+            "id_origem": "no-ORD-017-Interlag-Rec",
+            "tempo_segundos": 4059
+          },
+          {
+            "custo": "55.88",
+            "distancia_metros": 18626,
+            "id_destino": "no-ORD-016-RDireita-Sup",
+            "id_origem": "no-ORD-017-Interlag-Rec",
+            "tempo_segundos": 2191
+          },
+          {
+            "custo": "0.00",
+            "distancia_metros": 0,
+            "id_destino": "no-ORD-017-Interlag-Rec",
+            "id_origem": "no-ORD-017-Interlag-Rec",
+            "tempo_segundos": 0
+          },
+          {
+            "custo": "70.43",
+            "distancia_metros": 23477,
+            "id_destino": "no-ORD-018-Osasco-Sup",
+            "id_origem": "no-ORD-017-Interlag-Rec",
+            "tempo_segundos": 2762
+          },
+          {
+            "custo": "83.26",
+            "distancia_metros": 27753,
+            "id_destino": "no-ORD-019-Maua-Rec",
+            "id_origem": "no-ORD-017-Interlag-Rec",
+            "tempo_segundos": 3265
+          },
+          {
+            "custo": "149.06",
+            "distancia_metros": 49688,
+            "id_destino": "no-ORD-020-Mairi-Sup",
+            "id_origem": "no-ORD-017-Interlag-Rec",
+            "tempo_segundos": 5846
+          },
+          {
+            "custo": "41.60",
+            "distancia_metros": 13866,
+            "id_destino": "dep-BASE-SP-CENTRO",
+            "id_origem": "no-ORD-018-Osasco-Sup",
+            "tempo_segundos": 1631
+          },
+          {
+            "custo": "76.08",
+            "distancia_metros": 25359,
+            "id_destino": "dep-BASE-SP-LESTE",
+            "id_origem": "no-ORD-018-Osasco-Sup",
+            "tempo_segundos": 2983
+          },
+          {
+            "custo": "104.40",
+            "distancia_metros": 34801,
+            "id_destino": "dep-BASE-SP-ABC",
+            "id_origem": "no-ORD-018-Osasco-Sup",
+            "tempo_segundos": 4094
+          },
+          {
+            "custo": "55.54",
+            "distancia_metros": 18515,
+            "id_destino": "dep-BASE-SP-SUL",
+            "id_origem": "no-ORD-018-Osasco-Sup",
+            "tempo_segundos": 2178
+          },
+          {
+            "custo": "122.48",
+            "distancia_metros": 40828,
+            "id_destino": "dep-BASE-SP-NORTE",
+            "id_origem": "no-ORD-018-Osasco-Sup",
+            "tempo_segundos": 4803
+          },
+          {
+            "custo": "47.32",
+            "distancia_metros": 15774,
+            "id_destino": "no-ORD-001-Paul-Sup",
+            "id_origem": "no-ORD-018-Osasco-Sup",
+            "tempo_segundos": 1856
+          },
+          {
+            "custo": "47.69",
+            "distancia_metros": 15896,
+            "id_destino": "no-ORD-002-Frei-Rec",
+            "id_origem": "no-ORD-018-Osasco-Sup",
+            "tempo_segundos": 1870
+          },
+          {
+            "custo": "42.27",
+            "distancia_metros": 14090,
+            "id_destino": "no-ORD-003-Faria-Rec",
+            "id_origem": "no-ORD-018-Osasco-Sup",
+            "tempo_segundos": 1658
+          },
+          {
+            "custo": "34.73",
+            "distancia_metros": 11576,
+            "id_destino": "no-ORD-004-Eldo-Sup",
+            "id_origem": "no-ORD-018-Osasco-Sup",
+            "tempo_segundos": 1362
+          },
+          {
+            "custo": "76.75",
+            "distancia_metros": 25583,
+            "id_destino": "no-ORD-005-Tatu-Sup",
+            "id_origem": "no-ORD-018-Osasco-Sup",
+            "tempo_segundos": 3010
+          },
+          {
+            "custo": "31.45",
+            "distancia_metros": 10484,
+            "id_destino": "no-ORD-006-Alpha-Rec",
+            "id_origem": "no-ORD-018-Osasco-Sup",
+            "tempo_segundos": 1233
+          },
+          {
+            "custo": "104.63",
+            "distancia_metros": 34876,
+            "id_destino": "no-ORD-007-G Plaza-Rec",
+            "id_origem": "no-ORD-018-Osasco-Sup",
+            "tempo_segundos": 4103
+          },
+          {
+            "custo": "100.76",
+            "distancia_metros": 33585,
+            "id_destino": "no-ORD-008-Guaru-Sup",
+            "id_origem": "no-ORD-018-Osasco-Sup",
+            "tempo_segundos": 3951
+          },
+          {
+            "custo": "127.49",
+            "distancia_metros": 42498,
+            "id_destino": "no-ORD-009-S Miguel-Rec",
+            "id_origem": "no-ORD-018-Osasco-Sup",
+            "tempo_segundos": 5000
+          },
+          {
+            "custo": "47.70",
+            "distancia_metros": 15901,
+            "id_destino": "no-ORD-010-Morumb-Sup",
+            "id_origem": "no-ORD-018-Osasco-Sup",
+            "tempo_segundos": 1871
+          },
+          {
+            "custo": "56.32",
+            "distancia_metros": 18774,
+            "id_destino": "no-ORD-011-Merc-Rec",
+            "id_origem": "no-ORD-018-Osasco-Sup",
+            "tempo_segundos": 2209
+          },
+          {
+            "custo": "85.85",
+            "distancia_metros": 28617,
+            "id_destino": "no-ORD-012-Analia-Sup",
+            "id_origem": "no-ORD-018-Osasco-Sup",
+            "tempo_segundos": 3367
+          },
+          {
+            "custo": "47.90",
+            "distancia_metros": 15965,
+            "id_destino": "no-ORD-013-Chaca-Rec",
+            "id_origem": "no-ORD-018-Osasco-Sup",
+            "tempo_segundos": 1878
+          },
+          {
+            "custo": "114.55",
+            "distancia_metros": 38184,
+            "id_destino": "no-ORD-014-SBC-Sup",
+            "id_origem": "no-ORD-018-Osasco-Sup",
+            "tempo_segundos": 4492
+          },
+          {
+            "custo": "97.16",
+            "distancia_metros": 32388,
+            "id_destino": "no-ORD-015-Guaru-CEF-Rec",
+            "id_origem": "no-ORD-018-Osasco-Sup",
+            "tempo_segundos": 3810
+          },
+          {
+            "custo": "54.80",
+            "distancia_metros": 18266,
+            "id_destino": "no-ORD-016-RDireita-Sup",
+            "id_origem": "no-ORD-018-Osasco-Sup",
+            "tempo_segundos": 2149
+          },
+          {
+            "custo": "70.43",
+            "distancia_metros": 23477,
+            "id_destino": "no-ORD-017-Interlag-Rec",
+            "id_origem": "no-ORD-018-Osasco-Sup",
+            "tempo_segundos": 2762
+          },
+          {
+            "custo": "0.00",
+            "distancia_metros": 0,
+            "id_destino": "no-ORD-018-Osasco-Sup",
+            "id_origem": "no-ORD-018-Osasco-Sup",
+            "tempo_segundos": 0
+          },
+          {
+            "custo": "132.95",
+            "distancia_metros": 44316,
+            "id_destino": "no-ORD-019-Maua-Rec",
+            "id_origem": "no-ORD-018-Osasco-Sup",
+            "tempo_segundos": 5214
+          },
+          {
+            "custo": "111.43",
+            "distancia_metros": 37143,
+            "id_destino": "no-ORD-020-Mairi-Sup",
+            "id_origem": "no-ORD-018-Osasco-Sup",
+            "tempo_segundos": 4370
+          },
+          {
+            "custo": "98.56",
+            "distancia_metros": 32853,
+            "id_destino": "dep-BASE-SP-CENTRO",
+            "id_origem": "no-ORD-019-Maua-Rec",
+            "tempo_segundos": 3865
+          },
+          {
+            "custo": "69.47",
+            "distancia_metros": 23157,
+            "id_destino": "dep-BASE-SP-LESTE",
+            "id_origem": "no-ORD-019-Maua-Rec",
+            "tempo_segundos": 2724
+          },
+          {
+            "custo": "40.62",
+            "distancia_metros": 13541,
+            "id_destino": "dep-BASE-SP-ABC",
+            "id_origem": "no-ORD-019-Maua-Rec",
+            "tempo_segundos": 1593
+          },
+          {
+            "custo": "93.81",
+            "distancia_metros": 31270,
+            "id_destino": "dep-BASE-SP-SUL",
+            "id_origem": "no-ORD-019-Maua-Rec",
+            "tempo_segundos": 3679
+          },
+          {
+            "custo": "97.40",
+            "distancia_metros": 32465,
+            "id_destino": "dep-BASE-SP-NORTE",
+            "id_origem": "no-ORD-019-Maua-Rec",
+            "tempo_segundos": 3819
+          },
+          {
+            "custo": "86.85",
+            "distancia_metros": 28949,
+            "id_destino": "no-ORD-001-Paul-Sup",
+            "id_origem": "no-ORD-019-Maua-Rec",
+            "tempo_segundos": 3406
+          },
+          {
+            "custo": "87.64",
+            "distancia_metros": 29215,
+            "id_destino": "no-ORD-002-Frei-Rec",
+            "id_origem": "no-ORD-019-Maua-Rec",
+            "tempo_segundos": 3437
+          },
+          {
+            "custo": "91.13",
+            "distancia_metros": 30377,
+            "id_destino": "no-ORD-003-Faria-Rec",
+            "id_origem": "no-ORD-019-Maua-Rec",
+            "tempo_segundos": 3574
+          },
+          {
+            "custo": "98.31",
+            "distancia_metros": 32771,
+            "id_destino": "no-ORD-004-Eldo-Sup",
+            "id_origem": "no-ORD-019-Maua-Rec",
+            "tempo_segundos": 3855
+          },
+          {
+            "custo": "69.25",
+            "distancia_metros": 23083,
+            "id_destino": "no-ORD-005-Tatu-Sup",
+            "id_origem": "no-ORD-019-Maua-Rec",
+            "tempo_segundos": 2716
+          },
+          {
+            "custo": "164.39",
+            "distancia_metros": 54798,
+            "id_destino": "no-ORD-006-Alpha-Rec",
+            "id_origem": "no-ORD-019-Maua-Rec",
+            "tempo_segundos": 6447
+          },
+          {
+            "custo": "28.85",
+            "distancia_metros": 9617,
+            "id_destino": "no-ORD-007-G Plaza-Rec",
+            "id_origem": "no-ORD-019-Maua-Rec",
+            "tempo_segundos": 1131
+          },
+          {
+            "custo": "82.08",
+            "distancia_metros": 27359,
+            "id_destino": "no-ORD-008-Guaru-Sup",
+            "id_origem": "no-ORD-019-Maua-Rec",
+            "tempo_segundos": 3219
+          },
+          {
+            "custo": "71.70",
+            "distancia_metros": 23900,
+            "id_destino": "no-ORD-009-S Miguel-Rec",
+            "id_origem": "no-ORD-019-Maua-Rec",
+            "tempo_segundos": 2812
+          },
+          {
+            "custo": "92.81",
+            "distancia_metros": 30938,
+            "id_destino": "no-ORD-010-Morumb-Sup",
+            "id_origem": "no-ORD-019-Maua-Rec",
+            "tempo_segundos": 3640
+          },
+          {
+            "custo": "83.06",
+            "distancia_metros": 27685,
+            "id_destino": "no-ORD-011-Merc-Rec",
+            "id_origem": "no-ORD-019-Maua-Rec",
+            "tempo_segundos": 3257
+          },
+          {
+            "custo": "57.33",
+            "distancia_metros": 19110,
+            "id_destino": "no-ORD-012-Analia-Sup",
+            "id_origem": "no-ORD-019-Maua-Rec",
+            "tempo_segundos": 2248
+          },
+          {
+            "custo": "94.22",
+            "distancia_metros": 31406,
+            "id_destino": "no-ORD-013-Chaca-Rec",
+            "id_origem": "no-ORD-019-Maua-Rec",
+            "tempo_segundos": 3695
+          },
+          {
+            "custo": "38.06",
+            "distancia_metros": 12688,
+            "id_destino": "no-ORD-014-SBC-Sup",
+            "id_origem": "no-ORD-019-Maua-Rec",
+            "tempo_segundos": 1493
+          },
+          {
+            "custo": "87.87",
+            "distancia_metros": 29291,
+            "id_destino": "no-ORD-015-Guaru-CEF-Rec",
+            "id_origem": "no-ORD-019-Maua-Rec",
+            "tempo_segundos": 3446
+          },
+          {
+            "custo": "82.66",
+            "distancia_metros": 27552,
+            "id_destino": "no-ORD-016-RDireita-Sup",
+            "id_origem": "no-ORD-019-Maua-Rec",
+            "tempo_segundos": 3241
+          },
+          {
+            "custo": "83.26",
+            "distancia_metros": 27753,
+            "id_destino": "no-ORD-017-Interlag-Rec",
+            "id_origem": "no-ORD-019-Maua-Rec",
+            "tempo_segundos": 3265
+          },
+          {
+            "custo": "132.95",
+            "distancia_metros": 44316,
+            "id_destino": "no-ORD-018-Osasco-Sup",
+            "id_origem": "no-ORD-019-Maua-Rec",
+            "tempo_segundos": 5214
+          },
+          {
+            "custo": "0.00",
+            "distancia_metros": 0,
+            "id_destino": "no-ORD-019-Maua-Rec",
+            "id_origem": "no-ORD-019-Maua-Rec",
+            "tempo_segundos": 0
+          },
+          {
+            "custo": "149.68",
+            "distancia_metros": 49892,
+            "id_destino": "no-ORD-020-Mairi-Sup",
+            "id_origem": "no-ORD-019-Maua-Rec",
+            "tempo_segundos": 5870
+          },
+          {
+            "custo": "87.89",
+            "distancia_metros": 29297,
+            "id_destino": "dep-BASE-SP-CENTRO",
+            "id_origem": "no-ORD-020-Mairi-Sup",
+            "tempo_segundos": 3447
+          },
+          {
+            "custo": "88.23",
+            "distancia_metros": 29409,
+            "id_destino": "dep-BASE-SP-LESTE",
+            "id_origem": "no-ORD-020-Mairi-Sup",
+            "tempo_segundos": 3460
+          },
+          {
+            "custo": "151.42",
+            "distancia_metros": 50475,
+            "id_destino": "dep-BASE-SP-ABC",
+            "id_origem": "no-ORD-020-Mairi-Sup",
+            "tempo_segundos": 5938
+          },
+          {
+            "custo": "141.12",
+            "distancia_metros": 47039,
+            "id_destino": "dep-BASE-SP-SUL",
+            "id_origem": "no-ORD-020-Mairi-Sup",
+            "tempo_segundos": 5534
+          },
+          {
+            "custo": "62.18",
+            "distancia_metros": 20727,
+            "id_destino": "dep-BASE-SP-NORTE",
+            "id_origem": "no-ORD-020-Mairi-Sup",
+            "tempo_segundos": 2438
+          },
+          {
+            "custo": "100.54",
+            "distancia_metros": 33515,
+            "id_destino": "no-ORD-001-Paul-Sup",
+            "id_origem": "no-ORD-020-Mairi-Sup",
+            "tempo_segundos": 3943
+          },
+          {
+            "custo": "97.09",
+            "distancia_metros": 32363,
+            "id_destino": "no-ORD-002-Frei-Rec",
+            "id_origem": "no-ORD-020-Mairi-Sup",
+            "tempo_segundos": 3807
+          },
+          {
+            "custo": "113.47",
+            "distancia_metros": 37822,
+            "id_destino": "no-ORD-003-Faria-Rec",
+            "id_origem": "no-ORD-020-Mairi-Sup",
+            "tempo_segundos": 4450
+          },
+          {
+            "custo": "109.90",
+            "distancia_metros": 36634,
+            "id_destino": "no-ORD-004-Eldo-Sup",
+            "id_origem": "no-ORD-020-Mairi-Sup",
+            "tempo_segundos": 4310
+          },
+          {
+            "custo": "87.99",
+            "distancia_metros": 29329,
+            "id_destino": "no-ORD-005-Tatu-Sup",
+            "id_origem": "no-ORD-020-Mairi-Sup",
+            "tempo_segundos": 3450
+          },
+          {
+            "custo": "122.71",
+            "distancia_metros": 40902,
+            "id_destino": "no-ORD-006-Alpha-Rec",
+            "id_origem": "no-ORD-020-Mairi-Sup",
+            "tempo_segundos": 4812
+          },
+          {
+            "custo": "135.53",
+            "distancia_metros": 45177,
+            "id_destino": "no-ORD-007-G Plaza-Rec",
+            "id_origem": "no-ORD-020-Mairi-Sup",
+            "tempo_segundos": 5315
+          },
+          {
+            "custo": "67.89",
+            "distancia_metros": 22629,
+            "id_destino": "no-ORD-008-Guaru-Sup",
+            "id_origem": "no-ORD-020-Mairi-Sup",
+            "tempo_segundos": 2662
+          },
+          {
+            "custo": "89.00",
+            "distancia_metros": 29665,
+            "id_destino": "no-ORD-009-S Miguel-Rec",
+            "id_origem": "no-ORD-020-Mairi-Sup",
+            "tempo_segundos": 3490
+          },
+          {
+            "custo": "129.74",
+            "distancia_metros": 43246,
+            "id_destino": "no-ORD-010-Morumb-Sup",
+            "id_origem": "no-ORD-020-Mairi-Sup",
+            "tempo_segundos": 5088
+          },
+          {
+            "custo": "90.24",
+            "distancia_metros": 30081,
+            "id_destino": "no-ORD-011-Merc-Rec",
+            "id_origem": "no-ORD-020-Mairi-Sup",
+            "tempo_segundos": 3539
+          },
+          {
+            "custo": "97.30",
+            "distancia_metros": 32434,
+            "id_destino": "no-ORD-012-Analia-Sup",
+            "id_origem": "no-ORD-020-Mairi-Sup",
+            "tempo_segundos": 3816
+          },
+          {
+            "custo": "131.77",
+            "distancia_metros": 43922,
+            "id_destino": "no-ORD-013-Chaca-Rec",
+            "id_origem": "no-ORD-020-Mairi-Sup",
+            "tempo_segundos": 5167
+          },
+          {
+            "custo": "160.47",
+            "distancia_metros": 53491,
+            "id_destino": "no-ORD-014-SBC-Sup",
+            "id_origem": "no-ORD-020-Mairi-Sup",
+            "tempo_segundos": 6293
+          },
+          {
+            "custo": "61.83",
+            "distancia_metros": 20611,
+            "id_destino": "no-ORD-015-Guaru-CEF-Rec",
+            "id_origem": "no-ORD-020-Mairi-Sup",
+            "tempo_segundos": 2425
+          },
+          {
+            "custo": "93.46",
+            "distancia_metros": 31153,
+            "id_destino": "no-ORD-016-RDireita-Sup",
+            "id_origem": "no-ORD-020-Mairi-Sup",
+            "tempo_segundos": 3665
+          },
+          {
+            "custo": "149.06",
+            "distancia_metros": 49688,
+            "id_destino": "no-ORD-017-Interlag-Rec",
+            "id_origem": "no-ORD-020-Mairi-Sup",
+            "tempo_segundos": 5846
+          },
+          {
+            "custo": "111.43",
+            "distancia_metros": 37143,
+            "id_destino": "no-ORD-018-Osasco-Sup",
+            "id_origem": "no-ORD-020-Mairi-Sup",
+            "tempo_segundos": 4370
+          },
+          {
+            "custo": "149.68",
+            "distancia_metros": 49892,
+            "id_destino": "no-ORD-019-Maua-Rec",
+            "id_origem": "no-ORD-020-Mairi-Sup",
+            "tempo_segundos": 5870
+          },
+          {
+            "custo": "0.00",
+            "distancia_metros": 0,
+            "id_destino": "no-ORD-020-Mairi-Sup",
+            "id_origem": "no-ORD-020-Mairi-Sup",
+            "tempo_segundos": 0
+          }
+        ],
+        "generated_at": "2026-04-12T20:21:50.912046+00:00",
+        "snapshot_id": "snap-operacao_sob_pressao-2026-03-21",
+        "source_name": "operacao_sob_pressao_source",
+        "strategy_name": "synthetic_geodesic_v1"
+      }
+    },
+    "pontos": [
+      {
+        "fim_janela": "2026-03-21T17:00:00+00:00",
+        "id_ponto": "P-CENTRO-01",
+        "inicio_janela": "2026-03-21T08:00:00+00:00",
+        "latitude": -23.561414,
+        "longitude": -46.6558819,
+        "nome": "Agencia Itau - Av. Paulista",
+        "setor_geografico": "CENTRO",
+        "status_ativo": true,
+        "tempo_servico": 20,
+        "tipo_ponto": "agencia"
+      },
+      {
+        "fim_janela": "2026-03-21T17:00:00+00:00",
+        "id_ponto": "P-CENTRO-02",
+        "inicio_janela": "2026-03-21T08:00:00+00:00",
+        "latitude": -23.5535561,
+        "longitude": -46.6529552,
+        "nome": "Shopping Frei Caneca",
+        "setor_geografico": "CENTRO",
+        "status_ativo": true,
+        "tempo_servico": 45,
+        "tipo_ponto": "comercio"
+      },
+      {
+        "fim_janela": "2026-03-21T17:00:00+00:00",
+        "id_ponto": "P-OESTE-01",
+        "inicio_janela": "2026-03-21T08:00:00+00:00",
+        "latitude": -23.5864453,
+        "longitude": -46.6820785,
+        "nome": "Agencia Bradesco - Faria Lima",
+        "setor_geografico": "OESTE",
+        "status_ativo": true,
+        "tempo_servico": 25,
+        "tipo_ponto": "agencia"
+      },
+      {
+        "fim_janela": "2026-03-21T17:00:00+00:00",
+        "id_ponto": "P-OESTE-02",
+        "inicio_janela": "2026-03-21T08:00:00+00:00",
+        "latitude": -23.5725201,
+        "longitude": -46.6960124,
+        "nome": "Shopping Eldorado",
+        "setor_geografico": "OESTE",
+        "status_ativo": true,
+        "tempo_servico": 60,
+        "tipo_ponto": "comercio"
+      },
+      {
+        "fim_janela": "2026-03-21T17:00:00+00:00",
+        "id_ponto": "P-LESTE-01",
+        "inicio_janela": "2026-03-21T08:00:00+00:00",
+        "latitude": -23.5395512,
+        "longitude": -46.5749103,
+        "nome": "Agencia BB - Tatuape",
+        "setor_geografico": "LESTE",
+        "status_ativo": true,
+        "tempo_servico": 20,
+        "tipo_ponto": "agencia"
+      },
+      {
+        "fim_janela": "2026-03-21T17:00:00+00:00",
+        "id_ponto": "P-LESTE-02",
+        "inicio_janela": "2026-03-21T08:00:00+00:00",
+        "latitude": -23.5601128,
+        "longitude": -46.5529984,
+        "nome": "Shopping Analia Franco",
+        "setor_geografico": "LESTE",
+        "status_ativo": true,
+        "tempo_servico": 50,
+        "tipo_ponto": "comercio"
+      },
+      {
+        "fim_janela": "2026-03-21T17:00:00+00:00",
+        "id_ponto": "P-SUL-01",
+        "inicio_janela": "2026-03-21T08:00:00+00:00",
+        "latitude": -23.6261234,
+        "longitude": -46.7033456,
+        "nome": "Agencia Santander - Chacara Sto Antonio",
+        "setor_geografico": "SUL",
+        "status_ativo": true,
+        "tempo_servico": 30,
+        "tipo_ponto": "agencia"
+      },
+      {
+        "fim_janela": "2026-03-21T17:00:00+00:00",
+        "id_ponto": "P-SUL-02",
+        "inicio_janela": "2026-03-21T08:00:00+00:00",
+        "latitude": -23.622445,
+        "longitude": -46.6987789,
+        "nome": "Shopping Morumbi",
+        "setor_geografico": "SUL",
+        "status_ativo": true,
+        "tempo_servico": 55,
+        "tipo_ponto": "comercio"
+      },
+      {
+        "fim_janela": "2026-03-21T17:00:00+00:00",
+        "id_ponto": "P-ABC-01",
+        "inicio_janela": "2026-03-21T08:00:00+00:00",
+        "latitude": -23.7121004,
+        "longitude": -46.5488902,
+        "nome": "Agencia CEF - Centro SBC",
+        "setor_geografico": "ABC",
+        "status_ativo": true,
+        "tempo_servico": 20,
+        "tipo_ponto": "agencia"
+      },
+      {
+        "fim_janela": "2026-03-21T17:00:00+00:00",
+        "id_ponto": "P-NORTE-01",
+        "inicio_janela": "2026-03-21T08:00:00+00:00",
+        "latitude": -23.479123,
+        "longitude": -46.5184567,
+        "nome": "Internacional Shopping Guarulhos",
+        "setor_geografico": "NORTE",
+        "status_ativo": true,
+        "tempo_servico": 45,
+        "tipo_ponto": "comercio"
+      },
+      {
+        "fim_janela": "2026-03-21T17:00:00+00:00",
+        "id_ponto": "P-CENTRO-03",
+        "inicio_janela": "2026-03-21T08:00:00+00:00",
+        "latitude": -23.5417852,
+        "longitude": -46.6285521,
+        "nome": "Mercado Municipal de Sao Paulo",
+        "setor_geografico": "CENTRO",
+        "status_ativo": true,
+        "tempo_servico": 40,
+        "tipo_ponto": "comercio"
+      },
+      {
+        "fim_janela": "2026-03-21T17:00:00+00:00",
+        "id_ponto": "P-OESTE-03",
+        "inicio_janela": "2026-03-21T08:00:00+00:00",
+        "latitude": -23.5413123,
+        "longitude": -46.7231456,
+        "nome": "Shopping Villa-Lobos",
+        "setor_geografico": "OESTE",
+        "status_ativo": true,
+        "tempo_servico": 50,
+        "tipo_ponto": "comercio"
+      },
+      {
+        "fim_janela": "2026-03-21T17:00:00+00:00",
+        "id_ponto": "P-OESTE-04",
+        "inicio_janela": "2026-03-21T08:00:00+00:00",
+        "latitude": -23.4981245,
+        "longitude": -46.8488921,
+        "nome": "Agencia Itau - Alphaville",
+        "setor_geografico": "OESTE",
+        "status_ativo": true,
+        "tempo_servico": 20,
+        "tipo_ponto": "agencia"
+      },
+      {
+        "fim_janela": "2026-03-21T17:00:00+00:00",
+        "id_ponto": "P-LESTE-03",
+        "inicio_janela": "2026-03-21T08:00:00+00:00",
+        "latitude": -23.4975612,
+        "longitude": -46.4442134,
+        "nome": "Agencia Bradesco - Sao Miguel",
+        "setor_geografico": "LESTE",
+        "status_ativo": true,
+        "tempo_servico": 25,
+        "tipo_ponto": "agencia"
+      },
+      {
+        "fim_janela": "2026-03-21T17:00:00+00:00",
+        "id_ponto": "P-LESTE-04",
+        "inicio_janela": "2026-03-21T08:00:00+00:00",
+        "latitude": -23.535221,
+        "longitude": -46.471718,
+        "nome": "Shopping Metro Itaquera",
+        "setor_geografico": "LESTE",
+        "status_ativo": true,
+        "tempo_servico": 60,
+        "tipo_ponto": "comercio"
+      },
+      {
+        "fim_janela": "2026-03-21T17:00:00+00:00",
+        "id_ponto": "P-SUL-03",
+        "inicio_janela": "2026-03-21T08:00:00+00:00",
+        "latitude": -23.6761123,
+        "longitude": -46.6789901,
+        "nome": "Agencia BB - Interlagos",
+        "setor_geografico": "SUL",
+        "status_ativo": true,
+        "tempo_servico": 20,
+        "tipo_ponto": "agencia"
+      },
+      {
+        "fim_janela": "2026-03-21T17:00:00+00:00",
+        "id_ponto": "P-SUL-04",
+        "inicio_janela": "2026-03-21T08:00:00+00:00",
+        "latitude": -23.666991,
+        "longitude": -46.7028812,
+        "nome": "Shopping SP Market",
+        "setor_geografico": "SUL",
+        "status_ativo": true,
+        "tempo_servico": 45,
+        "tipo_ponto": "comercio"
+      },
+      {
+        "fim_janela": "2026-03-21T17:00:00+00:00",
+        "id_ponto": "P-ABC-02",
+        "inicio_janela": "2026-03-21T08:00:00+00:00",
+        "latitude": -23.6502213,
+        "longitude": -46.5338819,
+        "nome": "Grand Plaza Shopping - Santo Andre",
+        "setor_geografico": "ABC",
+        "status_ativo": true,
+        "tempo_servico": 55,
+        "tipo_ponto": "comercio"
+      },
+      {
+        "fim_janela": "2026-03-21T17:00:00+00:00",
+        "id_ponto": "P-ABC-03",
+        "inicio_janela": "2026-03-21T08:00:00+00:00",
+        "latitude": -23.6181123,
+        "longitude": -46.5714456,
+        "nome": "Agencia Santander - Sao Caetano",
+        "setor_geografico": "ABC",
+        "status_ativo": true,
+        "tempo_servico": 25,
+        "tipo_ponto": "agencia"
+      },
+      {
+        "fim_janela": "2026-03-21T17:00:00+00:00",
+        "id_ponto": "P-NORTE-02",
+        "inicio_janela": "2026-03-21T08:00:00+00:00",
+        "latitude": -23.468112,
+        "longitude": -46.5312214,
+        "nome": "Agencia CEF - Centro Guarulhos",
+        "setor_geografico": "NORTE",
+        "status_ativo": true,
+        "tempo_servico": 20,
+        "tipo_ponto": "agencia"
+      },
+      {
+        "fim_janela": "2026-03-21T17:00:00+00:00",
+        "id_ponto": "P-NORTE-03",
+        "inicio_janela": "2026-03-21T08:00:00+00:00",
+        "latitude": -23.4431562,
+        "longitude": -46.5244123,
+        "nome": "Parque Shopping Maia - Guarulhos",
+        "setor_geografico": "NORTE",
+        "status_ativo": true,
+        "tempo_servico": 50,
+        "tipo_ponto": "comercio"
+      },
+      {
+        "fim_janela": "2026-03-21T17:00:00+00:00",
+        "id_ponto": "P-SUL-05",
+        "inicio_janela": "2026-03-21T08:00:00+00:00",
+        "latitude": -23.7644123,
+        "longitude": -46.6978122,
+        "nome": "Agencia Bradesco - Grajau",
+        "setor_geografico": "SUL",
+        "status_ativo": true,
+        "tempo_servico": 30,
+        "tipo_ponto": "agencia"
+      },
+      {
+        "fim_janela": "2026-03-21T17:00:00+00:00",
+        "id_ponto": "P-OESTE-05",
+        "inicio_janela": "2026-03-21T08:00:00+00:00",
+        "latitude": -23.5021234,
+        "longitude": -47.0833121,
+        "nome": "Catarina Fashion Outlet - Extensao",
+        "setor_geografico": "OESTE",
+        "status_ativo": true,
+        "tempo_servico": 60,
+        "tipo_ponto": "comercio"
+      },
+      {
+        "fim_janela": "2026-03-21T17:00:00+00:00",
+        "id_ponto": "P-ABC-04",
+        "inicio_janela": "2026-03-21T08:00:00+00:00",
+        "latitude": -23.686123,
+        "longitude": -46.6231229,
+        "nome": "Agencia Itau - Centro Diadema",
+        "setor_geografico": "ABC",
+        "status_ativo": true,
+        "tempo_servico": 20,
+        "tipo_ponto": "agencia"
+      },
+      {
+        "fim_janela": "2026-03-21T17:00:00+00:00",
+        "id_ponto": "P-LESTE-05",
+        "inicio_janela": "2026-03-21T08:00:00+00:00",
+        "latitude": -23.4188912,
+        "longitude": -46.3988123,
+        "nome": "Shopping Bonsucesso - Guarulhos Leste",
+        "setor_geografico": "LESTE",
+        "status_ativo": true,
+        "tempo_servico": 45,
+        "tipo_ponto": "comercio"
+      },
+      {
+        "fim_janela": "2026-03-21T17:00:00+00:00",
+        "id_ponto": "P-CENTRO-04",
+        "inicio_janela": "2026-03-21T08:00:00+00:00",
+        "latitude": -23.5488123,
+        "longitude": -46.633312,
+        "nome": "Agencia Santander - Rua Direita",
+        "setor_geografico": "CENTRO",
+        "status_ativo": true,
+        "tempo_servico": 25,
+        "tipo_ponto": "agencia"
+      },
+      {
+        "fim_janela": "2026-03-21T17:00:00+00:00",
+        "id_ponto": "P-SUL-06",
+        "inicio_janela": "2026-03-21T08:00:00+00:00",
+        "latitude": -23.6644123,
+        "longitude": -46.7211228,
+        "nome": "Shopping Fiesta",
+        "setor_geografico": "SUL",
+        "status_ativo": true,
+        "tempo_servico": 40,
+        "tipo_ponto": "comercio"
+      },
+      {
+        "fim_janela": "2026-03-21T17:00:00+00:00",
+        "id_ponto": "P-OESTE-06",
+        "inicio_janela": "2026-03-21T08:00:00+00:00",
+        "latitude": -23.5322123,
+        "longitude": -46.7755121,
+        "nome": "Agencia BB - Osasco Centro",
+        "setor_geografico": "OESTE",
+        "status_ativo": true,
+        "tempo_servico": 20,
+        "tipo_ponto": "agencia"
+      },
+      {
+        "fim_janela": "2026-03-21T17:00:00+00:00",
+        "id_ponto": "P-ABC-05",
+        "inicio_janela": "2026-03-21T08:00:00+00:00",
+        "latitude": -23.6688122,
+        "longitude": -46.4611223,
+        "nome": "Maua Plaza Shopping",
+        "setor_geografico": "ABC",
+        "status_ativo": true,
+        "tempo_servico": 50,
+        "tipo_ponto": "comercio"
+      },
+      {
+        "fim_janela": "2026-03-21T17:00:00+00:00",
+        "id_ponto": "P-NORTE-04",
+        "inicio_janela": "2026-03-21T08:00:00+00:00",
+        "latitude": -23.3288123,
+        "longitude": -46.5866122,
+        "nome": "Agencia CEF - Mairipora",
+        "setor_geografico": "NORTE",
+        "status_ativo": true,
+        "tempo_servico": 25,
+        "tipo_ponto": "agencia"
+      }
+    ],
+    "solver": {
+      "collect_stats": false,
+      "display": false,
+      "max_iterations": 1000,
+      "seed": 20260411,
+      "service_policy": "maximize_attendance_v1"
+    },
+    "versao_schema": "1.0",
+    "viaturas": [
+      {
+        "capacidade_financeira": "5000000.00",
+        "capacidade_volumetrica": "1500",
+        "compatibilidade_servico": [
+          "suprimento",
+          "recolhimento"
+        ],
+        "custo_fixo": "1200.00",
+        "custo_variavel": "4.50",
+        "fim_turno": "2026-03-21T22:00:00+00:00",
+        "id_base_origem": "BASE-SP-CENTRO",
+        "id_viatura": "V-CENTRO-01",
+        "inicio_turno": "2026-03-21T06:00:00+00:00",
+        "status_ativo": true,
+        "teto_segurado": "5000000.00",
+        "tipo_viatura": "pesada"
+      },
+      {
+        "capacidade_financeira": "2000000.00",
+        "capacidade_volumetrica": "800",
+        "compatibilidade_servico": [
+          "suprimento",
+          "recolhimento"
+        ],
+        "custo_fixo": "800.00",
+        "custo_variavel": "3.20",
+        "fim_turno": "2026-03-21T22:00:00+00:00",
+        "id_base_origem": "BASE-SP-CENTRO",
+        "id_viatura": "V-CENTRO-02",
+        "inicio_turno": "2026-03-21T06:00:00+00:00",
+        "status_ativo": true,
+        "teto_segurado": "2000000.00",
+        "tipo_viatura": "media"
+      },
+      {
+        "capacidade_financeira": "2500000.00",
+        "capacidade_volumetrica": "800",
+        "compatibilidade_servico": [
+          "suprimento",
+          "recolhimento"
+        ],
+        "custo_fixo": "850.00",
+        "custo_variavel": "3.30",
+        "fim_turno": "2026-03-21T21:00:00+00:00",
+        "id_base_origem": "BASE-SP-LESTE",
+        "id_viatura": "V-LESTE-01",
+        "inicio_turno": "2026-03-21T06:30:00+00:00",
+        "status_ativo": true,
+        "teto_segurado": "2500000.00",
+        "tipo_viatura": "media"
+      },
+      {
+        "capacidade_financeira": "800000.00",
+        "capacidade_volumetrica": "400",
+        "compatibilidade_servico": [
+          "suprimento",
+          "recolhimento"
+        ],
+        "custo_fixo": "500.00",
+        "custo_variavel": "2.50",
+        "fim_turno": "2026-03-21T21:00:00+00:00",
+        "id_base_origem": "BASE-SP-LESTE",
+        "id_viatura": "V-LESTE-02",
+        "inicio_turno": "2026-03-21T06:30:00+00:00",
+        "status_ativo": true,
+        "teto_segurado": "800000.00",
+        "tipo_viatura": "leve"
+      },
+      {
+        "capacidade_financeira": "4500000.00",
+        "capacidade_volumetrica": "1500",
+        "compatibilidade_servico": [
+          "suprimento",
+          "recolhimento"
+        ],
+        "custo_fixo": "1150.00",
+        "custo_variavel": "4.40",
+        "fim_turno": "2026-03-21T21:30:00+00:00",
+        "id_base_origem": "BASE-SP-SUL",
+        "id_viatura": "V-SUL-01",
+        "inicio_turno": "2026-03-21T06:00:00+00:00",
+        "status_ativo": true,
+        "teto_segurado": "4500000.00",
+        "tipo_viatura": "pesada"
+      },
+      {
+        "capacidade_financeira": "1000000.00",
+        "capacidade_volumetrica": "400",
+        "compatibilidade_servico": [
+          "suprimento",
+          "recolhimento"
+        ],
+        "custo_fixo": "550.00",
+        "custo_variavel": "2.60",
+        "fim_turno": "2026-03-21T21:30:00+00:00",
+        "id_base_origem": "BASE-SP-SUL",
+        "id_viatura": "V-SUL-02",
+        "inicio_turno": "2026-03-21T06:00:00+00:00",
+        "status_ativo": true,
+        "teto_segurado": "1000000.00",
+        "tipo_viatura": "leve"
+      },
+      {
+        "capacidade_financeira": "2200000.00",
+        "capacidade_volumetrica": "800",
+        "compatibilidade_servico": [
+          "suprimento",
+          "recolhimento"
+        ],
+        "custo_fixo": "820.00",
+        "custo_variavel": "3.10",
+        "fim_turno": "2026-03-21T20:00:00+00:00",
+        "id_base_origem": "BASE-SP-ABC",
+        "id_viatura": "V-ABC-01",
+        "inicio_turno": "2026-03-21T07:00:00+00:00",
+        "status_ativo": true,
+        "teto_segurado": "2200000.00",
+        "tipo_viatura": "media"
+      },
+      {
+        "capacidade_financeira": "2200000.00",
+        "capacidade_volumetrica": "800",
+        "compatibilidade_servico": [
+          "suprimento",
+          "recolhimento"
+        ],
+        "custo_fixo": "820.00",
+        "custo_variavel": "3.10",
+        "fim_turno": "2026-03-21T20:00:00+00:00",
+        "id_base_origem": "BASE-SP-ABC",
+        "id_viatura": "V-ABC-02",
+        "inicio_turno": "2026-03-21T07:00:00+00:00",
+        "status_ativo": true,
+        "teto_segurado": "2200000.00",
+        "tipo_viatura": "media"
+      },
+      {
+        "capacidade_financeira": "6000000.00",
+        "capacidade_volumetrica": "2000",
+        "compatibilidade_servico": [
+          "suprimento",
+          "recolhimento"
+        ],
+        "custo_fixo": "1500.00",
+        "custo_variavel": "5.20",
+        "fim_turno": "2026-03-21T23:00:00+00:00",
+        "id_base_origem": "BASE-SP-NORTE",
+        "id_viatura": "V-NORTE-01",
+        "inicio_turno": "2026-03-21T05:30:00+00:00",
+        "status_ativo": true,
+        "teto_segurado": "6000000.00",
+        "tipo_viatura": "pesada"
+      },
+      {
+        "capacidade_financeira": "500000.00",
+        "capacidade_volumetrica": "300",
+        "compatibilidade_servico": [
+          "suprimento",
+          "recolhimento"
+        ],
+        "custo_fixo": "450.00",
+        "custo_variavel": "2.20",
+        "fim_turno": "2026-03-21T23:00:00+00:00",
+        "id_base_origem": "BASE-SP-NORTE",
+        "id_viatura": "V-NORTE-02",
+        "inicio_turno": "2026-03-21T05:30:00+00:00",
+        "status_ativo": true,
+        "teto_segurado": "500000.00",
+        "tipo_viatura": "leve"
+      }
+    ]
+  },
+  "hash_cenario": "68b45df125cb74315e3573e872dfe5ddb3f646f944619d8e8e11328af71e1f60",
+  "output_path": "/home/thiagobibianodasilva/Documentos/aredes-roteirizacao-numerario/data/fake_smoke/outputs/resultado-planejamento.json",
+  "snapshot_dir": "/home/thiagobibianodasilva/Documentos/aredes-roteirizacao-numerario/data/fake_smoke/logistics_snapshots",
+  "source_dir": "/home/thiagobibianodasilva/Documentos/aredes-roteirizacao-numerario/data/fake_smoke/logistics_sources"
+}

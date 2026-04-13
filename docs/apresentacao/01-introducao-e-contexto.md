@@ -2,39 +2,127 @@
 
 ## O problema
 
-Uma transportadora de valores precisa decidir, no início do dia, quais viaturas sairão de cada base, quais pontos serão atendidos e em que ordem. Essa decisão precisa equilibrar:
+No transporte de valores, planejar uma operação não significa apenas ligar pontos da rede.
 
-- janelas de tempo;
-- capacidade volumétrica;
-- limite financeiro segurado;
-- custo de deslocamento;
-- cobertura de atendimento.
+É preciso definir:
 
-## Dois fluxos operacionais
+- quais **ordens** serão atendidas;
+- quais **viaturas** executarão cada circuito;
+- em que sequência os atendimentos ocorrerão;
+- como respeitar restrições de tempo, capacidade e risco.
 
-O projeto trata dois tipos de operação:
+Cada decisão altera o custo da operação, o uso da frota e a viabilidade do atendimento.
 
-- **suprimento**: a carga sai da base e é descarregada ao longo da rota;
-- **recolhimento**: a carga é acumulada ao longo da rota e aproxima a viatura do limite segurado.
+---
 
-Essa diferença muda a leitura de capacidade e impede que a solução seja vista como um simples problema de menor caminho.
+## A rede analisada
 
-## Cenário da apresentação
+Nesta apresentação, a rede é representada por poucos elementos centrais:
 
-O fio condutor desta apresentação é o cenário **operação sob pressão**. Ele é mais adequado para discussão porque expõe conflito real entre tempo, frota, risco e cobertura.
+- **base**: origem e retorno das viaturas;
+- **ordens**: demandas de atendimento distribuídas na rede;
+- **viaturas**: recursos operacionais disponíveis;
+- **rotas**: circuitos construídos para atender as ordens.
 
-- mais ordens e maior dispersão geográfica;
-- maior pressão de capacidade e risco;
-- resultado operacional mais rico para interpretar.
+O interesse aqui não está em descrever uma operação isolada, mas em observar como essa rede responde quando a pressão operacional aumenta.
 
-![Rede-base do cenário operação sob pressão](./assets/generated/operacao_sob_pressao_rede_base.png)
+**[DEIXA PARA IMAGEM]**
+Inserir uma imagem simples da rede-base com:
+- base destacada;
+- pontos de atendimento;
+- indicação visual de ordens distribuídas no espaço.
 
-## Pergunta central
+---
 
-A pergunta da disciplina não é “qual é o menor caminho?”, mas sim:
+## Dois tipos de operação
 
-> como construir rotas viáveis, seguras e economicamente eficientes em uma rede com restrições?
+O problema foi analisado em dois contextos operacionais:
 
-![Transição da rede-base para a solução](./assets/gifs/rede-base-para-solucao.gif)
+### Suprimento
+A viatura parte da base carregada e realiza entregas ao longo da rota.
 
-[⬅️ Anterior](./01-introducao-e-contexto.md) | [Próxima ➡️](./02-elementos-da-rede-grafica.md)
+### Recolhimento
+A viatura percorre a rede acumulando valores ao longo do circuito.
+
+Essa separação é importante porque muda a interpretação de capacidade, risco e ocupação da viatura.
+
+Nesta apresentação, `suprimento` e `recolhimento` são lidos como **experimentos isolados**.
+
+---
+
+## O foco desta apresentação
+
+O objetivo aqui não é mostrar código nem detalhar implementação.
+
+O foco é analisar, sobre a mesma rede de transporte de valores, o comportamento de duas abordagens de resolução:
+
+- **PyVRP**
+- **PuLP**
+
+A comparação busca responder uma questão prática:
+
+> como a qualidade da solução e a viabilidade computacional mudam quando cresce a quantidade de ordens na rede?
+
+---
+
+## Recorte experimental
+
+O benchmark parte do cenário **`operacao_sob_pressao`**.
+
+A partir dele, são geradas amostras aleatórias de ordens em diferentes escalas:
+
+- **20%**
+- **40%**
+- **60%**
+- **80%**
+
+Ao final, há ainda uma **rodada exaustiva com 100% das ordens**.
+
+Esse desenho permite observar a rede de forma progressiva, comparando os solvers em situações de complexidade crescente.
+
+**[DEIXA PARA GIF]**
+Inserir um gif mostrando o aumento gradual da quantidade de ordens sobre a mesma rede:
+20% → 40% → 60% → 80% → 100%.
+
+---
+
+## O que será observado
+
+A análise comparativa se apoia em quatro leituras principais:
+
+- **médias por percentual de ordens**;
+- **dispersão entre repetições**;
+- **erro relativo da função objetivo do PyVRP em relação ao PuLP**;
+- **viabilidade do PuLP conforme a escala cresce**.
+
+Assim, a apresentação não discute apenas “qual solver resolve”, mas **como cada abordagem se comporta sob aumento de escala**.
+
+---
+
+## Interpretação esperada
+
+Em problemas de roteirização, encontrar uma solução viável é apenas parte da questão.
+
+Também é necessário avaliar:
+
+- se a solução mantém boa qualidade;
+- se o tempo de processamento permanece aceitável;
+- se a abordagem continua utilizável quando a rede cresce.
+
+Esse é o ponto central da análise apresentada a seguir.
+
+---
+
+## Síntese da abertura
+
+Esta apresentação investiga a roteirização em redes de transporte de valores a partir de um benchmark comparativo.
+
+O interesse principal está em entender o equilíbrio entre:
+
+- **custo da solução**;
+- **estabilidade dos resultados**;
+- **capacidade prática de resolução**.
+
+A partir daqui, a rede deixa de ser vista apenas como um conjunto de rotas possíveis e passa a ser analisada como um problema de decisão sob pressão operacional.
+
+[Próxima ➡️](./02-elementos-da-rede-grafica.md)

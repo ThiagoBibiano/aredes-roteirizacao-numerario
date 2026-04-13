@@ -12,6 +12,11 @@ from time import perf_counter
 from typing import Any
 
 from roteirizacao.application.instance_builder import OptimizationInstanceBuilder
+from roteirizacao.application.logistics_matrix import LogisticsMatrixBuilder
+from roteirizacao.application.logistics_provider import (
+    FallbackLogisticsMatrixProvider,
+    PersistedSnapshotLogisticsMatrixProvider,
+)
 from roteirizacao.application.orchestration import PlanningDatasetLoader
 from roteirizacao.application.preparation import PreparationPipeline
 from roteirizacao.benchmark.common import BenchmarkResultRecord, BenchmarkRoute, BenchmarkSolution, build_result_record
@@ -261,4 +266,12 @@ def load_instances_from_dataset(dataset_dir: Path | str) -> dict[ClasseOperacion
         viaturas_brutas=loader.load_raw_records(payloads.viaturas_payload, raw_cls=ViaturaBruta, default_origin="dataset:viaturas", id_field="id_viatura", contexto=context),
         ordens_brutas=loader.load_raw_records(payloads.ordens_payload, raw_cls=OrdemBruta, default_origin="dataset:ordens", id_field="id_ordem", contexto=context),
     )
-    return OptimizationInstanceBuilder(context).build(preparation).instancias
+    matrix_provider = FallbackLogisticsMatrixProvider(
+        context,
+        primary=PersistedSnapshotLogisticsMatrixProvider(
+            context,
+            snapshot_dir=dataset_dir / "logistics_snapshots",
+        ),
+        fallback=LogisticsMatrixBuilder(context),
+    )
+    return OptimizationInstanceBuilder(context, matrix_provider=matrix_provider).build(preparation).instancias

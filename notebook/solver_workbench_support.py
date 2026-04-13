@@ -409,6 +409,7 @@ def run_scenario(
 
 def summarize_orchestration(orchestration) -> dict[str, Any]:
     result = orchestration.resultado_planejamento
+    fleet_summary = summarize_fleet_usage(orchestration)
     return {
         "id_execucao": result.id_execucao,
         "status_final": result.status_final.value,
@@ -423,8 +424,14 @@ def summarize_orchestration(orchestration) -> dict[str, Any]:
         "ordens_nao_atendidas": result.resumo_operacional.total_ordens_nao_atendidas,
         "taxa_atendimento": str(result.kpi_operacional.taxa_atendimento),
         "utilizacao_frota": str(result.kpi_operacional.utilizacao_frota),
+        "viaturas_acionadas_unicas": result.kpi_operacional.viaturas_acionadas,
+        "alocacoes_viatura_rota": fleet_summary["alocacoes_viatura_rota"],
+        "viaturas_reutilizadas": fleet_summary["viaturas_reutilizadas"],
+        "viaturas_reutilizadas_entre_classes": fleet_summary["viaturas_reutilizadas_entre_classes"],
+        "ids_viaturas_reutilizadas_entre_classes": fleet_summary["ids_viaturas_reutilizadas_entre_classes"],
         "custo_total_estimado": str(result.kpi_gerencial.custo_total_estimado),
         "resultado_json": str(orchestration.result_path),
+        "observacao_frota": fleet_summary["leitura_correta"],
     }
 
 
@@ -473,6 +480,67 @@ def _iter_routes(orchestration):
     result = orchestration.resultado_planejamento
     yield from result.rotas_suprimento
     yield from result.rotas_recolhimento
+
+
+def summarize_fleet_usage(orchestration) -> dict[str, Any]:
+    route_rows = route_sequences(orchestration)
+    vehicle_counter = Counter(row["id_viatura"] for row in route_rows)
+    classes_by_vehicle: dict[str, set[str]] = {}
+    for row in route_rows:
+        classes_by_vehicle.setdefault(row["id_viatura"], set()).add(row["classe_operacional"])
+
+    reused_vehicle_ids = sorted(vehicle_id for vehicle_id, count in vehicle_counter.items() if count > 1)
+    reused_between_classes = sorted(
+        vehicle_id for vehicle_id, classes in classes_by_vehicle.items()
+        if len(classes) > 1
+    )
+    unique_vehicles = len(vehicle_counter)
+    total_routes = len(route_rows)
+    return {
+        "alocacoes_viatura_rota": total_routes,
+        "viaturas_unicas": unique_vehicles,
+        "viaturas_reutilizadas": len(reused_vehicle_ids),
+        "viaturas_reutilizadas_entre_classes": len(reused_between_classes),
+        "ids_viaturas_reutilizadas": reused_vehicle_ids,
+        "ids_viaturas_reutilizadas_entre_classes": reused_between_classes,
+        "rotas_por_viatura_unica": 0.0 if unique_vehicles == 0 else round(total_routes / unique_vehicles, 2),
+        "leitura_correta": (
+            "Suprimento e recolhimento são resolvidos em instâncias separadas. "
+            "Por isso, o mesmo ID de viatura pode aparecer em mais de uma rota e "
+            "`viaturas_acionadas_unicas` pode ser menor que `total_rotas`."
+        ),
+    }
+
+
+def fleet_assignment_rows(orchestration, *, only_reused: bool = True) -> list[dict[str, Any]]:
+    route_rows = route_sequences(orchestration)
+    by_vehicle: dict[str, dict[str, Any]] = {}
+    for row in route_rows:
+        vehicle_id = row["id_viatura"]
+        entry = by_vehicle.setdefault(
+            vehicle_id,
+            {"Viatura": vehicle_id, "Classes": set(), "Rotas": [], "Total de rotas": 0},
+        )
+        entry["Classes"].add(row["classe_operacional"])
+        entry["Rotas"].append(row["id_rota"])
+        entry["Total de rotas"] += 1
+
+    rows: list[dict[str, Any]] = []
+    for vehicle_id in sorted(by_vehicle):
+        entry = by_vehicle[vehicle_id]
+        if only_reused and entry["Total de rotas"] <= 1:
+            continue
+        classes = sorted(entry["Classes"])
+        rows.append(
+            {
+                "Viatura": vehicle_id,
+                "Classes": " + ".join(classes),
+                "Total de rotas": entry["Total de rotas"],
+                "Rotas": ", ".join(entry["Rotas"]),
+                "Reuso entre classes": "sim" if len(classes) > 1 else "não",
+            }
+        )
+    return rows
 
 
 def _route_color_map(orchestration) -> dict[str, tuple[float, float, float, float]]:
@@ -1174,10 +1242,11 @@ def plot_solution_graph(
 def plot_kpi_dashboard(orchestration, *, figsize: tuple[int, int] = (12, 4)):
     _, plt = _require_network_stack()
     result = orchestration.resultado_planejamento
+    fleet_summary = summarize_fleet_usage(orchestration)
     figure, axes = plt.subplots(1, 4, figsize=figsize, constrained_layout=True)
     cards = [
         ("Taxa de atendimento", f"{Decimal(str(result.kpi_operacional.taxa_atendimento)) * 100:.1f}%"),
-        ("Viaturas acionadas", str(result.kpi_operacional.viaturas_acionadas)),
+        ("Rotas / viaturas únicas", f"{fleet_summary['alocacoes_viatura_rota']} / {fleet_summary['viaturas_unicas']}"),
         ("Distância total", f"{result.kpi_operacional.distancia_total_estimada / 1000:.1f} km"),
         ("Custo estimado", f"R$ {_format_brl(result.kpi_gerencial.custo_total_estimado)}"),
     ]
@@ -1187,6 +1256,16 @@ def plot_kpi_dashboard(orchestration, *, figsize: tuple[int, int] = (12, 4)):
         axis.add_patch(plt.Rectangle((0, 0), 1, 1, color=color, alpha=0.92, transform=axis.transAxes))
         axis.text(0.08, 0.68, title, color="white", fontsize=11, fontweight="bold", transform=axis.transAxes)
         axis.text(0.08, 0.32, value, color="white", fontsize=22, fontweight="bold", transform=axis.transAxes)
+    if fleet_summary["viaturas_reutilizadas_entre_classes"] > 0:
+        figure.text(
+            0.5,
+            0.01,
+            "Leitura correta: o mesmo ID de viatura pode reaparecer porque suprimento e recolhimento são resolvidos separadamente.",
+            ha="center",
+            va="bottom",
+            fontsize=8.8,
+            color="#475569",
+        )
     return figure, axes
 
 

@@ -35,20 +35,22 @@ def build_solver_workbench() -> nbf.NotebookNode:
             "    build_takeaway,\n"
             "    compile_scenario,\n"
             "    export_presentation_bundle,\n"
+            "    fleet_assignment_rows,\n"
             "    load_scenario_artifacts,\n"
             "    plot_base_graph,\n"
             "    plot_kpi_dashboard,\n"
             "    plot_solution_graph,\n"
             "    route_sequences,\n"
             "    run_scenario,\n"
+            "    summarize_fleet_usage,\n"
             "    summarize_dataset,\n"
             "    summarize_orchestration,\n"
             ")\n"
             "\n"
-            "SCENARIO = 'operacao_controlada'\n"
-            "MAX_ITERATIONS = 50\n"
+            "SCENARIO = 'operacao_sob_pressao'\n"
+            "MAX_ITERATIONS = 500\n"
             "SEED = 1\n"
-            "WITH_BASEMAP = False\n"
+            "WITH_BASEMAP = True\n"
             "EXPORT_DIR = PROJECT_ROOT / 'docs' / 'apresentacao' / 'assets' / 'generated' / 'notebook'\n"
             "display(Markdown(f'**Configuracao ativa**: cenario=`{SCENARIO}`, max_iterations=`{MAX_ITERATIONS}`, seed=`{SEED}`'))"
         ),
@@ -91,13 +93,17 @@ def build_solver_workbench() -> nbf.NotebookNode:
             "    materialize_snapshot=True,\n"
             ")\n"
             "SUMMARY = summarize_orchestration(ORCHESTRATION)\n"
+            "FLEET_SUMMARY = summarize_fleet_usage(ORCHESTRATION)\n"
             "SUMMARY"
         ),
         nbf.v4.new_code_cell("plot_solution_graph(ORCHESTRATION, ARTIFACTS, with_basemap=WITH_BASEMAP)"),
-        nbf.v4.new_markdown_cell("## 6. Qual foi o saldo operacional em KPI e sequencia?"),
+        nbf.v4.new_markdown_cell("## 6. Como ler rotas e viaturas neste resultado?"),
+        nbf.v4.new_code_cell("FLEET_SUMMARY"),
+        nbf.v4.new_code_cell("fleet_assignment_rows(ORCHESTRATION)"),
+        nbf.v4.new_markdown_cell("## 7. Qual foi o saldo operacional em KPI e sequência?"),
         nbf.v4.new_code_cell("plot_kpi_dashboard(ORCHESTRATION)"),
         nbf.v4.new_code_cell("route_sequences(ORCHESTRATION)"),
-        nbf.v4.new_markdown_cell("## 7. Qual takeaway entra na apresentacao?"),
+        nbf.v4.new_markdown_cell("## 8. Qual takeaway entra na apresentação?"),
         nbf.v4.new_code_cell(
             "display(Markdown(build_takeaway(ORCHESTRATION, ARTIFACTS)))\n"
             "export_presentation_bundle(ORCHESTRATION, ARTIFACTS, output_dir=EXPORT_DIR, with_basemap=WITH_BASEMAP)"
