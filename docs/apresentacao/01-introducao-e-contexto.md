@@ -35,7 +35,6 @@ Cenário de **distribuição**. A viatura parte da Base com carga máxima e real
 Cenário de **coleta**. A viatura percorre a rede acumulando valores ao longo da rota, terminando o circuito com carga máxima ao retornar à Base.
 
 Esta distinção é fundamental, pois altera drasticamente a dinâmica de ocupação do veículo, a exposição ao risco e o gerenciamento da capacidade ao longo da rota.
-> **Nota**: Para fins desta apresentação, `suprimento` e `recolhimento` são tratados como **experimentos independentes**.
-> **Nota**: Para fins desta apresentação, não foram utilizados dados reais. Na prática operacional, o motorista desconhece a rota até o momento do embarque, o que justifica o uso de dados simulados para esta análise.
+> **Notas**: Para fins desta apresentação, `suprimento` e `recolhimento` são tratados como **experimentos independentes**. Para fins desta apresentação, não foram utilizados dados reais. Na prática operacional, o motorista desconhece a rota até o momento do embarque, o que justifica o uso de dados simulados para esta análise.
 
 [Próxima ➡️](./02-elementos-da-rede-grafica.md)
