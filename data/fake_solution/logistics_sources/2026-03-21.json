@@ -1,6 +1,6 @@
 {
   "snapshot_id": "snap-operacao_controlada-2026-03-21",
-  "generated_at": "2026-04-11T20:52:26.216692+00:00",
+  "generated_at": "2026-04-13T00:43:47.073071+00:00",
   "strategy_name": "synthetic_geodesic_v1",
   "source_name": "operacao_controlada_source",
   "arcs": [

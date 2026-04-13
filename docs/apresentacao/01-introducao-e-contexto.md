@@ -1,128 +1,41 @@
 # 1. Introdução e Contexto
 
-## O problema
+## O Desafio Operacional
 
-No transporte de valores, planejar uma operação não significa apenas ligar pontos da rede.
+No transporte de valores, o planejamento logístico transcende a simples conexão de pontos em um mapa. Trata-se de uma orquestração complexa que exige a definição precisa de:
 
-É preciso definir:
+* 📦 **Ordens**: Quais demandas de atendimento serão supridas ou recolhidas.
+* 🛻 **Viaturas**: Quais recursos operacionais (blindados) executarão cada circuito.
+* ⏱️ **Sequência**: A ordem exata dos atendimentos para maximizar a eficiência.
+* 🛡️ **Restrições**: Como garantir conformidade com janelas de tempo, limites de capacidade do baú e gerenciamento de risco.
 
-- quais **ordens** serão atendidas;
-- quais **viaturas** executarão cada circuito;
-- em que sequência os atendimentos ocorrerão;
-- como respeitar restrições de tempo, capacidade e risco.
-
-Cada decisão altera o custo da operação, o uso da frota e a viabilidade do atendimento.
+Cada decisão impacta diretamente o custo total, a taxa de ocupação da frota e a viabilidade da operação.
 
 ---
 
-## A rede analisada
+## A Rede em Análise
 
-Nesta apresentação, a rede é representada por poucos elementos centrais:
+Nesta análise, represento a operação através de seus quatro elementos centrais, simplificando a complexidade geográfica para focar na lógica da rede:
 
-- **base**: origem e retorno das viaturas;
-- **ordens**: demandas de atendimento distribuídas na rede;
-- **viaturas**: recursos operacionais disponíveis;
-- **rotas**: circuitos construídos para atender as ordens.
-
-O interesse aqui não está em descrever uma operação isolada, mas em observar como essa rede responde quando a pressão operacional aumenta.
-
-**[DEIXA PARA IMAGEM]**
-Inserir uma imagem simples da rede-base com:
-- base destacada;
-- pontos de atendimento;
-- indicação visual de ordens distribuídas no espaço.
+1.  🔴 **Base**: O ponto de origem, processamento de valores e retorno obrigatório das viaturas.
+2.  📍 **Pontos**: Locais físicos (agências, ATMs, varejistas, ...) onde as demandas estão localizadas.
+3.  📦 **Ordens**: As demandas específicas de atendimento distribuídas espacialmente na rede.
+4.  🛤️ **Rotas**: Os circuitos otimizados construídos para conectar a base às ordens.
 
 ---
 
-## Dois tipos de operação
+## Contextos Operacionais: Experimentos Isolados
 
-O problema foi analisado em dois contextos operacionais:
+A análise do problema foi conduzida sob dois cenários operacionais distintos e independentes:
 
-### Suprimento
-A viatura parte da base carregada e realiza entregas ao longo da rota.
+### 📦 Suprimento
+Cenário de **distribuição**. A viatura parte da Base com carga máxima e realiza entregas fracionadas ao longo do circuito, terminando a rota vazia.
 
-### Recolhimento
-A viatura percorre a rede acumulando valores ao longo do circuito.
+### 💰 Recolhimento
+Cenário de **coleta**. A viatura percorre a rede acumulando valores ao longo da rota, terminando o circuito com carga máxima ao retornar à Base.
 
-Essa separação é importante porque muda a interpretação de capacidade, risco e ocupação da viatura.
-
-Nesta apresentação, `suprimento` e `recolhimento` são lidos como **experimentos isolados**.
-
----
-
-## O foco desta apresentação
-
-O objetivo aqui não é mostrar código nem detalhar implementação.
-
-O foco é analisar, sobre a mesma rede de transporte de valores, o comportamento de duas abordagens de resolução:
-
-- **PyVRP**
-- **PuLP**
-
-A comparação busca responder uma questão prática:
-
-> como a qualidade da solução e a viabilidade computacional mudam quando cresce a quantidade de ordens na rede?
-
----
-
-## Recorte experimental
-
-O benchmark parte do cenário **`operacao_sob_pressao`**.
-
-A partir dele, são geradas amostras aleatórias de ordens em diferentes escalas:
-
-- **20%**
-- **40%**
-- **60%**
-- **80%**
-
-Ao final, há ainda uma **rodada exaustiva com 100% das ordens**.
-
-Esse desenho permite observar a rede de forma progressiva, comparando os solvers em situações de complexidade crescente.
-
-**[DEIXA PARA GIF]**
-Inserir um gif mostrando o aumento gradual da quantidade de ordens sobre a mesma rede:
-20% → 40% → 60% → 80% → 100%.
-
----
-
-## O que será observado
-
-A análise comparativa se apoia em quatro leituras principais:
-
-- **médias por percentual de ordens**;
-- **dispersão entre repetições**;
-- **erro relativo da função objetivo do PyVRP em relação ao PuLP**;
-- **viabilidade do PuLP conforme a escala cresce**.
-
-Assim, a apresentação não discute apenas “qual solver resolve”, mas **como cada abordagem se comporta sob aumento de escala**.
-
----
-
-## Interpretação esperada
-
-Em problemas de roteirização, encontrar uma solução viável é apenas parte da questão.
-
-Também é necessário avaliar:
-
-- se a solução mantém boa qualidade;
-- se o tempo de processamento permanece aceitável;
-- se a abordagem continua utilizável quando a rede cresce.
-
-Esse é o ponto central da análise apresentada a seguir.
-
----
-
-## Síntese da abertura
-
-Esta apresentação investiga a roteirização em redes de transporte de valores a partir de um benchmark comparativo.
-
-O interesse principal está em entender o equilíbrio entre:
-
-- **custo da solução**;
-- **estabilidade dos resultados**;
-- **capacidade prática de resolução**.
-
-A partir daqui, a rede deixa de ser vista apenas como um conjunto de rotas possíveis e passa a ser analisada como um problema de decisão sob pressão operacional.
+Esta distinção é fundamental, pois altera drasticamente a dinâmica de ocupação do veículo, a exposição ao risco e o gerenciamento da capacidade ao longo da rota.
+> **Nota**: Para fins desta apresentação, `suprimento` e `recolhimento` são tratados como **experimentos independentes**.
+> **Nota**: Para fins desta apresentação, não foram utilizados dados reais. Na prática operacional, o motorista desconhece a rota até o momento do embarque, o que justifica o uso de dados simulados para esta análise.
 
 [Próxima ➡️](./02-elementos-da-rede-grafica.md)

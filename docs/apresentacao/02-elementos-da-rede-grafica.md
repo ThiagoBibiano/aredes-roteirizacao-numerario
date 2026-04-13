@@ -1,42 +1,36 @@
 # 2. Elementos da Rede Gráfica
 
-## Da operação para a rede
+## Da operação para os dados
 
-Para analisar a roteirização, o espaço operacional é convertido em uma rede.
+Para que o algoritmo analise a roteirização, o mapa físico é abstraído e convertido em uma **rede matemática**.
 
-Nessa leitura:
+Nesta modelagem:
 
-- a **base** organiza a saída e o retorno das viaturas;
-- as **ordens** se materializam em pontos de atendimento;
-- as **viaturas** percorrem circuitos sobre essa estrutura;
-- as **rotas** passam a ser caminhos escolhidos dentro da rede.
+- a **base** é o nó central, organizando o despacho e o regresso da frota;
+- as **ordens** tornam-se pontos de atendimento (demanda);
+- as **viaturas** são os recursos que navegam por esta malha;
+- as **rotas** são os circuitos otimizados selecionados pelo solver.
 
-A representação gráfica reduz a complexidade do mapa físico e destaca apenas os elementos que influenciam a decisão.
+Essa abstração gráfica limpa o ruído geográfico e isola apenas as variáveis que impactam a decisão matemática.
 
 ---
 
-## Estrutura básica da rede
+## Estrutura da malha
 
-A rede pode ser lida a partir de três componentes:
+A rede é construída sobre três componentes fundamentais:
 
-### Nós
-Representam os pontos relevantes da operação:
-- base;
-- clientes;
-- pontos de coleta ou entrega;
-- locais associados às ordens.
+### Nós (Vértices)
+Representam os locais de interesse da operação:
+- a base operacional;
+- os pontos de `recolhimento` (coleta) ou `suprimento` (entrega).
 
-### Arestas
-Representam os deslocamentos possíveis entre dois pontos da rede.
+### Arestas (Conexões)
+Representam os deslocamentos viáveis entre dois nós quaisquer.
 
-### Atributos
-Qualificam nós e arestas com informações operacionais, como:
-- tempo de deslocamento;
-- distância;
-- custo;
-- tempo de serviço;
-- janela de atendimento;
-- demanda associada à ordem.
+### Atributos (Pesos e Restrições)
+Qualificam os nós e as arestas com parâmetros reais do negócio:
+- **Nas arestas:** tempo de viagem, distância, custo de pedágio/deslocamento.
+- **Nos nós:** tempo de serviço (SLA), janela de atendimento, volume da demanda.
 
 **[DEIXA PARA IMAGEM]**
 Inserir a imagem da rede-base com marcações simples:
@@ -48,93 +42,29 @@ Inserir a imagem da rede-base com marcações simples:
 
 ---
 
-## O que a visualização permite perceber
+## A anatomia da decisão
 
-Antes de qualquer solver ser executado, a rede já revela aspectos importantes da operação:
+Para o solver, a rede é um mapa de custos e limites.
 
-- concentração ou dispersão espacial das ordens;
-- proximidade entre pontos de atendimento;
-- regiões com maior pressão de atendimento;
-- efeito da posição da base sobre os circuitos possíveis.
+O **nó** dita as regras de parada:
+- *Onde* a ordem está;
+- *Quando* a viatura pode chegar (janela temporal);
+- *Quanto* da capacidade do baú será ocupada.
 
-Essa leitura é importante porque o problema não depende apenas da quantidade de ordens, mas também de **como elas se distribuem na rede**.
+A **aresta** dita o custo de transição:
+- *Quanto* tempo de rota será consumido;
+- *Qual* a penalidade financeira desse deslocamento.
 
----
-
-## O que cada elemento informa
-
-Cada **nó** da rede carrega informação sobre o atendimento:
-
-- onde a ordem está localizada;
-- quando pode ser atendida;
-- quanto tempo consome;
-- que carga operacional impõe à viatura.
-
-Cada **aresta** informa o custo do deslocamento entre dois pontos:
-
-- quanto tempo será gasto;
-- qual distância será percorrida;
-- qual impacto isso gera no custo total da rota.
-
-Assim, a solução não escolhe apenas “quais pontos visitar”, mas também **como atravessar a rede de forma viável**.
+Portanto, resolver o problema é decidir não apenas "quem atender", mas **"como atravessar a malha de forma viável e barata"**.
 
 ---
 
-## Leitura gráfica da operação
+## O Espaço de Busca vs. A Solução
 
-Em termos de análise de redes de transporte, a solução final pode ser entendida como:
+Em análise de redes, a solução final é definida como:
 
-> um subconjunto orientado da rede original, selecionado para atender ordens com menor custo possível e sob restrições operacionais.
+> Um subconjunto orientado da rede original, selecionado para cobrir a demanda com o menor custo possível, sem violar restrições físicas ou temporais.
 
-Isso significa que a rede completa contém muitas conexões possíveis, mas apenas parte delas será utilizada por cada viatura.
-
-**[DEIXA PARA GIF]**
-Inserir um gif mostrando:
-- a rede completa mais difusa no início;
-- depois o aparecimento de poucas conexões destacadas;
-- por fim, a formação de uma ou mais rotas válidas.
-
----
-
-## Rede potencial e rede realizada
-
-Há uma diferença importante entre duas leituras:
-
-### Rede potencial
-É o conjunto de conexões que poderiam ser usadas.
-
-### Rede realizada
-É o conjunto de conexões efetivamente selecionadas na solução.
-
-Essa distinção ajuda a interpretar os resultados do benchmark:
-o solver não cria a rede do zero, mas escolhe, entre várias possibilidades, os circuitos que melhor atendem às ordens disponíveis.
-
----
-
-## Relação com o benchmark
-
-No benchmark desta apresentação, o que varia não é apenas o solver.
-
-Também varia a pressão imposta sobre a rede, à medida que cresce a quantidade de ordens consideradas.
-
-Com isso, a visualização da rede passa a apoiar três perguntas:
-
-- como os circuitos mudam quando o volume de ordens aumenta;
-- como a ocupação espacial da rede afeta a solução;
-- em que ponto a complexidade começa a comprometer a resolução.
-
----
-
-## Síntese
-
-A representação gráfica da rede organiza o problema em uma forma analisável.
-
-Ela permite observar:
-
-- os pontos que precisam ser conectados;
-- os custos associados a cada deslocamento;
-- a diferença entre possibilidades da rede e rotas efetivamente construídas.
-
-A partir daqui, o passo seguinte é definir **como essa rede é modelada como problema de decisão** e quais critérios permitem comparar soluções.
+A rede inicial é densa e altamente conectada. O papel do solver é "podar" o excesso e isolar apenas os caminhos ótimos.
 
 [⬅️ Anterior](./01-introducao-e-contexto.md) | [Próxima ➡️](./03-modelagem-e-funcao-objetivo.md)
