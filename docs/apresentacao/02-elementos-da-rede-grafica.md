@@ -1,130 +1,70 @@
-# 2. Elementos da Rede Grafica
+# 2. Elementos da Rede Gráfica
 
-## Do mapa da cidade para o grafo matematico
+## Da operação para os dados
 
-Depois de entender o contexto operacional, o proximo passo e traduzir o problema para a linguagem de redes.
+Para que o algoritmo analise a roteirização, o mapa físico é abstraído e convertido em uma **rede matemática**.
 
-No mundo real, enxergamos:
+Nesta modelagem:
 
-- uma base;
-- agencias e clientes;
-- ruas, tempos de viagem e distancias.
+- a **base** é o nó central, organizando o despacho e o regresso da frota;
+- as **ordens** tornam-se pontos de atendimento (demanda);
+- as **viaturas** são os recursos que navegam por esta malha;
+- as **rotas** são os circuitos otimizados selecionados pelo solver.
 
-Na modelagem, isso vira um grafo.
+Essa abstração gráfica limpa o ruído geográfico e isola apenas as variáveis que impactam a decisão matemática.
 
-> Esta e a grande ponte entre o problema logistico e a analise quantitativa.
+---
 
-![Mapa simplificado da cidade com base e pontos atendidos](../../caminho/para/imagens/mapa-operacional.jpg)
+## Estrutura da malha
 
-## O que sao os nos?
+A rede é construída sobre três componentes fundamentais:
 
-Os nos representam os pontos relevantes da rede.
+### Nós (Vértices)
+Representam os locais de interesse da operação:
+- a base operacional;
+- os pontos de `recolhimento` (coleta) ou `suprimento` (entrega).
 
-No caso da transportadora de valores, os principais nos sao:
+### Arestas (Conexões)
+Representam os deslocamentos viáveis entre dois nós quaisquer.
 
-- **base operacional**: inicio e fim das rotas;
-- **clientes ou agencias**: locais onde existe demanda;
-- **pontos especiais**: quando existirem, locais com funcao logistica adicional.
+### Atributos (Pesos e Restrições)
+Qualificam os nós e as arestas com parâmetros reais do negócio:
+- **Nas arestas:** tempo de viagem, distância, custo de pedágio/deslocamento.
+- **Nos nós:** tempo de serviço (SLA), janela de atendimento, volume da demanda.
 
-Cada no pode carregar atributos como:
+**[DEIXA PARA IMAGEM]**
+Inserir a imagem da rede-base com marcações simples:
+- base em destaque;
+- ordens distribuídas como nós;
+- conexões sugeridas entre pontos.
 
-- coordenadas;
-- janela de atendimento;
-- tempo de servico;
-- tipo de demanda.
+![Mapa sintetizado da rede-base](./assets/generated/operacao_sob_pressao_rede_base.png)
 
-## O que sao as arestas?
+---
 
-As arestas representam as ligacoes entre os nos.
+## A anatomia da decisão
 
-Cada aresta responde, no minimo, a duas perguntas:
+Para o solver, a rede é um mapa de custos e limites.
 
-1. qual a distancia entre os pontos?
-2. quanto tempo a viagem consome?
+O **nó** dita as regras de parada:
+- *Onde* a ordem está;
+- *Quando* a viatura pode chegar (janela temporal);
+- *Quanto* da capacidade do baú será ocupada.
 
-Em alguns casos, a aresta tambem pode refletir:
+A **aresta** dita o custo de transição:
+- *Quanto* tempo de rota será consumido;
+- *Qual* a penalidade financeira desse deslocamento.
 
-- custo monetario;
-- indisponibilidade;
-- atrasos esperados;
-- restricoes de percurso.
+Portanto, resolver o problema é decidir não apenas "quem atender", mas **"como atravessar a malha de forma viável e barata"**.
 
-## Por que a matriz de tempos e distancias e tao importante?
+---
 
-O solver precisa comparar sequencias possiveis de atendimento.
+## O Espaço de Busca vs. A Solução
 
-Para isso, ele usa uma matriz que informa, para cada par de nos:
+Em análise de redes, a solução final é definida como:
 
-- distancia;
-- tempo de deslocamento.
+> Um subconjunto orientado da rede original, selecionado para cobrir a demanda com o menor custo possível, sem violar restrições físicas ou temporais.
 
-Sem essa matriz, nao conseguimos avaliar se uma rota:
-
-- cabe dentro do turno da viatura;
-- atende os clientes dentro da janela;
-- continua economicamente razoavel.
-
-## Exemplo de subgrafo simplificado
-
-No exemplo abaixo:
-
-- `B0` e a base;
-- `A1`, `A2` e `A3` representam clientes ou agencias;
-- os pesos nas arestas mostram tempo e distancia.
-
-```mermaid
-graph LR
-    B0[Base B0]
-    A1[Agencia A1]
-    A2[Cliente A2]
-    A3[Agencia A3]
-
-    B0 -- "12 min | 7 km" --> A1
-    B0 -- "18 min | 11 km" --> A2
-    B0 -- "15 min | 9 km" --> A3
-    A1 -- "6 min | 3 km" --> A2
-    A2 -- "5 min | 3 km" --> A3
-    A3 -- "8 min | 4 km" --> A1
-    A1 -- "12 min | 7 km" --> B0
-    A2 -- "18 min | 11 km" --> B0
-    A3 -- "15 min | 9 km" --> B0
-```
-
-## Lendo a rede como um problema de transporte
-
-Uma rota pode ser vista como um caminho orientado:
-
-$$
-\text{Base} \rightarrow \text{Agencia 1} \rightarrow \text{Cliente 2} \rightarrow \text{Base}
-$$
-
-Mas o objetivo nao e apenas construir um caminho.
-
-O que buscamos e um conjunto de caminhos que:
-
-- cubra os nos relevantes;
-- respeite as restricoes logisticas;
-- minimize o custo operacional.
-
-## Mapa real versus grafo abstrato
-
-Didaticamente, e interessante mostrar lado a lado:
-
-- o mapa real da operacao;
-- o grafo abstrato que alimenta o modelo.
-
-![Mapa real do atendimento no territorio](../../caminho/para/imagens/mapa-real-atendimento.png)
-
-![Esquema visual dos mesmos pontos convertidos em grafo](../../caminho/para/imagens/grafo-esquematico.png)
-
-> 🎥 *[Inserir GIF mostrando a transicao do mapa real para o grafo aqui]*
-
-## Pergunta de transicao
-
-Se a rede ja foi desenhada, ainda falta responder:
-
-> O que faz uma rota ser considerada boa, ruim, viavel ou inviavel?
-
-Essa pergunta leva diretamente a modelagem e a funcao objetivo.
+A rede inicial é densa e altamente conectada. O papel do solver é "podar" o excesso e isolar apenas os caminhos ótimos.
 
 [⬅️ Anterior](./01-introducao-e-contexto.md) | [Próxima ➡️](./03-modelagem-e-funcao-objetivo.md)

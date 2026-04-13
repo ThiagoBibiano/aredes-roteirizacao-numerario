@@ -1,109 +1,51 @@
-# 4. Tecnologia da Solucao
+# 4. Tecnologia da Solução
 
-## Da formulacao para a busca de boas rotas
+## Como resolver a matemática na prática?
 
-Depois de formular o problema, surge a pergunta natural:
+Com a rede montada e as restrições definidas, o problema precisa de força computacional para ser resolvido.
 
-> Como encontrar boas rotas em um problema com tantas combinacoes possiveis?
+Nesta análise, implementamos dois motores de roteirização (*solvers*) com propósitos complementares:
+- **PyVRP:** O motor focado na operação de rua (Heurística).
+- **PuLP:** O juiz focado na perfeição matemática (Exato).
 
-Em redes pequenas, ainda e possivel experimentar manualmente algumas alternativas. Mas, em redes reais, o numero de sequencias possiveis explode rapidamente.
+---
 
-## Por que nao resolver "no braco"?
+## O Motor Operacional: PyVRP
 
-Considere apenas alguns elementos:
+O **PyVRP** é o coração da solução escalável. Ele não busca a perfeição irrefutável; ele busca a **melhor rota possível no tempo disponível**.
 
-- varios clientes;
-- mais de um veiculo;
-- diferentes ordens de visita;
-- janelas de tempo;
-- capacidades;
-- possibilidade de nao atender alguns pontos.
+Ele foi escolhido por sua aderência nativa a problemas complexos do mundo real (*Rich VRP*):
+- ⏱️ Lida perfeitamente com **janelas de atendimento**.
+- 🛻 Suporta **frota heterogênea** (veículos de tamanhos/custos diferentes).
+- 📦 Gerencia **restrições de capacidade** simultâneas.
 
-O numero de combinacoes cresce muito rapidamente. Por isso, problemas de roteirizacao exigem metodos de busca eficientes.
+Na prática do transporte de valores, a agilidade salva a operação. O PyVRP entra para provar que a solução sobrevive quando o mapa lota de ordens e o tempo de planejamento encurta.
 
-## Por que Python ajuda no ambiente academico?
+---
 
-Python e uma escolha natural para sala de aula e pesquisa porque oferece:
+## O Juiz de Qualidade: PuLP
 
-- leitura simples;
-- escrita rapida de prototipos;
-- integracao forte com bibliotecas cientificas;
-- facilidade para testar cenarios e visualizar resultados.
+Se o PyVRP é tão rápido, por que usar o **PuLP**?
 
-Em ambiente academico, isso e valioso porque permite focar mais em:
+O PuLP atua como nosso **laboratório de controle**. Ele roda algoritmos exatos de Programação Linear. Se deixado rodar tempo suficiente, ele **garante a solução matematicamente perfeita**.
 
-- modelagem;
-- analise da rede;
-- interpretacao da solucao.
+No benchmark, ele recebe exatamente as mesmas regras:
+- A mesma malha;
+- As mesmas viaturas;
+- A mesma função objetivo.
 
-## Por que usar PyVRP?
+**A pergunta que o PuLP responde é:**
+> *"Ao escolhermos a velocidade do PyVRP, quanto dinheiro ou distância estamos deixando na mesa em comparação à rota perfeita?"*
 
-PyVRP e uma biblioteca moderna voltada para problemas de roteamento de veiculos.
+---
 
-Ela e adequada ao caso estudado porque facilita:
+## O Campo de Provas (Protocolo Experimental)
 
-- janelas de tempo;
-- frota heterogenea;
-- clientes opcionais;
-- capacidades em mais de uma dimensao;
-- busca de solucoes boas sem programar toda a heuristica do zero.
+Para garantir que a comparação seja justa e rigorosa, montei um **Teste de Stress** usando o cenário de rede `operacional`.
 
-## A ideia do HGS
-
-O PyVRP utiliza uma abordagem baseada em HGS, Hybrid Genetic Search.
-
-Em linguagem simples, a ideia e:
-
-1. gerar varias solucoes candidatas;
-2. combinar boas caracteristicas dessas solucoes;
-3. melhorar localmente as rotas;
-4. manter diversidade para nao ficar preso cedo demais em uma solucao ruim.
-
-```mermaid
-flowchart LR
-    A[Solucoes iniciais] --> B[Combinacao]
-    B --> C[Melhoria local]
-    C --> D[Selecao]
-    D --> E[Nova populacao]
-    E --> F[Melhores rotas encontradas]
-```
-
-## O que isso significa para a disciplina?
-
-Do ponto de vista didatico, a biblioteca nao substitui a modelagem.
-
-Ela entra depois que o problema ja foi:
-
-- traduzido para rede;
-- descrito por custos e restricoes;
-- organizado em um formato computacional.
-
-Ou seja:
-
-> o solver nao "inventa" o problema. Ele procura boas solucoes para o problema que a modelagem definiu.
-
-## Leitura visual da solucao computacional
-
-```mermaid
-flowchart TD
-    A[Dados da rede] --> B[Modelo de roteirizacao]
-    B --> C[PyVRP]
-    C --> D[Busca heuristica]
-    D --> E[Rotas candidatas]
-    E --> F[Melhor conjunto de rotas]
-```
-
-![Fluxo visual entre dados da rede, modelo e solver](../../caminho/para/imagens/solver-fluxo.png)
-
-## O ganho pedagogico
-
-Usar uma biblioteca especializada permite que o foco da aula permaneça onde interessa:
-
-- formulacao do problema;
-- leitura de restricoes logisticas;
-- comparacao entre solucoes;
-- analise dos resultados sobre a rede.
-
-> 🎥 *[Inserir video curto mostrando a execucao do solver e a melhoria gradual das rotas aqui]*
+Aumentei a carga operacional gradativamente para observar quando a complexidade quebra os algoritmos:
+- **Escalas:** 20% → 40% → 60% → 80% das ordens.
+- **Rigor:** 5 repetições para cada nível (para medir a estabilidade/dispersão).
+- **A Prova de Fogo:** Uma rodada exaustiva final com **100% da operação**.
 
 [⬅️ Anterior](./03-modelagem-e-funcao-objetivo.md) | [Próxima ➡️](./05-resultados-e-analise.md)

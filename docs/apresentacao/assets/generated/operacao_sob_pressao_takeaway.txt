@@ -1,0 +1,1 @@
+No cenário Operação Sob Pressão, o gargalo dominante é dispersão geográfica. O solver encerrou com status concluída com ressalvas, planejou 19 ordem(ns), deixou 1 não atendida(s) e acionou 12 rota(s). A leitura principal para apresentação é comparar cobertura e custo com esse gargalo em mente, sem tratar a sequência exata de visitas como critério científico principal.

@@ -1,6 +1,6 @@
 [
   {
-    "id_ordem": "ORD-001- Paul-Sup",
+    "id_ordem": "ORD-001-Paul-Sup",
     "origem_ordem": "erp_fake",
     "data_operacao": "2026-03-21",
     "timestamp_criacao": "2026-03-21T07:10:00+00:00",
@@ -184,7 +184,7 @@
     "origem_ordem": "erp_fake",
     "data_operacao": "2026-03-21",
     "timestamp_criacao": "2026-03-21T08:50:00+00:00",
-    "tipo_servico": "extraordinario",
+    "tipo_servico": "suprimento",
     "classe_operacional": "suprimento",
     "classe_planejamento": "especial",
     "id_ponto": "P-SUL-02",
@@ -304,7 +304,7 @@
     "origem_ordem": "erp_fake",
     "data_operacao": "2026-03-21",
     "timestamp_criacao": "2026-03-21T13:40:00+00:00",
-    "tipo_servico": "extraordinario",
+    "tipo_servico": "suprimento",
     "classe_operacional": "suprimento",
     "classe_planejamento": "especial",
     "id_ponto": "P-CENTRO-04",

@@ -1,111 +1,104 @@
-# 5. Resultados e Analise
+# 5. O Veredito: Resultados e Análise
 
-## A historia termina no mapa
+## O Campo de Provas
 
-Depois de toda a modelagem, o que o problema entrega ao final nao e apenas um numero.
+O benchmark submeteu os dois motores (PyVRP e PuLP) ao cenário `operacao_sob_pressao`.
 
-O resultado aparece como um conjunto de rotas:
+Para testar os limites da rede, aplicamos:
+- **Carga gradativa:** 20%, 40%, 60% e 80% das ordens.
+- **Rigor estatístico:** 5 repetições por escala (para medir a estabilidade).
+- **A Prova de Fogo:** Uma rodada exaustiva final com 100% da malha.
 
-- cada rota associada a uma viatura;
-- cada viatura ligada a uma base;
-- cada atendimento em uma sequencia e em um horario.
+---
 
-Em outras palavras, a saida do modelo devolve um plano operacional.
+## 1. O Preço do Tempo (Escalabilidade)
 
-## Como a solucao pode ser lida?
+O limite computacional foi o contraste mais drástico do experimento.
 
-Cada rota responde perguntas concretas:
+| Carga | PyVRP (Heurística) | PuLP (Exato) |
+| :--- | ---: | ---: |
+| **20%** | 0,4 s | 0,3 s |
+| **40%** | 0,6 s | 3,7 s |
+| **60%** | 0,9 s | 20,2 s |
+| **80%** | **1,4 s** | **114,1 s** |
 
-1. qual viatura foi usada?
-2. quais pontos ela vai atender?
-3. em que ordem?
-4. em que horario?
-5. com qual custo?
+**Leitura Operacional:**
+- Em cenários pequenos, a força bruta (PuLP) ainda é rápida.
+- A partir de 40%, o tempo do modelo exato entra em crescimento exponencial.
+- Em 80% da rede, o PyVRP entrega a rota em apenas **1,4 s**, enquanto o modelo exato trava a operação por quase dois minutos.
 
-## Leitura em linguagem de rede
+> **Conclusão:** O PyVRP absorve o choque da escala sem penalizar o relógio da operação.
 
-Na perspectiva de redes, a solucao final e um subconjunto orientado das arestas da rede original.
+![Painel de Tendências](/data/benchmarks/operacao_sob_pressao_subsample/plots/dispersao_tempo.png)
 
-Esse subconjunto precisa formar caminhos validos:
+---
 
-- saindo da base;
-- visitando os nos escolhidos;
-- retornando ao deposito;
-- respeitando as restricoes do modelo.
+## 2. A Qualidade da Solução e Dispersão
 
-```mermaid
-flowchart LR
-    B0[Base] --> A1[Agencia 1]
-    A1 --> C2[Cliente 2]
-    C2 --> A3[Agencia 3]
-    A3 --> B0
-```
+Se o PyVRP é tão rápido, quanto ele "erra" em relação à perfeição?
 
-## O que deve ser analisado depois da otimizacao?
+| Carga | Custo (FO) PyVRP | Custo (FO) PuLP |
+| :--- | ---: | ---: |
+| **20%** | 12,3 mil | 11,5 mil |
+| **40%** | 18,7 mil | 17,8 mil |
+| **60%** | 34,6 mil | 33,5 mil |
+| **80%** | 45,1 mil | 43,6 mil |
 
-Uma analise de qualidade nao deve parar na pergunta "a rota ficou curta?".
+**Leitura Operacional:**
+- O PuLP, por ser um modelo matemático exato, sempre garantirá o menor custo absoluto.
+- No entanto, a diferença financeira da heurística é muito contida. O PyVRP mostrou um comportamento extremamente estável nas repetições, sem picos de ineficiência.
 
-Tambem e preciso observar:
+![Painel de Dispersão](/data/benchmarks/operacao_sob_pressao_subsample/plots/dispersao_fo.png)
 
-- a quantidade de viaturas usadas;
-- a aderencia as janelas de tempo;
-- a quantidade de ordens nao atendidas;
-- o custo total da operacao;
-- a proximidade de limites de capacidade e de risco segurado.
+---
 
-## Indicadores que merecem destaque em sala
+## 3. O Trade-Off: Erro Relativo vs. Velocidade
 
-- distancia total percorrida;
-- tempo total em operacao;
-- numero de viaturas acionadas;
-- taxa de atendimento;
-- ordens nao atendidas;
-- custo total estimado;
-- rotas proximas do limite segurado.
+Cruzando a qualidade (Custo/FO) com a garantia matemática do PuLP, extraímos o **Erro Relativo**.
 
-## Sugestao de bloco visual para a apresentacao
+| Carga | Gap do PyVRP para o Ótimo |
+| :--- | ---: |
+| **20%** | 7,2% |
+| **40%** | 4,4% |
+| **60%** | 3,5% |
+| **80%** | **3,3%** |
 
-Nesta pagina, o ideal e mostrar a solucao em varias camadas:
+**Leitura Operacional:**
+Curiosamente, à medida que a rede fica mais complexa e densa, a heurística do PyVRP se torna **mais precisa** em relação à solução ótima, caindo para um gap de apenas **3,3%** no cenário de estresse.
 
-1. mapa da rota;
-2. tabela com sequencia e horario;
-3. painel com indicadores;
-4. comparacao antes e depois.
+> **O Trade-off:** Na carga de 80%, o negócio decide se prefere economizar 3,3% do custo da rota (PuLP) ou ganhar 98% de velocidade no despacho da frota (PyVRP).
 
-![Mapa real das rotas geradas pelo projeto](../../caminho/para/imagens/mapa-rotas-geradas.png)
+![Erro Relativo da Função Objetivo](/data/benchmarks/operacao_sob_pressao_subsample/plots/erro_relativo_fo_pct.png)
 
-![Tabela com veiculo, sequencia de paradas e horarios](../../caminho/para/imagens/tabela-rotas-horarios.png)
+---
 
-![Painel com indicadores de custo, tempo e atendimento](../../caminho/para/imagens/painel-indicadores.png)
+## 4. O Teste de Sobrevivência (100% da Malha)
 
-![Comparacao visual entre planejamento manual e planejamento otimizado](../../caminho/para/imagens/antes-depois.png)
+A rodada final exigiu a roteirização da rede inteira de uma só vez, para as 20 ordens de serviço.
+*(Nota: O SLA de atendimento e a viabilidade matemática fecharam em **100,0%** para ambos os modelos em todas as rodadas).*
 
-> 🎥 *[Inserir GIF da evolucao das rotas no mapa aqui]*
+| Solver | Status | Custo (FO) | Viaturas | Distância Total | Duração Total |
+| :--- | :--- | ---: | ---: | ---: | ---: |
+| **PyVRP** | Viável | 53,1 mil | 13 | 339,4 km | 670,5 min |
+| **PuLP** | Viável | 50,2 mil | 10 | 326,2 km | 642,1 min |
 
-> 🎥 *[Inserir video curto com a execucao completa do projeto e a solucao final aqui]*
+**Leitura Operacional:**
+Ambos sobreviveram e garantiram 100,0% de atendimento das agências. O modelo exato conseguiu consolidar a carga economizando 3 viaturas, o que gerou a diferença no custo final e na distância percorrida.
 
-## O ganho logistico da otimizacao
+![Rodada Exaustiva](/data/benchmarks/operacao_sob_pressao_subsample/plots/rodada_exaustiva_100_rotas.png)
 
-Do ponto de vista operacional, otimizar a rede pode trazer:
+---
 
-- reducao de custo logistico;
-- melhor uso da frota;
-- melhor aderencia a horarios;
-- maior transparencia na tomada de decisao;
-- apoio quantitativo para discutir cenarios.
+## A Decisão de Engenharia (Síntese Final)
 
-## Fechamento da narrativa
+O transporte de numerário impõe pressão real sobre a malha. A análise comprova que não existe um solver que "vence" em todas as categorias; existem ferramentas certas para papéis específicos:
 
-O caminho percorrido nesta apresentacao foi:
+* 🔬 **PuLP (A Régua de Qualidade):** Inviável para o despacho em tempo real na rua devido à sua explosão combinatória, mas indispensável como laboratório para auditar e calibrar a qualidade da operação.
+* 🚀 **PyVRP (O Motor de Produção):** Entrega respostas quase instantâneas, absorve o caos de 100% da rede e mantém a margem de erro financeiro abaixo de 4%. É a escolha definitiva para sustentar a escala do negócio na ponta.
 
-1. uma operacao real de transporte de valores;
-2. uma rede com nos e arestas;
-3. um modelo com custos e restricoes;
-4. uma heuristica de busca;
-5. uma solucao interpretavel no mapa.
+---
 
-Essa sequencia resume muito bem a contribuicao da Analise de Redes de Transporte:
+### Material de Apoio
+- [Notebook de Benchmark Detalhado](../../notebook/benchmark_solver_comparison.ipynb)
 
-> transformar um problema real de mobilidade e servico em uma estrutura analisavel, modelavel e otimizavel.
-
-[⬅️ Anterior](./04-tecnologia-solucao.md) | [Próxima ➡️](./05-resultados-e-analise.md)
+[⬅️ Anterior](./04-tecnologia-solucao.md) | [Início ↺](./01-introducao-e-contexto.md)

@@ -53,6 +53,8 @@ Exemplo de payload:
 }
 ```
 
+Neste exemplo, `data/fake_smoke` e o dataset interno do cenario publico `operacao_sob_pressao`.
+
 ### `POST /api/v1/planning/run`
 
 Executa o planejamento a partir de payload inline, sem expor paths locais ao frontend.

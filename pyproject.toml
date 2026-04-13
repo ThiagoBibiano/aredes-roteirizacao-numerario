@@ -17,6 +17,10 @@ authors = [
 ]
 
 [project.optional-dependencies]
+benchmark = [
+  "matplotlib>=3.10,<4",
+  "pulp>=2.9,<3",
+]
 dev = [
   "httpx>=0.28,<1",
 ]

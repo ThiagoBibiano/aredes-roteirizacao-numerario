@@ -1,166 +1,71 @@
-# 3. Modelagem e Funcao Objetivo
+# 3. Modelagem e Função Objetivo
 
-## Quando uma rota e boa?
+## Da rede ao problema de decisão
 
-Essa e a pergunta central da modelagem.
+A rede nos mostra o que *pode* ser feito. A modelagem define o que *deve* ser feito.
 
-Uma rota boa nao e necessariamente a rota mais curta. Ela precisa ser:
+Transformamos o caos geográfico em um problema de otimização onde o motor precisa responder:
+- Quais **ordens** priorizar?
+- Quais **viaturas** tirar da garagem?
+- Qual a **sequência** exata de visitas?
 
-- viavel no tempo;
-- viavel na capacidade;
-- coerente com a operacao;
-- economicamente eficiente.
+---
 
-## Os tres blocos da modelagem
+## O que define o "Sucesso" (A Solução Ótima)
 
-Para tornar isso didatico, podemos pensar em tres blocos principais:
+Uma boa solução no transporte de valores vai muito além do "caminho mais curto". O modelo busca o ponto de equilíbrio perfeito entre quatro eixos:
 
-1. **veiculos**
-2. **demandas**
-3. **tempo**
+1. ⏱️ **Viabilidade Temporal:** Respeito absoluto às janelas das agências.
+2. 📦 **Viabilidade de Carga:** O baú não estica e o limite do seguro não muda.
+3. 🔄 **Coerência de Rota:** Não se mistura `suprimento` (distribuição) com `recolhimento` (coleta).
+4. 💸 **Eficiência de Custo:** Fazer tudo isso gastando o mínimo possível.
 
-```mermaid
-flowchart TD
-    A[Veiculos] --> D[Modelo]
-    B[Demandas] --> D
-    C[Janelas de tempo] --> D
-    D --> E[Rotas viaveis]
-```
+---
 
-## 1. Veiculos
+## Os Três Pilares da Modelagem
 
-Cada viatura entra no problema com caracteristicas proprias:
+O algoritmo cruza três conjuntos de dados para tomar a decisão:
 
-- capacidade financeira;
-- capacidade fisica ou volumetrica;
-- custo fixo de uso;
-- custo variavel de deslocamento;
-- janela de operacao.
+1. **🛻 Viaturas:** Carregam o *custo de ativação*, capacidade volumétrica e limite financeiro (seguro).
+2. **📍 Ordens:** Carregam a *demanda* (volume/valor), tempo de serviço na porta giratória e janela de atendimento rígida.
+3. **🛤️ Malha:** Carrega o *custo de transição* (distância física e tempo de deslocamento no trânsito).
 
-Isso significa que duas viaturas diferentes podem gerar solucoes muito diferentes para o mesmo conjunto de clientes.
+---
 
-![Viatura com indicacoes visuais de capacidade, custo e turno](../../caminho/para/imagens/viatura-capacidades.jpg)
+## As Variáveis de Decisão (A linguagem do motor)
 
-## 2. Demandas
+Para o computador resolver o problema, as escolhas viram variáveis binárias e contínuas:
 
-Cada cliente ou agencia pode gerar uma ordem com:
+* $x_{ij}^k$: A viatura $k$ viajou do nó $i$ para o nó $j$? *(1 se Sim, 0 se Não)*
+* $y_k$: A viatura $k$ precisou sair da base? *(1 se Sim, 0 se Não)*
+* $u_i$: A ordem $i$ foi abandonada/não atendida? *(1 se Sim, 0 se Não)*
 
-- valor financeiro;
-- volume estimado;
-- tempo de servico;
-- janela de atendimento;
-- tipo de operacao.
+---
 
-No problema estudado aqui:
+## A Função Objetivo
 
-- no **suprimento**, a carga e levada da base para o cliente;
-- no **recolhimento**, a carga e acumulada ao longo da rota.
-
-Isso muda a leitura logistica da capacidade e, principalmente, do limite segurado.
-
-![Exemplo visual de itens transportados e demanda por atendimento](../../caminho/para/imagens/demanda-operacional.jpg)
-
-## 3. Janelas de tempo
-
-Uma rota pode ser curta e ainda assim ser ruim.
-
-Por exemplo:
-
-- a agencia aceita atendimento so entre 9h e 10h;
-- a viatura chega 10h20;
-- a rota falhou operacionalmente, mesmo que a distancia total seja pequena.
-
-Por isso, o encaixe temporal e central na modelagem:
-
-- tempo de deslocamento;
-- tempo de servico;
-- horario permitido em cada no;
-- turno total da viatura.
-
-## Intuicao da funcao objetivo
-
-A funcao objetivo tenta equilibrar cobertura e eficiencia.
-
-Em forma simplificada, queremos minimizar:
+A Equação de Minimização ($Z$) é o "coração" do modelo. Ela pune o algoritmo financeiramente por ineficiências. O modelo é treinado para buscar o menor $Z$ possível.
 
 $$
-\text{custo total} =
-\text{custo de viaturas}
-+
-\text{custo de deslocamento}
-+
-\text{custo de tempo}
-+
-\text{penalidade por nao atendimento}
+\min Z = \underbrace{\sum_{k \in K} F_k y_k}_{\text{Custo Fixo}} + \underbrace{\sum_{k \in K}\sum_{(i,j)\in A} C_{ij}^k x_{ij}^k}_{\text{Deslocamento}} + \underbrace{\sum_{k \in K}\sum_{(i,j)\in A} T_{ij} x_{ij}^k}_{\text{Tempo}} + \underbrace{\sum_{i \in N} P_i u_i}_{\text{Penalidade SLA}}
 $$
 
-Uma escrita didatica e:
+### Lendo a equação em "regras de negócio":
 
-$$
-\min Z =
-\sum_{k \in K} F_k y_k
-+
-\sum_{k \in K}\sum_{(i,j)\in A} C_{ij}^k x_{ij}^k
-+
-\sum_{k \in K}\sum_{(i,j)\in A} T_{ij} x_{ij}^k
-+
-\sum_{i \in N} P_i u_i
-$$
+1. **Custo Fixo da Frota:** *Ligou o motor da viatura, pagou.* Força o algoritmo a tentar consolidar a carga em menos caminhões em vez de despachar a frota inteira vazia.
+2. **Custo de Deslocamento:** O gasto real (combustível, pedágio) para transitar pelas arestas da rede.
+3. **Custo de Tempo/Duração:** Mesmo que a quilometragem seja curta, se a rota for muito demorada (trânsito pesado), o risco e o custo da hora-homem sobem.
+4. **Penalidade por Quebra de SLA:** Se o algoritmo não atender uma agência ($u_i = 1$), ele recebe uma "multa matemática" gigantesca. Isso impede que o solver finja ter achado uma solução barata simplesmente ignorando clientes difíceis.
 
-## Lendo a equacao passo a passo
+---
 
-### Custo de ativar veiculos
+## As Restrições Operacionais (Os limites inquebráveis)
 
-$$
-\sum_{k \in K} F_k y_k
-$$
+A função objetivo tenta baratear tudo, mas as **restrições** impedem soluções irreais. O solver é obrigado a respeitar:
 
-Esse termo indica que usar mais viaturas tende a encarecer a operacao.
-
-### Custo de percorrer a rede
-
-$$
-\sum_{k \in K}\sum_{(i,j)\in A} C_{ij}^k x_{ij}^k
-$$
-
-Esse termo representa o custo de deslocamento nos arcos da rede.
-
-### Custo do tempo em operacao
-
-$$
-\sum_{k \in K}\sum_{(i,j)\in A} T_{ij} x_{ij}^k
-$$
-
-Esse termo reforca que tempo tambem e recurso logístico.
-
-### Penalidade por nao atendimento
-
-$$
-\sum_{i \in N} P_i u_i
-$$
-
-Esse termo evita que o modelo "economize" deixando ordens importantes fora da solucao.
-
-## Restricoes fundamentais
-
-Mesmo sem escrever a formulacao completa, algumas restricoes sao indispensaveis:
-
-- cada ordem pode ser atendida no maximo uma vez;
-- a viatura deve respeitar sua capacidade financeira;
-- a viatura deve respeitar sua capacidade fisica;
-- a rota deve respeitar as janelas de atendimento;
-- a viatura deve operar dentro do turno;
-- a rota deve sair e retornar a base;
-- nem toda viatura pode atender todo cliente.
-
-## Leitura final desta pagina
-
-Se precisarmos resumir a modelagem em uma frase:
-
-> O problema e escolher quais arcos da rede serao percorridos por quais viaturas, de forma a atender a demanda com o menor custo possivel e sem violar as restricoes logisticas.
-
-![Esquema visual: veiculo, demanda e tempo alimentando a funcao objetivo](../../caminho/para/imagens/modelagem-visual.png)
-
-> 🎥 *[Inserir GIF curto com uma rota sendo avaliada por capacidade e horario aqui]*
+* **Atendimento Único:** Uma agência só recebe um carro-forte. Nada de dividir ordens.
+* **Teto de Capacidade:** A soma dos malotes e do dinheiro na rota não pode ultrapassar a física do baú ou o teto da apólice de seguro do carro.
+* **Viagem no Tempo Proibida:** É obrigatório chegar depois que a janela da agência abre e antes dela fechar.
+* **Conservação de Fluxo:** Todo circuito tem que nascer na Base e morrer na Base. Nenhuma viatura pode "desaparecer".
 
 [⬅️ Anterior](./02-elementos-da-rede-grafica.md) | [Próxima ➡️](./04-tecnologia-solucao.md)

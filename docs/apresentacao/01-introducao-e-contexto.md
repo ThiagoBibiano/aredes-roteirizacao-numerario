@@ -1,107 +1,40 @@
-# 1. Introducao e Contexto
+# 1. Introdução e Contexto
 
-## A cena inicial: o problema comeca antes da primeira rota
+## O Desafio Operacional
 
-Imagine o inicio do dia operacional.
+No transporte de valores, o planejamento logístico transcende a simples conexão de pontos em um mapa. Trata-se de uma orquestração complexa que exige a definição precisa de:
 
-Uma viatura blindada sai da base com um plano que precisa funcionar no mundo real: horarios apertados, clientes espalhados pela cidade, risco financeiro acumulado e custo elevado de qualquer decisao ruim.
+* 📦 **Ordens**: Quais demandas de atendimento serão supridas ou recolhidas.
+* 🛻 **Viaturas**: Quais recursos operacionais (blindados) executarão cada circuito.
+* ⏱️ **Sequência**: A ordem exata dos atendimentos para maximizar a eficiência.
+* 🛡️ **Restrições**: Como garantir conformidade com janelas de tempo, limites de capacidade do baú e gerenciamento de risco.
 
-> Uma rota ruim nao significa apenas mais quilometros. Pode significar atraso em agencia, excesso de carga, uso ineficiente da frota e aumento de risco operacional.
+Cada decisão impacta diretamente o custo total, a taxa de ocupação da frota e a viabilidade da operação.
 
-![Viatura blindada saindo da base](../../caminho/para/imagens/viatura-blindada.jpg)
+---
 
-![Itens que podem compor a carga: malotes, caixas, envelopes e numerario](../../caminho/para/imagens/carga-transportada.jpg)
+## A Rede em Análise
 
-## O que uma transportadora de valores realmente movimenta?
+Nesta análise, represento a operação através de seus quatro elementos centrais, simplificando a complexidade geográfica para focar na lógica da rede:
 
-Quando pensamos em transporte de numerario, nao estamos falando apenas de dinheiro em especie. A operacao pode envolver:
+1.  🔴 **Base**: O ponto de origem, processamento de valores e retorno obrigatório das viaturas.
+2.  📍 **Pontos**: Locais físicos (agências, ATMs, varejistas, ...) onde as demandas estão localizadas.
+3.  📦 **Ordens**: As demandas específicas de atendimento distribuídas espacialmente na rede.
+4.  🛤️ **Rotas**: Os circuitos otimizados construídos para conectar a base às ordens.
 
-- numerario para suprimento de agencias e caixas;
-- recolhimento de valores de clientes e pontos atendidos;
-- malotes e envelopes lacrados;
-- documentos operacionais vinculados ao atendimento;
-- cargas com restricoes de volume, seguranca e tempo.
+---
 
-Isso faz com que a viatura seja, ao mesmo tempo:
+## Contextos Operacionais: Experimentos Isolados
 
-- um veiculo de transporte;
-- um recurso operacional escasso;
-- um elemento central de uma rede de servicos.
+A análise do problema foi conduzida sob dois cenários operacionais distintos e independentes:
 
-## Por que esse problema e mais dificil do que parece?
+### 📦 Suprimento
+Cenário de **distribuição**. A viatura parte da Base com carga máxima e realiza entregas fracionadas ao longo do circuito, terminando a rota vazia.
 
-Em uma aula introdutoria, pode parecer que o objetivo seria apenas ligar pontos no mapa. Mas o problema real e muito mais rico.
+### 💰 Recolhimento
+Cenário de **coleta**. A viatura percorre a rede acumulando valores ao longo da rota, terminando o circuito com carga máxima ao retornar à Base.
 
-Cada decisao precisa conciliar:
+Esta distinção é fundamental, pois altera drasticamente a dinâmica de ocupação do veículo, a exposição ao risco e o gerenciamento da capacidade ao longo da rota.
+> **Notas**: Para fins desta apresentação, `suprimento` e `recolhimento` são tratados como **experimentos independentes**. Para fins desta apresentação, não foram utilizados dados reais. Na prática operacional, o motorista desconhece a rota até o momento do embarque, o que justifica o uso de dados simulados para esta análise.
 
-- janelas de tempo em agencias, clientes e bases;
-- frota heterogenea, com capacidades diferentes;
-- limite financeiro e limite fisico de carga;
-- custo de ativar mais viaturas;
-- necessidade de sair e retornar a uma base;
-- restricoes de compatibilidade entre servico, ponto e veiculo.
-
-## Dois tipos de operacao, duas leituras logisticas
-
-Na pratica, o problema possui dois grandes fluxos:
-
-- **suprimento**: a carga sai da base e vai sendo entregue;
-- **recolhimento**: a carga vai sendo acumulada ao longo da rota.
-
-Essa diferenca e importante porque altera o comportamento da capacidade da viatura:
-
-- no suprimento, a rota tende a descarregar;
-- no recolhimento, a rota tende a carregar;
-- no recolhimento, o valor embarcado pode aproximar a rota do limite segurado.
-
-```mermaid
-flowchart LR
-    A[Base operacional] --> B[Suprimento]
-    A --> C[Recolhimento]
-    B --> D[Entrega de carga]
-    C --> E[Acumulo de valor na rota]
-    D --> F[Restricoes de tempo e capacidade]
-    E --> F
-```
-
-## A pergunta central da disciplina
-
-Do ponto de vista de Analise de Redes de Transporte, a pergunta nao e:
-
-> Qual e o menor caminho?
-
-A pergunta correta e:
-
-> Como montar rotas viaveis, seguras e economicamente eficientes em uma rede com restricoes?
-
-## Como isso aparece em Pesquisa Operacional?
-
-Esse problema pode ser lido como uma variacao do Vehicle Routing Problem, ou VRP, com varios elementos adicionais:
-
-- janelas de tempo;
-- capacidade em mais de uma dimensao;
-- frota heterogenea;
-- clientes opcionais com alto custo de nao atendimento.
-
-Ou seja, a aplicacao real da transportadora de valores e um excelente estudo de caso porque conecta:
-
-- rede fisica;
-- decisao combinatoria;
-- custo operacional;
-- restricoes logisticas.
-
-## O fio da apresentacao
-
-Nas proximas paginas, a historia sera a seguinte:
-
-1. o mundo real sera traduzido para um grafo;
-2. o grafo sera transformado em um modelo de roteirizacao;
-3. a funcao objetivo mostrara o que significa uma "boa" solucao;
-4. uma heuristica moderna buscara rotas viaveis;
-5. por fim, veremos como interpretar os resultados.
-
-> 🎥 *[Inserir video curto da viatura em operacao ou saindo da base aqui]*
-
-> 🎥 *[Inserir video ou GIF curto mostrando itens sendo preparados para embarque aqui]*
-
-[⬅️ Anterior](./01-introducao-e-contexto.md) | [Próxima ➡️](./02-elementos-da-rede-grafica.md)
+[Próxima ➡️](./02-elementos-da-rede-grafica.md)
