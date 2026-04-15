@@ -70,12 +70,12 @@ Consequencia:
 
 `classify_ordem` concentra uma parte importante da semantica operacional do sistema.
 
-## ADR-008 - A UI permanece cliente da API, nao do nucleo de planejamento
+## ADR-008 - Consumidores externos usam a API, nao o nucleo de planejamento
 
 Decisao:
 
-A UI Streamlit conversa com a API HTTP e deriva view models da resposta, sem chamar diretamente o orquestrador.
+Clientes HTTP externos consomem a API HTTP e nao importam diretamente o orquestrador.
 
 Consequencia:
 
-O contrato de rede vira a fronteira real entre backend e frontend, o que simplifica evolucao e testes de integracao.
+O contrato de rede vira a fronteira real entre backend e integracoes externas, o que simplifica evolucao e testes de integracao.

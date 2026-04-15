@@ -18,9 +18,8 @@ Registrar como o repositorio protege hoje os contratos do backend. Este document
 | `tests/contract/test_audit_builder.py` | consolidacao de eventos, erros e motivos de inviabilidade |
 | `tests/contract/test_reporting_builder.py` | KPIs e relatorio de planejamento |
 | `tests/contract/test_orchestration.py` | `hash_cenario`, cache, persistencia e idempotencia |
-| `tests/contract/test_api.py` | contratos da API FastAPI |
+| `tests/contract/test_api.py` | contratos da API FastAPI para clientes HTTP externos |
 | `tests/contract/test_cli.py` | contratos publicos da CLI |
-| `tests/ui/*.py` | cliente HTTP, settings, filtros, exportacao e smoke da UI |
 
 ## Criterios minimos de aceitacao
 
@@ -39,10 +38,10 @@ Cada area nova ou alterada deve cobrir:
 - mudanca nas dimensoes de capacidade da instancia;
 - mudanca na composicao do `hash_cenario`;
 - mudanca na forma canonica de snapshots ou manifests;
-- mudanca no schema da resposta da API consumida pela UI.
+- mudanca no schema da resposta da API consumida por clientes HTTP.
 
 ## Lacunas que continuam sensiveis
 
 - comportamento do solver depende da biblioteca PyVRP estar instalada no ambiente;
-- testes de UI validam o contrato de integracao, nao a renderizacao visual detalhada;
+- a suite atual valida contratos de backend e API HTTP, mas nao cobre o comportamento de um frontend especifico;
 - datasets fake cobrem cenarios representativos, mas nao substituem homologacao com dados reais.
