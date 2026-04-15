@@ -101,8 +101,6 @@ Principios mantidos:
 │  ├─ contexto.md
 │  ├─ formulacao-matematica.md
 │  └─ contratos-e-arquitetura/
-├─ apps/
-│  └─ ui_streamlit/
 ├─ notebook/
 │  ├─ modelo_solver_workbench.ipynb
 │  ├─ benchmark_solver_comparison.ipynb
@@ -129,8 +127,7 @@ Principios mantidos:
 │     ├─ optimization/
 │     └─ cli.py
 ├─ tests/
-│  ├─ contract/
-│  └─ ui/
+│  └─ contract/
 ├─ pyproject.toml
 └─ .python-version
 ```
@@ -156,7 +153,7 @@ Versoes usadas no ambiente de desenvolvimento atual:
 pyenv local 3.13.7
 pyenv exec python -m venv .venv
 .venv/bin/pip install -e .
-.venv/bin/pip install '.[dev,ui]'
+.venv/bin/pip install '.[dev]'
 .venv/bin/pip install pyvrp==0.13.3
 .venv/bin/pip install '.[benchmark]'
 ```
@@ -181,7 +178,7 @@ A suite atual cobre contratos do pipeline, adaptador do solver, snapshots, orque
 
 O repositorio inclui dois cenarios publicos de exemplo:
 
-- `operacao_controlada`: caminho feliz para demonstracao e UI, implementado no dataset interno [`data/fake_solution/`](data/fake_solution/)
+- `operacao_controlada`: caminho feliz para demonstracao operacional, implementado no dataset interno [`data/fake_solution/`](data/fake_solution/)
 - `operacao_sob_pressao`: cenario mais agressivo para estresse e explicabilidade, implementado no dataset interno [`data/fake_smoke/`](data/fake_smoke/)
 
 Execucao pela CLI:
@@ -262,6 +259,21 @@ O endpoint `run-dataset` reutiliza um dataset existente em disco.
 
 O endpoint `run` aceita payload inline, materializa internamente os arquivos em `data/api_runs/` e executa o mesmo orquestrador idempotente usado pela CLI.
 
+Exemplo rapido de chamada HTTP com dataset existente:
+
+```bash
+curl -X POST http://127.0.0.1:8000/api/v1/planning/run-dataset \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "dataset_dir": "data/fake_solution",
+    "materialize_snapshot": true,
+    "max_iterations": 50,
+    "seed": 1
+  }'
+```
+
+Detalhes adicionais da camada HTTP estao em [`docs/api.md`](docs/api.md).
+
 ## Benchmark experimental
 
 Gerar o catalogo declarativo:
@@ -320,73 +332,6 @@ Regra pratica de uso:
 
 - mudanca apenas visual em grafico, legenda, eixo ou texto: basta recarregar o `summary.json` e rerodar as celulas de visualizacao;
 - mudanca de experimento, amostragem, parametros de solver ou agregacao: exige rerodar o benchmark.
-
-## UI Streamlit
-
-A interface web vive em `apps/ui_streamlit/` e consome exclusivamente a API HTTP do projeto.
-
-Suba primeiro o backend FastAPI e, em seguida, execute a UI:
-
-```bash
-streamlit run apps/ui_streamlit/app.py
-```
-
-A UI agora carrega defaults de `apps/ui_streamlit/settings.toml` e aceita override local em `apps/ui_streamlit/settings.local.toml`.
-
-Exemplo de override local para evitar preencher tudo manualmente a cada uso:
-
-```toml
-api_base_url = "http://127.0.0.1:8000"
-
-[execution]
-default_mode = "dataset"
-auto_check_health = true
-
-[execution.parameters]
-materialize_snapshot = true
-max_iterations = 50
-seed = 1
-collect_stats = false
-display = false
-
-[execution.dataset]
-dataset_dir = "data/fake_solution"
-
-[execution.inline.files]
-contexto = "data/fake_solution/contexto.json"
-bases = "data/fake_solution/bases.json"
-pontos = "data/fake_solution/pontos.json"
-viaturas = "data/fake_solution/viaturas.json"
-ordens = "data/fake_solution/ordens.json"
-```
-
-Fluxos principais disponiveis na UI:
-
-- execucao inline por upload dos JSONs obrigatorios
-- execucao tecnica por `dataset_dir`
-- resultados com KPIs, tabela de rotas, detalhe de paradas e mapa operacional
-- auditoria, excecoes, exportacao e inspecao offline
-
-A suite dedicada da UI pode ser executada com:
-
-```bash
-.venv/bin/python -m unittest discover -s tests/ui -p 'test_*.py' -v
-```
-
-Exemplo rapido de chamada HTTP com dataset existente:
-
-```bash
-curl -X POST http://127.0.0.1:8000/api/v1/planning/run-dataset \
-  -H 'Content-Type: application/json' \
-  -d '{
-    "dataset_dir": "data/fake_solution",
-    "materialize_snapshot": true,
-    "max_iterations": 50,
-    "seed": 1
-  }'
-```
-
-Detalhes adicionais da camada HTTP estao em [`docs/api.md`](docs/api.md).
 
 ## Notebooks
 

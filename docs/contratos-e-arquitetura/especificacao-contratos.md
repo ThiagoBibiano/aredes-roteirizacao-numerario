@@ -2,7 +2,7 @@
 
 ## 1. Objetivo
 
-Documentar os contratos que de fato sustentam o backend executavel de planejamento diario. Esta referencia cobre o fluxo compartilhado por CLI, API HTTP e UI Streamlit, sem repetir detalhes internos do PyVRP.
+Documentar os contratos que de fato sustentam o backend executavel de planejamento diario. Esta referencia cobre o fluxo compartilhado por CLI e API HTTP, incluindo o contrato publicado para clientes externos, sem repetir detalhes internos do PyVRP.
 
 ## 2. Fronteiras atuais do sistema
 
@@ -371,6 +371,6 @@ Endpoints:
 - `POST /api/v1/planning/run-dataset`
 - `POST /api/v1/planning/run`
 
-### 11.3 UI Streamlit
+### 11.3 Clientes HTTP externos
 
-A UI nao executa o solver localmente. Ela conversa com a API e trabalha sobre o mesmo contrato de resposta de `PlanningRunResponse`, transformado em view models apenas para visualizacao, filtros e exportacao offline.
+Clientes externos nao executam o solver localmente. Eles consomem a API e trabalham sobre o mesmo contrato de resposta de `PlanningRunResponse`.
