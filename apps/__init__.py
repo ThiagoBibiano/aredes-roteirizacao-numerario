@@ -1,1 +1,0 @@
-"""Aplicacoes auxiliares do repositorio."""

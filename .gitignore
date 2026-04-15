@@ -45,6 +45,7 @@ pip-delete-this-directory.txt
 htmlcov/
 .tox/
 .nox/
+.tracecov/
 .coverage
 .coverage.*
 .cache
@@ -206,6 +207,9 @@ cython_debug/
 #   you could uncomment the following to ignore the entire vscode folder
 # .vscode/
 
+# Codex
+.codex/
+
 # Ruff stuff:
 .ruff_cache/
 
@@ -216,9 +220,6 @@ cython_debug/
 marimo/_static/
 marimo/_lsp/
 __marimo__/
-
-# Streamlit
-.streamlit/secrets.toml
 
 # Smoke test artifacts
 data/fake_smoke/logistics_snapshots/
@@ -236,5 +237,3 @@ data/benchmarks/operacao_sob_pressao_subsample/*
 data/scenarios/generated/
 docs/apresentacao/assets/generated/notebook/
 notebook/.ipynb_checkpoints/
-
-apps/ui_streamlit/settings.local.toml

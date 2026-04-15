@@ -369,7 +369,7 @@ flowchart TD
     K --> L[PlanningReportingBuilder]
     L --> M[ResultadoPlanejamento]
     M --> N[Persistencia por hash_cenario]
-    M --> O[CLI, API e UI]
+    M --> O[CLI e API HTTP]
 ```
 
 ---
@@ -532,7 +532,6 @@ O projeto não está mais apenas em fase de desenho. Hoje já existe um backend 
 * `src/roteirizacao/optimization`: adaptador para PyVRP;
 * `src/roteirizacao/benchmark`: baseline PuLP, catálogo de cenários, runner experimental e agregação de métricas;
 * `src/roteirizacao/api`: camada FastAPI sobre o orquestrador;
-* `apps/ui_streamlit`: frontend que consome a API HTTP;
 * `notebook/modelo_solver_workbench.ipynb`: workbench narrativo para demonstração do solver;
 * `notebook/benchmark_solver_comparison.ipynb`: caderno experimental para comparação PyVRP x PuLP.
 
@@ -544,7 +543,7 @@ O projeto não está mais apenas em fase de desenho. Hoje já existe um backend 
 4. `OptimizationInstanceBuilder` monta uma `InstanciaRoteirizacaoBase` por `ClasseOperacional`.
 5. Para a malha, o backend tenta primeiro `PersistedSnapshotLogisticsMatrixProvider`; se o snapshot estiver ausente, inválido ou incompleto, usa `FallbackLogisticsMatrixProvider` com `LogisticsMatrixBuilder`.
 6. `PlanningExecutor` usa `PyVRPAdapter`, executa o solver e consolida `RoutePostProcessor`, `PlanningAuditTrailBuilder` e `PlanningReportingBuilder`.
-7. O orquestrador persiste artefatos por cenário e expõe o resultado para CLI, API e UI.
+7. O orquestrador persiste artefatos por cenário e expõe o resultado para CLI e API.
 
 ## 20. Interfaces públicas do sistema
 
@@ -581,9 +580,9 @@ A API expõe:
 
 O endpoint `run` materializa internamente um dataset em `data/api_runs/` e reutiliza o mesmo orquestrador da CLI.
 
-### 20.4 UI Streamlit
+### 20.4 Clientes HTTP externos
 
-A UI não executa o solver diretamente. Ela funciona como cliente da API e deriva a visualização a partir do contrato de resposta do backend.
+Consumidores externos não executam o solver diretamente. Eles usam a API HTTP e trabalham sobre o mesmo contrato de resposta publicado pelo backend.
 
 ### 20.5 Notebooks públicos
 
@@ -649,7 +648,8 @@ O repositório já cobre o backend com testes por contrato e integração leve:
 * `tests/contract/test_benchmark_catalog.py`
 * `tests/contract/test_benchmark_runner.py`
 * `tests/contract/test_benchmark_workbench_support.py`
-* `tests/ui/` para o contrato entre frontend e backend
+
+O contrato HTTP consumido por clientes externos é protegido por `tests/contract/test_api.py`.
 
 ## 23. Resultado atual esperado da aplicação
 
@@ -672,5 +672,5 @@ O núcleo executável existe, e a prioridade documental passa a ser:
 
 * manter o contexto de negócio alinhado ao backend real;
 * preservar o desacoplamento entre domínio e solver;
-* registrar com clareza o contrato entre CLI, API, UI, notebooks e persistência operacional;
+* registrar com clareza o contrato entre CLI, API, clientes HTTP externos, notebooks e persistência operacional;
 * sustentar a narrativa metodológica do benchmark, distinguindo claramente operação do produto e comparação científica controlada.
