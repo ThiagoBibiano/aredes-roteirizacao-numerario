@@ -369,7 +369,7 @@ flowchart TD
     K --> L[PlanningReportingBuilder]
     L --> M[ResultadoPlanejamento]
     M --> N[Persistencia por hash_cenario]
-    M --> O[CLI, API e UI]
+    M --> O[CLI e API HTTP]
 ```
 
 ---
@@ -648,7 +648,8 @@ O repositório já cobre o backend com testes por contrato e integração leve:
 * `tests/contract/test_benchmark_catalog.py`
 * `tests/contract/test_benchmark_runner.py`
 * `tests/contract/test_benchmark_workbench_support.py`
-* `tests/contract/test_api.py` para o contrato HTTP consumido por clientes externos
+
+O contrato HTTP consumido por clientes externos é protegido por `tests/contract/test_api.py`.
 
 ## 23. Resultado atual esperado da aplicação
 
@@ -671,5 +672,5 @@ O núcleo executável existe, e a prioridade documental passa a ser:
 
 * manter o contexto de negócio alinhado ao backend real;
 * preservar o desacoplamento entre domínio e solver;
-* registrar com clareza o contrato entre CLI, API, UI, notebooks e persistência operacional;
+* registrar com clareza o contrato entre CLI, API, clientes HTTP externos, notebooks e persistência operacional;
 * sustentar a narrativa metodológica do benchmark, distinguindo claramente operação do produto e comparação científica controlada.

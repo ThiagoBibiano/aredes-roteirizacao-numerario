@@ -12,7 +12,7 @@ Hoje o repositorio ja contem:
 - geracao e persistencia de snapshots logísticos;
 - orquestracao idempotente do planejamento diario;
 - CLI operacional;
-- API FastAPI para consumo por frontend externo.
+- API FastAPI para consumo por clientes HTTP externos.
 
 Frentes experimentais adicionadas nesta fase:
 
@@ -229,7 +229,7 @@ Exemplo para materializar snapshot:
 
 ## API FastAPI
 
-A API foi criada para expor o motor como backend para um frontend futuro em outro repositorio.
+A API foi criada para expor o motor como fronteira HTTP do sistema para integracoes e clientes externos, mantendo o orquestrador como nucleo interno do backend.
 
 Subir localmente com recarga:
 
@@ -446,4 +446,4 @@ Ainda nao fazem parte do escopo implementado:
 - transformar execucoes longas em jobs assíncronos;
 - persistir resultados em banco em vez de apenas filesystem;
 - adicionar integracoes reais de entrada e de malha;
-- criar o frontend consumidor em repositorio separado.
+- publicar exemplos de integracao para clientes HTTP externos em repositorio separado, quando fizer sentido.
