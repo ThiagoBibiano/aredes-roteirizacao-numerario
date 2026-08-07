@@ -32,12 +32,6 @@ Qualificam os nós e as arestas com parâmetros reais do negócio:
 - **Nas arestas:** tempo de viagem, distância, custo de pedágio/deslocamento.
 - **Nos nós:** tempo de serviço (SLA), janela de atendimento, volume da demanda.
 
-**[DEIXA PARA IMAGEM]**
-Inserir a imagem da rede-base com marcações simples:
-- base em destaque;
-- ordens distribuídas como nós;
-- conexões sugeridas entre pontos.
-
 ![Mapa sintetizado da rede-base](./assets/generated/operacao_sob_pressao_rede_base.png)
 
 ---
