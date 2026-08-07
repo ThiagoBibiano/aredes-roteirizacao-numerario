@@ -941,7 +941,7 @@ def plot_base_graph(
     figure, axis = plt.subplots(figsize=figsize)
     basemap_added = _maybe_add_basemap(axis, positions) if with_basemap else False
     title_suffix = " com basemap" if basemap_added else ""
-    axis.set_title(f"Rede-base do cenário {scenario_public_label(artifacts.scenario_name)}{title_suffix}")
+    axis.set_title(f"Malha logística antes da formulação matemática.")
 
     base_nodes = [node for node, kind in artifacts.node_kind.items() if kind == "base"]
     order_metadata = _order_metadata_map(artifacts)
